@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LevelUp English — Frontend
 
-## Getting Started
+Interface web da **LevelUp English**, plataforma de gamificação para aprendizado
+de inglês: missões, atitudes, XP, níveis e ranking por turma.
 
-First, run the development server:
+Construído com Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4,
+shadcn/ui (base Radix UI, preset `nova`, tema `zinc`), TanStack Query e nuqs.
+
+## Backend
+
+|                           |                                                         |
+| ------------------------- | ------------------------------------------------------- |
+| API (produção)            | https://level-up-english-api.onrender.com               |
+| Documentação (Swagger UI) | https://level-up-english-api.onrender.com/api-docs/     |
+| OpenAPI (JSON)            | https://level-up-english-api.onrender.com/api-docs.json |
+
+Um resumo das rotas e do fluxo de autenticação está em [`docs/api.md`](docs/api.md).
+
+> A API está hospedada no plano gratuito do Render: a primeira requisição depois
+> de um período ocioso pode levar ~50s até o serviço acordar.
+
+## Requisitos
+
+- Node.js >= 20.9 (o projeto usa 22.13.0 — veja `.nvmrc`)
+- npm
+
+## Como rodar
 
 ```bash
+nvm use          # opcional, respeita o .nvmrc
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+A aplicação sobe em http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variáveis de ambiente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variável              | Descrição                        |
+| --------------------- | -------------------------------- |
+| `NEXT_PUBLIC_API_URL` | URL base da LevelUp English API. |
 
-## Learn More
+Copie `.env.example` para `.env.local` e ajuste conforme o ambiente. O
+`.env.local` não é versionado.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Script                 | O que faz                                          |
+| ---------------------- | -------------------------------------------------- |
+| `npm run dev`          | Servidor de desenvolvimento.                       |
+| `npm run build`        | Build de produção.                                 |
+| `npm run start`        | Sobe o build de produção.                          |
+| `npm run lint`         | ESLint.                                            |
+| `npm run lint:fix`     | ESLint com correção automática.                    |
+| `npm run typecheck`    | Gera os tipos de rota do Next e roda o TypeScript. |
+| `npm run format`       | Formata com Prettier.                              |
+| `npm run format:check` | Verifica a formatação sem alterar arquivos.        |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estrutura
 
-## Deploy on Vercel
+```
+src/
+├── app/          # rotas do App Router, layouts e páginas
+├── components/
+│   └── ui/       # componentes do shadcn/ui (não editar à mão sem necessidade)
+├── contexts/     # React contexts
+├── lib/          # utilitários (cn) e configuração de infraestrutura
+├── providers/    # providers que embrulham a árvore (AppProviders)
+├── schemas/      # schemas de validação de formulários e payloads
+├── services/     # chamadas à LevelUp English API
+└── types/        # tipos TypeScript compartilhados
+docs/             # documentação do projeto
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O alias `@/*` aponta para `src/*` — por exemplo,
+`import { api } from "@/services/api"`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## shadcn/ui
+
+Configuração em `components.json`: base **Radix UI**, preset **nova**
+(ícones Lucide + fonte Geist), cor base **zinc**, com CSS variables. Os tokens
+de tema ficam em `src/app/globals.css`.
+
+Para adicionar um componente:
+
+```bash
+npx shadcn@latest add button dialog input
+```
+
+Os arquivos caem em `src/components/ui/`.
+
+> **Dark mode:** o shadcn usa a estratégia de classe (`.dark` no `<html>`), não
+> `prefers-color-scheme`. Os tokens dark já estão definidos, mas nada aplica a
+> classe ainda — para ligar o tema escuro será preciso um theme provider
+> (ex.: `next-themes`).
+
+## Providers
+
+`src/providers/app-providers.tsx` compõe todos os providers da aplicação e é o
+único que o `layout.tsx` importa. Ao adicionar um provider novo (theme, auth),
+encaixe ele ali em vez de mexer no layout.
+
+Hoje: `NuqsAdapter` > `QueryProvider`.
+
+## TanStack Query
+
+O `QueryProvider` (`src/providers/query-provider.tsx`) já embrulha a aplicação
+no layout raiz. Ele cria um `QueryClient` novo a cada request no servidor — um
+client compartilhado vazaria cache de um usuário para outro — e mantém um único
+client no navegador.
+
+Defaults configurados: `staleTime` de 60s (evita refetch imediato na
+hidratação) e `refetchOnWindowFocus` desligado.
+
+## nuqs
+
+O `NuqsAdapter` já está no `AppProviders` — é obrigatório, sem ele os hooks do
+nuqs quebram em runtime.
+
+**Atenção ao Suspense.** Os hooks do nuqs leem os search params, e no App Router
+qualquer componente que faça isso precisa estar dentro de um `<Suspense>`, senão
+o build falha com `useSearchParams() should be wrapped in a suspense boundary`.
+O boundary vai na página, em volta do componente que usa o hook:
+
+```tsx
+import { Suspense } from "react";
+
+export default function RankingPage() {
+  return (
+    <Suspense fallback={<RankingSkeleton />}>
+      <RankingFiltrado />
+    </Suspense>
+  );
+}
+```
+
+Não coloque esse `<Suspense>` no layout raiz: isso resolveria o erro para todas
+as páginas de uma vez, mas ao custo de tirar do prerender estático também as
+páginas que não usam nuqs.
