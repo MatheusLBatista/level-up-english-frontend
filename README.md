@@ -3,7 +3,8 @@
 Interface web da **LevelUp English**, plataforma de gamificação para aprendizado
 de inglês: missões, atitudes, XP, níveis e ranking por turma.
 
-Construído com Next.js 16 (App Router), React 19, TypeScript e Tailwind CSS 4.
+Construído com Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4 e
+shadcn/ui (base Radix UI, preset `nova`, tema `zinc`).
 
 ## Backend
 
@@ -61,9 +62,10 @@ Copie `.env.example` para `.env.local` e ajuste conforme o ambiente. O
 ```
 src/
 ├── app/          # rotas do App Router, layouts e páginas
-├── components/   # componentes de UI reutilizáveis
+├── components/
+│   └── ui/       # componentes do shadcn/ui (não editar à mão sem necessidade)
 ├── contexts/     # React contexts
-├── lib/          # utilitários e configuração de infraestrutura
+├── lib/          # utilitários (cn) e configuração de infraestrutura
 ├── providers/    # providers que embrulham a árvore da aplicação
 ├── schemas/      # schemas de validação de formulários e payloads
 ├── services/     # chamadas à LevelUp English API
@@ -73,3 +75,22 @@ docs/             # documentação do projeto
 
 O alias `@/*` aponta para `src/*` — por exemplo,
 `import { api } from "@/services/api"`.
+
+## shadcn/ui
+
+Configuração em `components.json`: base **Radix UI**, preset **nova**
+(ícones Lucide + fonte Geist), cor base **zinc**, com CSS variables. Os tokens
+de tema ficam em `src/app/globals.css`.
+
+Para adicionar um componente:
+
+```bash
+npx shadcn@latest add button dialog input
+```
+
+Os arquivos caem em `src/components/ui/`.
+
+> **Dark mode:** o shadcn usa a estratégia de classe (`.dark` no `<html>`), não
+> `prefers-color-scheme`. Os tokens dark já estão definidos, mas nada aplica a
+> classe ainda — para ligar o tema escuro será preciso um theme provider
+> (ex.: `next-themes`).
