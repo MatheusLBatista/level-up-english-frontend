@@ -70,7 +70,7 @@ export function DashboardStats() {
         value={`Nível ${user.level}`}
         accentClassName="text-brand-level"
       >
-        <Progress value={user.progress.porcentage} className="h-2" />
+        <Progress value={user.progress.percentage} className="h-2" />
       </StatCard>
 
       <StatCard

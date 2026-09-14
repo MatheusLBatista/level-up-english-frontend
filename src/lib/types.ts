@@ -65,7 +65,7 @@ export type LevelProgress = {
   current_level_xp: number;
   next_level_xp: number | null;
   xp_to_next_level: number;
-  porcentage: number;
+  percentage: number;
 };
 
 export type MissionProgressEntry = {
