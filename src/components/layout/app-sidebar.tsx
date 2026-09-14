@@ -36,10 +36,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4">
+       <SidebarHeader className="h-16 justify-center p-4 group-data-[collapsible=icon]:p-2">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <span className="bg-brand-gradient grid size-9 shrink-0 place-items-center rounded-xl">
-            <Gamepad2Icon className="size-5 text-white" />
+          <span className="bg-brand-gradient grid size-9 shrink-0 place-items-center rounded-xl group-data-[collapsible=icon]:size-8">
+            <Gamepad2Icon className="size-5 text-white group-data-[collapsible=icon]:size-4" />
           </span>
           <span className="grid group-data-[collapsible=icon]:hidden">
             <span className="text-sm leading-tight font-semibold">
