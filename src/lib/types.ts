@@ -2,6 +2,13 @@ export type Role = "admin" | "student" | "teacher";
 
 export type MissionType = "quiz" | "vocabulary" | "audio";
 
+export type QuizAnswer = "a" | "b" | "c" | "d";
+
+export type MissionQuestion = {
+  question: string;
+  options: Record<QuizAnswer, string>;
+};
+
 export type Paginated<T> = {
   docs: T[];
   totalDocs: number;
@@ -30,8 +37,28 @@ export type Mission = {
   createdBy: Ref | null;
   content: string | null;
   content_url: string | null;
+  questions?: MissionQuestion[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type MissionProgressResult = {
+  mission: string;
+  student: string;
+  done: boolean;
+  score: number;
+  correct_answers: number | null;
+  total_questions: number | null;
+  xp_earned: number;
+  credited_so_far: number;
+  already_rewarded: boolean;
+  progression: {
+    previous_level: number;
+    leveled_up: boolean;
+    leveled_down: boolean;
+    level: number;
+    xp: number;
+  } | null;
 };
 
 export type LevelProgress = {
