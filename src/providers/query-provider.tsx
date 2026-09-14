@@ -1,5 +1,5 @@
 "use client";
-
+import { ApiError } from "@/lib/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
@@ -7,9 +7,10 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // Evita que o React Query refaça no cliente o fetch que o servidor
-        // acabou de fazer durante a hidratação.
         staleTime: 60 * 1000,
+        retry: (failureCount, error) =>
+          !(error instanceof ApiError && error.status < 500) &&
+          failureCount < 2,
         refetchOnWindowFocus: false,
       },
     },
