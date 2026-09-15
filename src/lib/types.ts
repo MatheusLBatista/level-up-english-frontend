@@ -98,3 +98,29 @@ export type LoginResponse = {
   refreshToken: string;
   user: User;
 };
+
+export type RankingScope = "global" | "class";
+
+export type RankingUser = {
+  _id: string;
+  name: string;
+  email: string;
+  xp: number;
+  level: number;
+};
+
+export type RankingEntry = {
+  user: RankingUser;
+  xp: number;
+  level: number;
+};
+
+export type Ranking = {
+  _id: string;
+  type: RankingScope;
+  class: Ref | null;
+  entries: RankingEntry[];
+  createdAt: string;
+  updatedAt: string;
+};
+

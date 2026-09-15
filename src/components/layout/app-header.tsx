@@ -4,20 +4,13 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/auth-context";
 import type { Role } from "@/lib/types";
+import { getInitials } from "@/lib/user";
 
 const roleLabels: Record<Role, string> = {
   student: "Aluno",
   teacher: "Professor",
   admin: "Administrador",
 };
-
-function getInitials(name: string) {
-  const parts = name.trim().split(/\s+/);
-  const first = parts.at(0)?.[0] ?? "";
-  const last = parts.length > 1 ? (parts.at(-1)?.[0] ?? "") : "";
-
-  return (first + last).toUpperCase();
-}
 
 export function AppHeader() {
   const { user } = useAuth();
