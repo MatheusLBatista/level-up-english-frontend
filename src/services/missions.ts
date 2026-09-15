@@ -5,12 +5,30 @@ import type {
   Paginated,
   QuizAnswer,
 } from "@/lib/types";
+import { MissionType } from "@/lib/types";
 
-export function listMissions(token: string) {
-  return apiFetch<Paginated<Mission>>("/missions?active=true&limit=100", {
-    token,
+export function listMissions(token: string, filters: MissionFilters = {}) {
+  const params = new URLSearchParams({
+    active: "true",
+    limit: String(filters.limit ?? 100),
   });
+
+  if (filters.type) {
+    params.set("type", filters.type);
+  }
+
+  if (filters.page && filters.page > 1) {
+    params.set("page", String(filters.page));
+  }
+
+  return apiFetch<Paginated<Mission>>(`/missions?${params}`, { token });
 }
+
+export type MissionFilters = {
+  type?: MissionType | null;
+  page?: number;
+  limit?: number;
+};
 
 export type SubmitProgressBody = {
   done: boolean;

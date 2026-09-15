@@ -2,7 +2,6 @@
 
 import { ChevronRightIcon, PartyPopperIcon } from "lucide-react";
 import Link from "next/link";
-import { MissionCard } from "@/components/dashboard/mission-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -68,7 +67,7 @@ function MissionsGrid() {
         <MissionDialog
           key={mission._id}
           mission={mission}
-          inProgress={progress.has(mission._id)}
+          progress={progress.get(mission._id)}
         />
       ))}
     </div>

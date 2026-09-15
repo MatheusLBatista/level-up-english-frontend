@@ -2,7 +2,7 @@
 
 import { CheckCircle2Icon, GiftIcon, PartyPopperIcon } from "lucide-react";
 import { useState } from "react";
-import { MissionCard } from "@/components/dashboard/mission-card";
+import { MissionCard } from "@/components/missions/mission-card";
 import { MissionMedia } from "@/components/dashboard/mission-media";
 import { MissionQuiz } from "@/components/dashboard/mission-quiz";
 import { Button } from "@/components/ui/button";
@@ -17,14 +17,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubmitMissionProgress } from "@/hooks/use-submit-mission-progression";
-import type { Mission, QuizAnswer } from "@/lib/types";
+import type { Mission, QuizAnswer, MissionProgressEntry } from "@/lib/types";
 
 type MissionDialogProps = {
   mission: Mission;
-  inProgress: boolean;
+  progress?: MissionProgressEntry;
 };
 
-export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
+export function MissionDialog({ mission, progress }: MissionDialogProps) {
   const [answers, setAnswers] = useState<(QuizAnswer | undefined)[]>([]);
   const mutation = useSubmitMissionProgress(mission._id);
 
@@ -37,8 +37,6 @@ export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
 
   function handleOpenChange(open: boolean) {
     if (!open) {
-      // Reabrir a missão tem que começar limpo: sem resultado nem respostas
-      // da tentativa anterior.
       mutation.reset();
       setAnswers([]);
     }
@@ -56,9 +54,7 @@ export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
     mutation.mutate(
       isQuiz
         ? { done: true, answers: answers as QuizAnswer[] }
-        : // Vocabulary/audio não têm o que corrigir: o aluno declara que
-          // terminou e leva o XP cheio.
-          { done: true, score: 100 },
+        : { done: true, score: 100 },
     );
   }
 
@@ -66,7 +62,7 @@ export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
     <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <button type="button" className="rounded-xl text-left">
-          <MissionCard mission={mission} inProgress={inProgress} />
+          <MissionCard mission={mission} progress={progress} />
         </button>
       </DialogTrigger>
 
