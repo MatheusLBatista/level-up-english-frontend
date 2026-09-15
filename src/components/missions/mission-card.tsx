@@ -1,18 +1,8 @@
-import {
-  CircleCheckIcon,
-  ListChecksIcon,
-  PlayIcon,
-  TargetIcon,
-  TrophyIcon,
-  Volume2Icon,
-  ZapIcon,
-} from "lucide-react";
+import { ListChecksIcon, TargetIcon, TrophyIcon, Volume2Icon, ZapIcon } from "lucide-react";
 import type { LucideProps } from "lucide-react";
-import Link from "next/link";
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMissionStatus } from "@/lib/missions";
 import type { Mission, MissionProgressEntry, MissionType } from "@/lib/types";
@@ -42,13 +32,13 @@ const missionStyles: Record<
 type MissionCardProps = {
   mission: Mission;
   progress?: MissionProgressEntry;
-  withAction?: boolean;
+  action?: ReactNode;
 };
 
 export function MissionCard({
   mission,
   progress,
-  withAction = false,
+  action,
 }: MissionCardProps) {
   const { icon: Icon, label, tile } = missionStyles[mission.type];
   const status = getMissionStatus(progress);
@@ -111,20 +101,7 @@ export function MissionCard({
           )}
         </div>
 
-        {withAction &&
-          (status === "done" ? (
-            <Button variant="secondary" className="text-brand-done w-full" disabled>
-              <CircleCheckIcon />
-              Concluído
-            </Button>
-          ) : (
-            <Button asChild className="bg-brand-gradient w-full">
-              <Link href={`/missoes/${mission._id}`}>
-                <PlayIcon />
-                {status === "in-progress" ? "Continuar" : "Jogar agora"}
-              </Link>
-            </Button>
-          ))}
+        {action}
       </CardContent>
     </Card>
   );

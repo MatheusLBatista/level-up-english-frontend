@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissions } from "@/hooks/use-mission";
 import { indexProgress, selectRecommended } from "@/lib/missions";
-import { MissionDialog } from "@/components/dashboard/mission-dialog";
+import { MissionDialog } from "@/components/missions/mission-dialog";
 
 function MissionsGrid() {
   const userQuery = useCurrentUser();

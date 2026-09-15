@@ -1,10 +1,15 @@
 "use client";
 
-import { CheckCircle2Icon, GiftIcon, PartyPopperIcon } from "lucide-react";
+import {
+  CheckCircle2Icon,
+  GiftIcon,
+  PartyPopperIcon,
+  PlayIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { MissionCard } from "@/components/missions/mission-card";
-import { MissionMedia } from "@/components/dashboard/mission-media";
-import { MissionQuiz } from "@/components/dashboard/mission-quiz";
+import { MissionMedia } from "@/components/missions/mission-media";
+import { MissionQuiz } from "@/components/missions/mission-quiz";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,14 +22,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubmitMissionProgress } from "@/hooks/use-submit-mission-progression";
-import type { Mission, QuizAnswer, MissionProgressEntry } from "@/lib/types";
+import { getMissionStatus } from "@/lib/missions";
+import type { Mission, MissionProgressEntry, QuizAnswer } from "@/lib/types";
 
 type MissionDialogProps = {
   mission: Mission;
   progress?: MissionProgressEntry;
+  withAction?: boolean;
 };
 
-export function MissionDialog({ mission, progress }: MissionDialogProps) {
+export function MissionDialog({
+  mission,
+  progress,
+  withAction = false,
+}: MissionDialogProps) {
   const [answers, setAnswers] = useState<(QuizAnswer | undefined)[]>([]);
   const mutation = useSubmitMissionProgress(mission._id);
 
@@ -34,6 +45,22 @@ export function MissionDialog({ mission, progress }: MissionDialogProps) {
   const allAnswered =
     questions.length > 0 && answers.filter(Boolean).length === questions.length;
   const result = mutation.data;
+
+  const status = getMissionStatus(progress);
+
+  const action = !withAction ? null : status === "done" ? (
+    <Button variant="secondary" className="text-brand-done w-full" disabled>
+      <CheckCircle2Icon />
+      Concluído
+    </Button>
+  ) : (
+    <DialogTrigger asChild>
+      <Button className="bg-brand-gradient w-full">
+        <PlayIcon />
+        {status === "in-progress" ? "Continuar" : "Jogar agora"}
+      </Button>
+    </DialogTrigger>
+  );
 
   function handleOpenChange(open: boolean) {
     if (!open) {
@@ -60,11 +87,15 @@ export function MissionDialog({ mission, progress }: MissionDialogProps) {
 
   return (
     <Dialog onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button type="button" className="rounded-xl text-left">
-          <MissionCard mission={mission} progress={progress} />
-        </button>
-      </DialogTrigger>
+      {withAction ? (
+        <MissionCard mission={mission} progress={progress} action={action} />
+      ) : (
+        <DialogTrigger asChild>
+          <button type="button" className="rounded-xl text-left">
+            <MissionCard mission={mission} progress={progress} />
+          </button>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="max-h-[85vh] gap-6 overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
