@@ -2,13 +2,12 @@
 
 import { ChevronRightIcon, PartyPopperIcon } from "lucide-react";
 import Link from "next/link";
-import { MissionCard } from "@/components/dashboard/mission-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissions } from "@/hooks/use-mission";
 import { indexProgress, selectRecommended } from "@/lib/missions";
-import { MissionDialog } from "@/components/dashboard/mission-dialog";
+import { MissionDialog } from "@/components/missions/mission-dialog";
 
 function MissionsGrid() {
   const userQuery = useCurrentUser();
@@ -68,7 +67,7 @@ function MissionsGrid() {
         <MissionDialog
           key={mission._id}
           mission={mission}
-          inProgress={progress.has(mission._id)}
+          progress={progress.get(mission._id)}
         />
       ))}
     </div>

@@ -1,4 +1,13 @@
 import type { Mission, MissionProgressEntry, User } from "@/lib/types";
+export type MissionStatus = "todo" | "in-progress" | "done";
+
+export function getMissionStatus(entry?: MissionProgressEntry): MissionStatus {
+  if (!entry) {
+    return "todo";
+  }
+
+  return entry.done ? "done" : "in-progress";
+}
 
 export function indexProgress(user: User): Map<string, MissionProgressEntry> {
   return new Map(user.mission_progress.map((entry) => [entry.mission_id, entry]));

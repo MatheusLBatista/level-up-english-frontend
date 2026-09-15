@@ -1,10 +1,15 @@
 "use client";
 
-import { CheckCircle2Icon, GiftIcon, PartyPopperIcon } from "lucide-react";
+import {
+  CheckCircle2Icon,
+  GiftIcon,
+  PartyPopperIcon,
+  PlayIcon,
+} from "lucide-react";
 import { useState } from "react";
-import { MissionCard } from "@/components/dashboard/mission-card";
-import { MissionMedia } from "@/components/dashboard/mission-media";
-import { MissionQuiz } from "@/components/dashboard/mission-quiz";
+import { MissionCard } from "@/components/missions/mission-card";
+import { MissionMedia } from "@/components/missions/mission-media";
+import { MissionQuiz } from "@/components/missions/mission-quiz";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,14 +22,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubmitMissionProgress } from "@/hooks/use-submit-mission-progression";
-import type { Mission, QuizAnswer } from "@/lib/types";
+import { getMissionStatus } from "@/lib/missions";
+import type { Mission, MissionProgressEntry, QuizAnswer } from "@/lib/types";
 
 type MissionDialogProps = {
   mission: Mission;
-  inProgress: boolean;
+  progress?: MissionProgressEntry;
+  withAction?: boolean;
 };
 
-export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
+export function MissionDialog({
+  mission,
+  progress,
+  withAction = false,
+}: MissionDialogProps) {
   const [answers, setAnswers] = useState<(QuizAnswer | undefined)[]>([]);
   const mutation = useSubmitMissionProgress(mission._id);
 
@@ -35,10 +46,24 @@ export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
     questions.length > 0 && answers.filter(Boolean).length === questions.length;
   const result = mutation.data;
 
+  const status = getMissionStatus(progress);
+
+  const action = !withAction ? null : status === "done" ? (
+    <Button variant="secondary" className="text-brand-done w-full" disabled>
+      <CheckCircle2Icon />
+      Concluído
+    </Button>
+  ) : (
+    <DialogTrigger asChild>
+      <Button className="bg-brand-gradient w-full">
+        <PlayIcon />
+        {status === "in-progress" ? "Continuar" : "Jogar agora"}
+      </Button>
+    </DialogTrigger>
+  );
+
   function handleOpenChange(open: boolean) {
     if (!open) {
-      // Reabrir a missão tem que começar limpo: sem resultado nem respostas
-      // da tentativa anterior.
       mutation.reset();
       setAnswers([]);
     }
@@ -56,19 +81,21 @@ export function MissionDialog({ mission, inProgress }: MissionDialogProps) {
     mutation.mutate(
       isQuiz
         ? { done: true, answers: answers as QuizAnswer[] }
-        : // Vocabulary/audio não têm o que corrigir: o aluno declara que
-          // terminou e leva o XP cheio.
-          { done: true, score: 100 },
+        : { done: true, score: 100 },
     );
   }
 
   return (
     <Dialog onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <button type="button" className="rounded-xl text-left">
-          <MissionCard mission={mission} inProgress={inProgress} />
-        </button>
-      </DialogTrigger>
+      {withAction ? (
+        <MissionCard mission={mission} progress={progress} action={action} />
+      ) : (
+        <DialogTrigger asChild>
+          <button type="button" className="rounded-xl text-left">
+            <MissionCard mission={mission} progress={progress} />
+          </button>
+        </DialogTrigger>
+      )}
 
       <DialogContent className="max-h-[85vh] gap-6 overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
