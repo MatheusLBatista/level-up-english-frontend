@@ -25,6 +25,7 @@ type AuthContextValue = {
   token: string | null;
   signIn: (session: Session) => void;
   signOut: () => void;
+  updateUser: (user: User) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -53,6 +54,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("unauthenticated");
   }, []);
 
+  const updateUser = useCallback(
+    (user: User) => {
+      if (!session) {
+        return;
+      }
+
+      const next = { ...session, user };
+
+      writeSession(next);
+      setSession(next);
+    },
+    [session],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
@@ -60,8 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: session?.accessToken ?? null,
       signIn,
       signOut,
+      updateUser
     }),
-    [status, session, signIn, signOut],
+    [status, session, signIn, signOut, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
