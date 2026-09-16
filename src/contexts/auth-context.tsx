@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   createContext,
@@ -18,6 +18,7 @@ import {
 import type { User } from "@/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { onUnauthorized } from "@/lib/auth-events";
+import { onSessionRefreshed } from "@/lib/auth-events";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
@@ -60,6 +61,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient]);
 
   useEffect(() => onUnauthorized(signOut), [signOut]);
+  useEffect(
+    () =>
+      onSessionRefreshed((next) => {
+        writeSession(next);
+        setSession(next);
+      }),
+    [],
+  );
 
   const updateUser = useCallback(
     (user: User) => {
@@ -82,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: session?.accessToken ?? null,
       signIn,
       signOut,
-      updateUser
+      updateUser,
     }),
     [status, session, signIn, signOut, updateUser],
   );
