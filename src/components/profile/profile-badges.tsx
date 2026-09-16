@@ -14,14 +14,14 @@ export function ProfileBadges({ user }: { user: User }) {
   const completed = countCompleted(user);
 
   return (
-    <Card className="border-border/40 bg-card/60 backdrop-blur-sm">
+    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-base">Conquistas</CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-1 flex-col justify-between gap-6">
         <div>
-          <p className="text-brand-done text-xl font-bold tabular-nums">
+          <p className="text-brand-done text-2xl font-bold tabular-nums">
             {completed}
           </p>
           <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
