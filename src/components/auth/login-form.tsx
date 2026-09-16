@@ -3,9 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,7 +25,6 @@ import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { login } from "@/services/auth";
 
 export function LoginForm() {
-  const router = useRouter();
   const { signIn } = useAuth();
 
   const form = useForm<LoginInput>({
@@ -39,7 +36,6 @@ export function LoginForm() {
     mutationFn: login,
     onSuccess: (session) => {
       signIn(session);
-      router.replace("/dashboard");
     }
   });
 

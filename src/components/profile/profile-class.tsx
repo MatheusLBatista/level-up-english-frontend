@@ -17,7 +17,7 @@ export function ProfileClass({ user }: { user: User }) {
 
   if (!user.class) {
     return (
-      <Card className="border-border/40 bg-card/60 backdrop-blur-sm">
+      <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-base">Turma</CardTitle>
         </CardHeader>
@@ -31,12 +31,12 @@ export function ProfileClass({ user }: { user: User }) {
   }
 
   return (
-    <Card className="border-border/40 bg-card/60 backdrop-blur-sm">
+    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="text-base">Turma</CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-1 flex-col justify-between gap-6">
         {classQuery.isPending ? (
           <Skeleton className="h-16 rounded-xl" />
         ) : classQuery.isError ? (
@@ -55,9 +55,9 @@ export function ProfileClass({ user }: { user: User }) {
               )}
             </div>
 
-            <div className="flex flex-wrap gap-6">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xl font-bold tabular-nums">
+                <p className="text-2xl font-bold tabular-nums">
                   {classQuery.data.students.length}
                 </p>
                 <p className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
@@ -67,7 +67,7 @@ export function ProfileClass({ user }: { user: User }) {
               </div>
 
               <div>
-                <p className="text-brand-level text-xl font-bold tabular-nums">
+                <p className="text-brand-level text-2xl font-bold tabular-nums">
                   {position > 0 ? `${position}º` : "—"}
                 </p>
                 <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">

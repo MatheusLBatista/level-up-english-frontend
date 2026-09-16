@@ -8,3 +8,16 @@ export function login(creditials: LoginInput) {
     body: creditials,
   });
 }
+
+export type ChangePasswordBody = {
+  currentPassword: string;
+  newPassword: string;
+};
+
+export function changePassword(body: ChangePasswordBody, token: string) {
+  return apiFetch<null>("/auth/change-password", {
+    method: "PATCH",
+    body,
+    token,
+  });
+}
