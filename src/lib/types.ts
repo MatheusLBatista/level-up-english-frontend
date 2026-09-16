@@ -26,6 +26,37 @@ export type Ref = {
   name: string;
 };
 
+export type TeacherRef = {
+  _id: string;
+  name: string;
+  email: string;
+  role: Role;
+};
+
+export type StudentRef = {
+  _id: string;
+  name: string;
+  role: Role;
+};
+
+export type MissionRef = {
+  _id: string;
+  title: string;
+  type: MissionType;
+  active: boolean;
+};
+
+export type SchoolClass = {
+  _id: string;
+  name: string;
+  active: boolean;
+  teacher: TeacherRef | null;
+  students: StudentRef[];
+  missions: MissionRef[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type Mission = {
   _id: string;
   title: string;
