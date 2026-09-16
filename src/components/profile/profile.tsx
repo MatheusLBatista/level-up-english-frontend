@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { Role, User } from "@/lib/types";
 import { getInitials } from "@/lib/user";
+import { ChangePasswordDialog } from "@/components/profile/change-password-dialog";
+import { EditProfileDialog } from "@/components/profile/edit-profile-dialog";
 
 const roleLabels: Record<Role, string> = {
   student: "Aluno",
@@ -44,6 +46,10 @@ export function ProfileIdentity({ user }: { user: User }) {
                 {memberSinceFormatter.format(new Date(user.createdAt))}
               </p>
             )}
+          </div>
+          <div className="ml-auto flex flex-wrap gap-2">
+            <EditProfileDialog user={user} />
+            <ChangePasswordDialog />
           </div>
         </div>
 

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   createContext,
@@ -16,6 +16,9 @@ import {
   type Session,
 } from "@/lib/auth-storage";
 import type { User } from "@/lib/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { onUnauthorized } from "@/lib/auth-events";
+import { onSessionRefreshed } from "@/lib/auth-events";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
@@ -25,6 +28,7 @@ type AuthContextValue = {
   token: string | null;
   signIn: (session: Session) => void;
   signOut: () => void;
+  updateUser: (user: User) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -41,6 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus(stored ? "authenticated" : "unauthenticated");
   }, []);
 
+  const queryClient = useQueryClient();
+
   const signIn = useCallback((next: Session) => {
     writeSession(next);
     setSession(next);
@@ -49,9 +55,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(() => {
     clearSession();
+    queryClient.clear();
     setSession(null);
     setStatus("unauthenticated");
-  }, []);
+  }, [queryClient]);
+
+  useEffect(() => onUnauthorized(signOut), [signOut]);
+  useEffect(
+    () =>
+      onSessionRefreshed((next) => {
+        writeSession(next);
+        setSession(next);
+      }),
+    [],
+  );
+
+  const updateUser = useCallback(
+    (user: User) => {
+      if (!session) {
+        return;
+      }
+
+      const next = { ...session, user };
+
+      writeSession(next);
+      setSession(next);
+    },
+    [session],
+  );
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -60,8 +91,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token: session?.accessToken ?? null,
       signIn,
       signOut,
+      updateUser,
     }),
-    [status, session, signIn, signOut],
+    [status, session, signIn, signOut, updateUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
