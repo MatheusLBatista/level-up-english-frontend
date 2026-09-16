@@ -1,5 +1,7 @@
 //TODO: review this file
 
+import { emitUnauthorized } from "./auth-events";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API_URL) {
@@ -49,8 +51,6 @@ export async function apiFetch<T>(
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
-    // Os dados são por usuário logado: nunca reaproveitar o cache de fetch
-    // do Next entre requisições autenticadas.
     cache: "no-store",
   });
 
@@ -64,6 +64,10 @@ export async function apiFetch<T>(
   }
 
   if (!response.ok) {
+    if (response.status === 401 && token) {
+      emitUnauthorized();
+    }
+
     throw new ApiError(
       envelope?.message ??
         `Erro ${response.status} ao chamar a API. Tente novamente em instantes.`,

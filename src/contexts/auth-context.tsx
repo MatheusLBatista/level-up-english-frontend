@@ -16,6 +16,8 @@ import {
   type Session,
 } from "@/lib/auth-storage";
 import type { User } from "@/lib/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { onUnauthorized } from "@/lib/auth-events";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
@@ -42,6 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus(stored ? "authenticated" : "unauthenticated");
   }, []);
 
+  const queryClient = useQueryClient();
+
   const signIn = useCallback((next: Session) => {
     writeSession(next);
     setSession(next);
@@ -50,9 +54,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(() => {
     clearSession();
+    queryClient.clear();
     setSession(null);
     setStatus("unauthenticated");
-  }, []);
+  }, [queryClient]);
+
+  useEffect(() => onUnauthorized(signOut), [signOut]);
 
   const updateUser = useCallback(
     (user: User) => {
