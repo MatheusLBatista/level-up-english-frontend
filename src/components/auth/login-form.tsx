@@ -39,7 +39,6 @@ export function LoginForm() {
     mutationFn: login,
     onSuccess: (session) => {
       signIn(session);
-      router.replace("/dashboard");
     }
   });
 
