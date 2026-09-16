@@ -60,7 +60,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === href}
+                    isActive={pathname === href || pathname.startsWith(`${href}/`)}
                     tooltip={label}
                   >
                     <Link href={href}>
