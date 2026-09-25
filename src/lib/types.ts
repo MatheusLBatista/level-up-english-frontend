@@ -155,3 +155,8 @@ export type Ranking = {
   updatedAt: string;
 };
 
+export type ClassSummary = Omit<SchoolClass, "students" | "missions"> & {
+  students: string[];
+  missions: string[];
+};
+
