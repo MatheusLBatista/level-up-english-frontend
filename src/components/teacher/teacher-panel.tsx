@@ -19,6 +19,7 @@ import { useTeacherClasses } from "@/hooks/use-teacher-classes";
 import { SelectAllCard } from "@/components/teacher/select-all-card";
 import { SelectionBar } from "@/components/teacher/selection-bar";
 import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialog";
+import { AdjustXpDialog } from "@/components/teacher/adjust-xp-dialog";
 
 function normalize(text: string) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
@@ -189,12 +190,20 @@ export function TeacherPanel() {
           count={selectedStudents.length}
           onClear={clearSelection}
           onApplyAttitude={() => setOpenDialog("attitudes")}
+          onAdjustXp={() => setOpenDialog("xp")}
         />
       )}
 
       <ApplyAttitudesDialog
         open={openDialog === "attitudes"}
         onOpenChange={(open) => setOpenDialog(open ? "attitudes" : null)}
+        students={selectedStudents}
+        onFinished={clearSelection}
+      />
+
+      <AdjustXpDialog
+        open={openDialog === "xp"}
+        onOpenChange={(open) => setOpenDialog(open ? "xp" : null)}
         students={selectedStudents}
         onFinished={clearSelection}
       />

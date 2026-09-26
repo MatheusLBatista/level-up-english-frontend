@@ -177,3 +177,13 @@ export type AttitudeLogResult = {
   attitude: string;
   xp_applied: number;
 };
+
+export type XpAdjustmentResult = {
+  _id: string;
+  student: string;
+  teacher: string;
+  amount: number;
+  xp_applied: number;
+  reason?: string | null;
+  applied_at: string;
+};
