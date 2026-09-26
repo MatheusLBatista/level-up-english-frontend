@@ -160,3 +160,20 @@ export type ClassSummary = Omit<SchoolClass, "students" | "missions"> & {
   missions: string[];
 };
 
+export type AttitudeType = "positive" | "negative";
+
+export type Attitude = {
+  _id: string;
+  name: string;
+  description: string | null;
+  xp_value: number;
+  type: AttitudeType;
+  active: boolean;
+};
+
+export type AttitudeLogResult = {
+  _id: string;
+  student: string;
+  attitude: string;
+  xp_applied: number;
+};

@@ -18,6 +18,7 @@ import { useClassStudents } from "@/hooks/use-class-students";
 import { useTeacherClasses } from "@/hooks/use-teacher-classes";
 import { SelectAllCard } from "@/components/teacher/select-all-card";
 import { SelectionBar } from "@/components/teacher/selection-bar";
+import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialog";
 
 function normalize(text: string) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
@@ -26,6 +27,7 @@ function normalize(text: string) {
 export function TeacherPanel() {
   const [turma, setTurma] = useQueryState("turma");
   const [search, setSearch] = useState("");
+  const [openDialog, setOpenDialog] = useState<"attitudes" | "xp" | null>(null);
 
   const classesQuery = useTeacherClasses();
   const classes = classesQuery.data ?? [];
@@ -45,7 +47,6 @@ export function TeacherPanel() {
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
-  // Só conta quem está na turma carregada; ids de outra turma são ignorados.
   const selectedStudents = useMemo(
     () => (studentsQuery.data ?? []).filter((student) => selectedIds.has(student._id)),
     [studentsQuery.data, selectedIds],
@@ -89,7 +90,7 @@ export function TeacherPanel() {
   }
 
   return (
-    <div className="flex-1 flex-col gap-6">
+    <div className="flex flex-1 flex-col gap-6">
       <div className="flex items-center gap-3">
         <span className="bg-brand-gradient grid size-12 place-items-center rounded-2xl">
           <UsersRoundIcon className="size-6 text-white" />
@@ -117,7 +118,10 @@ export function TeacherPanel() {
 
         <Select
           value={classId ?? undefined}
-          onValueChange={(value) => void setTurma(value)}
+          onValueChange={(value) => {
+            clearSelection();
+            void setTurma(value);
+          }}
           disabled={classes.length === 0}
         >
           <SelectTrigger className="w-full sm:w-56" aria-label="Turma">
@@ -181,8 +185,19 @@ export function TeacherPanel() {
       )}
 
       {Boolean(studentsQuery.data?.length) && (
-        <SelectionBar count={selectedStudents.length} onClear={clearSelection} />
+        <SelectionBar
+          count={selectedStudents.length}
+          onClear={clearSelection}
+          onApplyAttitude={() => setOpenDialog("attitudes")}
+        />
       )}
+
+      <ApplyAttitudesDialog
+        open={openDialog === "attitudes"}
+        onOpenChange={(open) => setOpenDialog(open ? "attitudes" : null)}
+        students={selectedStudents}
+        onFinished={clearSelection}
+      />
     </div>
   );
 }
