@@ -4,18 +4,19 @@ import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
+import { getHomeRoute } from "@/lib/routes";
 
 import { useAuth } from "@/contexts/auth-context";
 
 export function GuestGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const { status } = useAuth();
+  const { status, user } = useAuth();
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
+    if (status === "authenticated" && user) {
+      router.replace(getHomeRoute(user.role));
     }
-  }, [status, router]);
+  }, [status, user, router]);
 
   if (status !== "unauthenticated") {
     return (

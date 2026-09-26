@@ -155,3 +155,35 @@ export type Ranking = {
   updatedAt: string;
 };
 
+export type ClassSummary = Omit<SchoolClass, "students" | "missions"> & {
+  students: string[];
+  missions: string[];
+};
+
+export type AttitudeType = "positive" | "negative";
+
+export type Attitude = {
+  _id: string;
+  name: string;
+  description: string | null;
+  xp_value: number;
+  type: AttitudeType;
+  active: boolean;
+};
+
+export type AttitudeLogResult = {
+  _id: string;
+  student: string;
+  attitude: string;
+  xp_applied: number;
+};
+
+export type XpAdjustmentResult = {
+  _id: string;
+  student: string;
+  teacher: string;
+  amount: number;
+  xp_applied: number;
+  reason?: string | null;
+  applied_at: string;
+};
