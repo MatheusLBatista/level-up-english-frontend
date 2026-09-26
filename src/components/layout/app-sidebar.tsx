@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import { getHomeRoute } from "@/lib/routes";
 import {
   Sidebar,
   SidebarContent,
@@ -23,21 +23,30 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/auth-context";
 
-const navItems = [
+const studentNav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGridIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
   { href: "/ranking", label: "Ranking", icon: TrophyIcon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
 
+const teacherNav = [
+  { href: "/painel", label: "Painel", icon: LayoutGridIcon },
+  { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
+  { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
+];
+
 export function AppSidebar() {
   const pathname = usePathname();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
+
+  const navItems = user?.role === "student" ? studentNav : teacherNav;
+  const homeHref = user ? getHomeRoute(user.role) : "/dashboard";
 
   return (
     <Sidebar collapsible="icon">
        <SidebarHeader className="h-16 justify-center p-4 group-data-[collapsible=icon]:p-2">
-        <Link href="/dashboard" className="flex items-center gap-3">
+        <Link href={homeHref} className="flex items-center gap-3">
           <span className="bg-brand-gradient grid size-9 shrink-0 place-items-center rounded-xl group-data-[collapsible=icon]:size-8">
             <Gamepad2Icon className="size-5 text-white group-data-[collapsible=icon]:size-4" />
           </span>
