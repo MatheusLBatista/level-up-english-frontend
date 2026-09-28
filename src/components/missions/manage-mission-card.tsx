@@ -1,4 +1,9 @@
-import { PencilIcon, RotateCcwIcon, Trash2Icon } from "lucide-react";
+import {
+  PencilIcon,
+  RotateCcwIcon,
+  Trash2Icon,
+  Loader2Icon,
+} from "lucide-react";
 import { MissionCard } from "@/components/missions/mission-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,6 +12,7 @@ import type { Mission } from "@/lib/types";
 type ManageMissionCardProps = {
   mission: Mission;
   canManage: boolean;
+  busy?: boolean;
   onEdit?: (mission: Mission) => void;
   onToggleActive?: (mission: Mission) => void;
 };
@@ -14,6 +20,7 @@ type ManageMissionCardProps = {
 export function ManageMissionCard({
   mission,
   canManage,
+  busy = false,
   onEdit,
   onToggleActive,
 }: ManageMissionCardProps) {
@@ -64,11 +71,21 @@ export function ManageMissionCard({
             variant="ghost"
             aria-label={toggleLabel}
             title={mission.active ? "Desativar" : "Reativar"}
-            className={mission.active ? "hover:text-destructive" : "hover:text-brand-done"}
-            disabled={!onToggleActive}
+            className={
+              mission.active
+                ? "hover:text-destructive"
+                : "hover:text-brand-done"
+            }
+            disabled={!onToggleActive || busy}
             onClick={() => onToggleActive?.(mission)}
           >
-            {mission.active ? <Trash2Icon /> : <RotateCcwIcon />}
+            {busy ? (
+              <Loader2Icon className="animate-spin" />
+            ) : mission.active ? (
+              <Trash2Icon />
+            ) : (
+              <RotateCcwIcon />
+            )}
           </Button>
         </div>
       )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Gamepad2Icon, PlusIcon, SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { ManageMissionCard } from "@/components/missions/manage-mission-card";
@@ -13,6 +14,8 @@ import { useMissions } from "@/hooks/use-mission";
 import { useSelectedClass } from "@/hooks/use-selected-class";
 import type { Mission, MissionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { DeactivateMissionDialog } from "@/components/missions/deactivate-mission-dialog";
+import { useSetMissionActive } from "@/hooks/use-set-mission-active";
 
 const PAGE_SIZE = 6;
 
@@ -40,6 +43,17 @@ export function TeacherMissionsScreen() {
 
   function canManage(mission: Mission) {
     return user?.role === "admin" || mission.createdBy?._id === user?._id;
+  }
+
+  const [missionToDeactivate, setMissionToDeactivate] = useState<Mission | null>(null);
+  const reactivate = useSetMissionActive();
+
+  function handleToggleActive(mission: Mission) {
+    if (mission.active) {
+      setMissionToDeactivate(mission);
+    } else {
+      reactivate.mutate({ mission, active: true });
+    }
   }
 
   return (
@@ -76,6 +90,23 @@ export function TeacherMissionsScreen() {
           onChange={(value) => void setFilters({ tipo: value, pagina: 1 })}
         />
       </div>
+
+      {reactivate.isError && (
+        <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
+          <p className="text-sm">
+            Não foi possível reativar “{reactivate.variables?.mission.title}”:{" "}
+            {reactivate.error.message}
+          </p>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            onClick={() => reactivate.reset()}
+          >
+            Fechar
+          </Button>
+        </div>
+      )}
 
       {classesQuery.isError || missionsQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-4">
@@ -122,6 +153,11 @@ export function TeacherMissionsScreen() {
               key={mission._id}
               mission={mission}
               canManage={canManage(mission)}
+              busy={
+                reactivate.isPending &&
+                reactivate.variables?.mission._id === mission._id
+              }
+              onToggleActive={handleToggleActive}
             />
           ))}
         </div>
@@ -133,6 +169,11 @@ export function TeacherMissionsScreen() {
           onChange={(value) => void setFilters({ pagina: value })}
         />
       )}
+
+      <DeactivateMissionDialog
+        mission={missionToDeactivate}
+        onClose={() => setMissionToDeactivate(null)}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { apiFetch } from "@/lib/api";
 import type {
   Mission,
   MissionProgressResult,
+  MissionWriteResult,
   Paginated,
   QuizAnswer,
 } from "@/lib/types";
@@ -50,6 +51,22 @@ export function submitMissionProgress(
 ) {
   return apiFetch<MissionProgressResult>(`/missions/${missionId}/progress`, {
     method: "POST",
+    body,
+    token,
+  });
+}
+
+export type UpdateMissionBody = {
+  active?: boolean;
+};
+
+export function updateMission(
+  id: string,
+  body: UpdateMissionBody,
+  token: string
+) {
+  return apiFetch<MissionWriteResult>(`/missions/${id}`, {
+    method: "PATCH",
     body,
     token,
   });

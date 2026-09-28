@@ -92,6 +92,11 @@ export type MissionProgressResult = {
   } | null;
 };
 
+export type MissionWriteResult = Omit<Mission, "class_id" | "createdBy"> & {
+  class_id: string;
+  createdBy: string;
+};
+
 export type LevelProgress = {
   current_level_xp: number;
   next_level_xp: number | null;
