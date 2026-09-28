@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
   Gamepad2Icon,
   SearchXIcon,
 } from "lucide-react";
@@ -16,6 +14,7 @@ import { useMissions } from "@/hooks/use-mission";
 import { indexProgress } from "@/lib/missions";
 import type { MissionProgressEntry, MissionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { MissionPagination } from "./mission-pagination";
 
 const PAGE_SIZE = 6;
 
@@ -123,32 +122,11 @@ export function MissionsScreen() {
         </div>
       )}
 
-      {page && page.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!page.hasPrevPage}
-            onClick={() => setFilters({ pagina: page.page - 1 })}
-          >
-            <ChevronLeftIcon />
-            Anterior
-          </Button>
-
-          <span className="text-muted-foreground text-sm tabular-nums">
-            Página {page.page} de {page.totalPages}
-          </span>
-
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!page.hasNextPage}
-            onClick={() => setFilters({ pagina: page.page + 1 })}
-          >
-            Próxima
-            <ChevronRightIcon />
-          </Button>
-        </div>
+       {page && (
+        <MissionPagination
+          page={page}
+          onChange={(pagina) => setFilters({ pagina })}
+        />
       )}
     </div>
   );

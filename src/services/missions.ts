@@ -8,10 +8,15 @@ import type {
 import { MissionType } from "@/lib/types";
 
 export function listMissions(token: string, filters: MissionFilters = {}) {
-  const params = new URLSearchParams({
-    active: "true",
-    limit: String(filters.limit ?? 100),
-  });
+  const params = new URLSearchParams({ limit: String(filters.limit ?? 100) });
+
+  if (!filters.includeInactive) {
+    params.set("active", "true");
+  }
+
+  if (filters.classId) {
+    params.set("class_id", filters.classId);
+  }
 
   if (filters.type) {
     params.set("type", filters.type);
@@ -26,6 +31,8 @@ export function listMissions(token: string, filters: MissionFilters = {}) {
 
 export type MissionFilters = {
   type?: MissionType | null;
+  classId?: string | null;
+  includeInactive?: boolean;
   page?: number;
   limit?: number;
 };
