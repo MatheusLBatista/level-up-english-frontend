@@ -7,6 +7,7 @@ export type QuizAnswer = "a" | "b" | "c" | "d";
 export type MissionQuestion = {
   question: string;
   options: Record<QuizAnswer, string>;
+  correct_answer?: QuizAnswer;
 };
 
 export type Paginated<T> = {

@@ -56,9 +56,34 @@ export function submitMissionProgress(
   });
 }
 
-export type UpdateMissionBody = {
+export type MissionQuestionInput = {
+  question: string;
+  options: Record<QuizAnswer, string>;
+  correct_answer: QuizAnswer;
+};
+
+export type CreateMissionBody = {
+  type: MissionType;
+  title: string;
+  description: string;
+  xp_reward: number;
+  class_id: string;
+  questions?: MissionQuestionInput[];
+  content?: string;
+  content_url?: string;
+};
+
+export type UpdateMissionBody = Partial<Omit<CreateMissionBody, "type">> & {
   active?: boolean;
 };
+
+export function createMission(body: CreateMissionBody, token: string) {
+  return apiFetch<MissionWriteResult>("/missions", {
+    method: "POST",
+    body,
+    token,
+  });
+}
 
 export function updateMission(
   id: string,
@@ -70,4 +95,4 @@ export function updateMission(
     body,
     token,
   });
-}
+};

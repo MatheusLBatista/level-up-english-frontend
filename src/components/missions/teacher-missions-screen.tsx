@@ -16,6 +16,7 @@ import type { Mission, MissionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { DeactivateMissionDialog } from "@/components/missions/deactivate-mission-dialog";
 import { useSetMissionActive } from "@/hooks/use-set-mission-active";
+import { MissionFormDialog } from "@/components/missions/mission-form-dialog";
 
 const PAGE_SIZE = 6;
 
@@ -34,7 +35,13 @@ export function TeacherMissionsScreen() {
   });
 
   const missionsQuery = useMissions(
-    { classId, type: tipo, page: pagina, limit: PAGE_SIZE, includeInactive: true },
+    {
+      classId,
+      type: tipo,
+      page: pagina,
+      limit: PAGE_SIZE,
+      includeInactive: true,
+    },
     Boolean(classId),
   );
 
@@ -45,7 +52,21 @@ export function TeacherMissionsScreen() {
     return user?.role === "admin" || mission.createdBy?._id === user?._id;
   }
 
-  const [missionToDeactivate, setMissionToDeactivate] = useState<Mission | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [missionToEdit, setMissionToEdit] = useState<Mission | null>(null);
+
+  function openCreate() {
+    setMissionToEdit(null);
+    setFormOpen(true);
+  }
+
+  function openEdit(mission: Mission) {
+    setMissionToEdit(mission);
+    setFormOpen(true);
+  }
+
+  const [missionToDeactivate, setMissionToDeactivate] =
+    useState<Mission | null>(null);
   const reactivate = useSetMissionActive();
 
   function handleToggleActive(mission: Mission) {
@@ -69,7 +90,11 @@ export function TeacherMissionsScreen() {
           </div>
         </div>
 
-        <Button className="bg-brand-gradient" disabled>
+        <Button
+          className="bg-brand-gradient"
+          disabled={classes.length === 0}
+          onClick={openCreate}
+        >
           <PlusIcon />
           Criar missão
         </Button>
@@ -118,7 +143,9 @@ export function TeacherMissionsScreen() {
             variant="outline"
             className="ml-auto"
             onClick={() =>
-              void (classesQuery.isError ? classesQuery.refetch() : missionsQuery.refetch())
+              void (classesQuery.isError
+                ? classesQuery.refetch()
+                : missionsQuery.refetch())
             }
           >
             Tentar de novo
@@ -153,6 +180,7 @@ export function TeacherMissionsScreen() {
               key={mission._id}
               mission={mission}
               canManage={canManage(mission)}
+              onEdit={openEdit}
               busy={
                 reactivate.isPending &&
                 reactivate.variables?.mission._id === mission._id
@@ -173,6 +201,14 @@ export function TeacherMissionsScreen() {
       <DeactivateMissionDialog
         mission={missionToDeactivate}
         onClose={() => setMissionToDeactivate(null)}
+      />
+
+      <MissionFormDialog
+        open={formOpen}
+        mission={missionToEdit}
+        classes={classes}
+        defaultClassId={classId}
+        onClose={() => setFormOpen(false)}
       />
     </div>
   );
