@@ -43,4 +43,11 @@ export function selectRecommended(
       return Date.parse(b.createdAt) - Date.parse(a.createdAt);
     })
     .slice(0, limit);
-  }
+}
+
+export function canRetryMission(
+  mission: Mission,
+  entry?: MissionProgressEntry,
+): boolean {
+  return mission.type === "quiz" && entry?.done === true && entry.score < 100;
+}

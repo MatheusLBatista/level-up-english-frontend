@@ -1,41 +1,28 @@
 "use client";
 
 import { SearchIcon, UsersRoundIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { StudentCard } from "@/components/teacher/student-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useClassStudents } from "@/hooks/use-class-students";
-import { useTeacherClasses } from "@/hooks/use-teacher-classes";
 import { SelectAllCard } from "@/components/teacher/select-all-card";
 import { SelectionBar } from "@/components/teacher/selection-bar";
 import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialog";
 import { AdjustXpDialog } from "@/components/teacher/adjust-xp-dialog";
+import { ClassSelect } from "@/components/teacher/class-select";
+import { useSelectedClass } from "@/hooks/use-selected-class";
 
 function normalize(text: string) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
 export function TeacherPanel() {
-  const [turma, setTurma] = useQueryState("turma");
   const [search, setSearch] = useState("");
   const [openDialog, setOpenDialog] = useState<"attitudes" | "xp" | null>(null);
 
-  const classesQuery = useTeacherClasses();
-  const classes = classesQuery.data ?? [];
-
-  const classId = classes.some((item) => item._id === turma)
-    ? turma
-    : (classes[0]?._id ?? null);
+  const { classesQuery, classes, classId, setClassId } = useSelectedClass();
 
   const studentsQuery = useClassStudents(classId);
 
@@ -117,25 +104,15 @@ export function TeacherPanel() {
           />
         </div>
 
-        <Select
-          value={classId ?? undefined}
-          onValueChange={(value) => {
+        <ClassSelect
+          classes={classes}
+          value={classId}
+          isPending={classesQuery.isPending}
+          onChange={(value) => {
             clearSelection();
-            void setTurma(value);
+            void setClassId(value);
           }}
-          disabled={classes.length === 0}
-        >
-          <SelectTrigger className="w-full sm:w-56" aria-label="Turma">
-            <SelectValue placeholder={classesQuery.isPending ? "Carregando…" : "Sem turmas"} />
-          </SelectTrigger>
-          <SelectContent>
-            {classes.map((item) => (
-              <SelectItem key={item._id} value={item._id}>
-                {item.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        />
       </div>
 
       {classesQuery.isError || studentsQuery.isError ? (

@@ -7,6 +7,7 @@ export type QuizAnswer = "a" | "b" | "c" | "d";
 export type MissionQuestion = {
   question: string;
   options: Record<QuizAnswer, string>;
+  correct_answer?: QuizAnswer;
 };
 
 export type Paginated<T> = {
@@ -90,6 +91,11 @@ export type MissionProgressResult = {
     level: number;
     xp: number;
   } | null;
+};
+
+export type MissionWriteResult = Omit<Mission, "class_id" | "createdBy"> & {
+  class_id: string;
+  createdBy: string;
 };
 
 export type LevelProgress = {
