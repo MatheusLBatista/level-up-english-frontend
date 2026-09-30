@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch, type FieldPath } from "react-hook-form";
 import { ClassSelect } from "@/components/teacher/class-select";
+import { QuizQuestionsEditor } from "./quiz-questions-editor";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -27,16 +28,24 @@ import { ApiError } from "@/lib/api";
 import { getMissionFormDefaults } from "@/lib/mission-form";
 import type { ClassSummary, Mission } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import {
-  MIN_QUIZ_QUESTIONS,
-  missionFormSchema,
-  type MissionFormInput,
-} from "@/schemas/mission";
+import { missionFormSchema, type MissionFormInput } from "@/schemas/mission";
 
 const typeOptions = [
-  { value: "quiz", label: "Quiz" },
-  { value: "vocabulary", label: "Vocabulário" },
-  { value: "audio", label: "Áudio" },
+  {
+    value: "quiz",
+    label: "Quiz",
+    activeClassName: "bg-brand-xp hover:bg-brand-xp",
+  },
+  {
+    value: "vocabulary",
+    label: "Vocabulário",
+    activeClassName: "bg-brand-mission hover:bg-brand-mission",
+  },
+  {
+    value: "audio",
+    label: "Áudio",
+    activeClassName: "bg-brand-reward hover:bg-brand-reward",
+  },
 ] as const;
 
 const serverFields = new Set<string>([
@@ -48,6 +57,13 @@ const serverFields = new Set<string>([
   "content_url",
   "questions",
 ]);
+
+const questionFieldPath =
+  /^questions\.\d+\.(question|correct_answer|options\.[abcd])$/;
+
+function isFormField(path: string): path is FieldPath<MissionFormInput> {
+  return serverFields.has(path) || questionFieldPath.test(path);
+}
 
 type MissionFormProps = {
   mission: Mission | null;
@@ -72,7 +88,6 @@ export function MissionForm({
   });
 
   const type = useWatch({ control: form.control, name: "type" });
-  const questions = useWatch({ control: form.control, name: "questions" });
   const { errors } = form.formState;
   const hasFieldErrors = Object.keys(errors).length > 0;
 
@@ -87,10 +102,8 @@ export function MissionForm({
           }
 
           for (const item of error.errors) {
-            if (item.path && serverFields.has(item.path)) {
-              form.setError(item.path as keyof MissionFormInput, {
-                message: item.message,
-              });
+            if (item.path && isFormField(item.path)) {
+              form.setError(item.path, { message: item.message });
             }
           }
         },
@@ -105,7 +118,11 @@ export function MissionForm({
         <DialogDescription>Crie conteúdos para seus alunos.</DialogDescription>
       </DialogHeader>
 
-      <form noValidate id="mission-form" onSubmit={form.handleSubmit(handleSubmit)}>
+      <form
+        noValidate
+        id="mission-form"
+        onSubmit={form.handleSubmit(handleSubmit)}
+      >
         <FieldGroup>
           <Field>
             <FieldLabel id="mission-type-label">Tipo de missão</FieldLabel>
@@ -114,7 +131,7 @@ export function MissionForm({
               aria-labelledby="mission-type-label"
               className="border-border/40 bg-card/60 grid grid-cols-3 gap-1 rounded-xl border p-1"
             >
-              {typeOptions.map(({ value, label }) => {
+              {typeOptions.map(({ value, label, activeClassName }) => {
                 const isActive = type === value;
 
                 return (
@@ -129,7 +146,10 @@ export function MissionForm({
                     className={cn(
                       "rounded-lg text-xs font-semibold tracking-wide uppercase",
                       isActive &&
-                        "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground disabled:opacity-100",
+                        cn(
+                          "text-primary-foreground hover:text-primary-foreground disabled:opacity-100",
+                          activeClassName,
+                        ),
                     )}
                   >
                     {label}
@@ -223,7 +243,9 @@ export function MissionForm({
           {type === "audio" && (
             <>
               <Field data-invalid={Boolean(errors.content_url)}>
-                <FieldLabel htmlFor="content_url">Link do áudio ou vídeo</FieldLabel>
+                <FieldLabel htmlFor="content_url">
+                  Link do áudio ou vídeo
+                </FieldLabel>
                 <Input
                   id="content_url"
                   type="url"
@@ -233,13 +255,16 @@ export function MissionForm({
                   {...form.register("content_url")}
                 />
                 <FieldDescription>
-                  Links do YouTube viram um player de vídeo; outros links tocam como áudio.
+                  Links do YouTube viram um player de vídeo; outros links tocam
+                  como áudio.
                 </FieldDescription>
                 <FieldError errors={[errors.content_url]} />
               </Field>
 
               <Field data-invalid={Boolean(errors.content)}>
-                <FieldLabel htmlFor="content">Texto de apoio (opcional)</FieldLabel>
+                <FieldLabel htmlFor="content">
+                  Texto de apoio (opcional)
+                </FieldLabel>
                 <Textarea
                   id="content"
                   rows={4}
@@ -254,15 +279,7 @@ export function MissionForm({
           )}
 
           {type === "quiz" && (
-            <Field data-invalid={Boolean(errors.questions)}>
-              <FieldLabel>Perguntas</FieldLabel>
-              <p className="text-muted-foreground text-sm">
-                {questions.length} cadastradas (mínimo {MIN_QUIZ_QUESTIONS}).
-              </p>
-              <FieldError>
-                {errors.questions?.message ?? errors.questions?.root?.message}
-              </FieldError>
-            </Field>
+            <QuizQuestionsEditor form={form} disabled={mutation.isPending} />
           )}
 
           {isEditing && (

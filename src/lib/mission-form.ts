@@ -1,6 +1,18 @@
 import type { Mission } from "@/lib/types";
-import type { MissionFormInput } from "@/schemas/mission";
+import {
+  MIN_QUIZ_QUESTIONS,
+  type MissionFormInput,
+  type QuestionFormInput,
+} from "@/schemas/mission";
 import type { CreateMissionBody, UpdateMissionBody } from "@/services/missions";
+
+export function createEmptyQuestion(): QuestionFormInput {
+  return {
+    question: "",
+    options: { a: "", b: "", c: "", d: "" },
+    correct_answer: "a",
+  };
+}
 
 export function getMissionFormDefaults(
   mission: Mission | null,
@@ -15,11 +27,13 @@ export function getMissionFormDefaults(
     active: mission?.active ?? true,
     content: mission?.content ?? "",
     content_url: mission?.content_url ?? "",
-    questions: (mission?.questions ?? []).map((question) => ({
-      question: question.question,
-      options: question.options,
-      correct_answer: question.correct_answer ?? "a",
-    })),
+    questions: mission
+      ? (mission.questions ?? []).map((question) => ({
+          question: question.question,
+          options: question.options,
+          correct_answer: question.correct_answer ?? "a",
+        }))
+      : Array.from({ length: MIN_QUIZ_QUESTIONS }, createEmptyQuestion),
   };
 }
 

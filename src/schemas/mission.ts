@@ -2,15 +2,20 @@ import { z } from "zod";
 
 export const MIN_QUIZ_QUESTIONS = 5;
 
-const option = z.string().trim().min(1, "Preencha a alternativa.");
+export const answerKeys = ["a", "b", "c", "d"] as const;
 
-export const questionSchema = z.object({
-  question: z.string().trim().min(1, "Escreva a pergunta."),
-  options: z.object({ a: option, b: option, c: option, d: option }),
-  correct_answer: z.enum(["a", "b", "c", "d"], {
-    error: "Marque a alternativa correta.",
+const questionDraftSchema = z.object({
+  question: z.string().trim(),
+  options: z.object({
+    a: z.string().trim(),
+    b: z.string().trim(),
+    c: z.string().trim(),
+    d: z.string().trim(),
   }),
+  correct_answer: z.enum(answerKeys),
 });
+
+const httpUrl = z.url({ protocol: /^https?$/ });
 
 export const missionFormSchema = z
   .object({
@@ -25,7 +30,7 @@ export const missionFormSchema = z
     active: z.boolean(),
     content: z.string().trim(),
     content_url: z.string().trim(),
-    questions: z.array(questionSchema),
+    questions: z.array(questionDraftSchema),
   })
   .superRefine((data, ctx) => {
     if (data.type === "vocabulary" && !data.content) {
@@ -43,7 +48,7 @@ export const missionFormSchema = z
           path: ["content_url"],
           message: "Informe o link do áudio ou vídeo.",
         });
-      } else if (!z.url().safeParse(data.content_url).success) {
+      } else if (!httpUrl.safeParse(data.content_url).success) {
         ctx.addIssue({
           code: "custom",
           path: ["content_url"],
@@ -52,13 +57,38 @@ export const missionFormSchema = z
       }
     }
 
-    if (data.type === "quiz" && data.questions.length < MIN_QUIZ_QUESTIONS) {
+    if (data.type !== "quiz") {
+      return;
+    }
+
+    if (data.questions.length < MIN_QUIZ_QUESTIONS) {
       ctx.addIssue({
         code: "custom",
         path: ["questions"],
         message: `O quiz precisa de no mínimo ${MIN_QUIZ_QUESTIONS} perguntas.`,
       });
     }
+
+    data.questions.forEach((item, index) => {
+      if (!item.question) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["questions", index, "question"],
+          message: "Escreva a pergunta.",
+        });
+      }
+
+      for (const key of answerKeys) {
+        if (!item.options[key]) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["questions", index, "options", key],
+            message: "Preencha a alternativa.",
+          });
+        }
+      }
+    });
   });
 
 export type MissionFormInput = z.infer<typeof missionFormSchema>;
+export type QuestionFormInput = MissionFormInput["questions"][number];
