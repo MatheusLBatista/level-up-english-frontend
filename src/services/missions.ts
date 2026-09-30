@@ -95,4 +95,4 @@ export function updateMission(
     body,
     token,
   });
-};
+}

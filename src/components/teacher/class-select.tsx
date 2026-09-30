@@ -15,6 +15,7 @@ type ClassSelectProps = {
   value: string | null;
   onChange: (classId: string) => void;
   isPending?: boolean;
+  disabled?: boolean;
   className?: string;
 };
 
@@ -23,13 +24,14 @@ export function ClassSelect({
   value,
   onChange,
   isPending = false,
+  disabled,
   className,
 }: ClassSelectProps) {
   return (
     <Select
       value={value ?? undefined}
       onValueChange={onChange}
-      disabled={classes.length === 0}
+      disabled={disabled || classes.length === 0}
     >
       <SelectTrigger className={cn("w-full sm:w-56", className)} aria-label="Turma">
         <SelectValue placeholder={isPending ? "Carregando…" : "Sem turmas"} />

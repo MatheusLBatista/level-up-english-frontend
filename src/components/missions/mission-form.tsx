@@ -74,6 +74,7 @@ export function MissionForm({
   const type = useWatch({ control: form.control, name: "type" });
   const questions = useWatch({ control: form.control, name: "questions" });
   const { errors } = form.formState;
+  const hasFieldErrors = Object.keys(errors).length > 0;
 
   function handleSubmit(values: MissionFormInput) {
     mutation.mutate(
@@ -196,6 +197,7 @@ export function MissionForm({
                     value={field.value || null}
                     onChange={field.onChange}
                     className="sm:w-full"
+                    disabled={mutation.isPending}
                   />
                 )}
               />
@@ -283,7 +285,9 @@ export function MissionForm({
             />
           )}
 
-          {mutation.isError && <FieldError>{mutation.error.message}</FieldError>}
+          {mutation.isError && !hasFieldErrors && (
+            <FieldError>{mutation.error.message}</FieldError>
+          )}
         </FieldGroup>
       </form>
 
