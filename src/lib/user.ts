@@ -1,3 +1,5 @@
+import type { Role } from "./types";
+
 export function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
   const first = parts.at(0)?.[0] ?? "";
@@ -5,3 +7,9 @@ export function getInitials(name: string) {
 
   return (first + last).toUpperCase();
 }
+
+export const roleLabels: Record<Role, string> = {
+  student: "Aluno",
+  teacher: "Professor",
+  admin: "Administrador",
+};
