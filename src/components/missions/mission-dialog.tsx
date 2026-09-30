@@ -5,6 +5,7 @@ import {
   GiftIcon,
   PartyPopperIcon,
   PlayIcon,
+  RotateCcwIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { MissionCard } from "@/components/missions/mission-card";
@@ -22,8 +23,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSubmitMissionProgress } from "@/hooks/use-submit-mission-progression";
-import { getMissionStatus } from "@/lib/missions";
+import { canRetryMission, getMissionStatus } from "@/lib/missions";
 import type { Mission, MissionProgressEntry, QuizAnswer } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 type MissionDialogProps = {
   mission: Mission;
@@ -47,25 +49,40 @@ export function MissionDialog({
   const result = mutation.data;
 
   const status = getMissionStatus(progress);
+  const isRetry = canRetryMission(mission, progress);
+  const canRetryNow = isQuiz && result !== undefined && result.score < 100;
 
-  const action = !withAction ? null : status === "done" ? (
+  const actionLabel = isRetry
+    ? "Tentar de novo"
+    : status === "in-progress"
+      ? "Continuar"
+      : "Jogar agora";
+
+  const action = !withAction ? null : status === "done" && !isRetry ? (
     <Button variant="secondary" className="text-brand-done w-full" disabled>
       <CheckCircle2Icon />
       Concluído
     </Button>
   ) : (
     <DialogTrigger asChild>
-      <Button className="bg-brand-gradient w-full">
-        <PlayIcon />
-        {status === "in-progress" ? "Continuar" : "Jogar agora"}
+      <Button
+        variant={isRetry ? "outline" : "default"}
+        className={cn("w-full", !isRetry && "bg-brand-gradient")}
+      >
+        {isRetry ? <RotateCcwIcon /> : <PlayIcon />}
+        {actionLabel}
       </Button>
     </DialogTrigger>
   );
 
+  function resetAttempt() {
+    mutation.reset();
+    setAnswers([]);
+  }
+
   function handleOpenChange(open: boolean) {
     if (!open) {
-      mutation.reset();
-      setAnswers([]);
+      resetAttempt();
     }
   }
 
@@ -117,10 +134,14 @@ export function MissionDialog({
               {result.total_questions
                 ? `Você acertou ${result.correct_answers} de ${result.total_questions} (${result.score}%).`
                 : "Progresso salvo."}
-              {result.already_rewarded &&
-                result.xp_earned === 0 &&
-                " O XP desta missão já tinha sido creditado."}
             </p>
+            {result.already_rewarded && (
+              <p className="text-muted-foreground text-sm">
+                {result.xp_earned > 0
+                  ? `Você superou sua melhor tentativa, e só a diferença entrou. Total nesta missão: ${result.credited_so_far} de ${mission.xp_reward} XP.`
+                  : `Nenhum XP novo: sua melhor tentativa já rendeu ${result.credited_so_far} de ${mission.xp_reward} XP.`}
+              </p>
+            )}
             {result.progression?.leveled_up && (
               <p className="text-brand-level text-sm font-semibold">
                 Você subiu para o nível {result.progression.level}!
@@ -159,6 +180,12 @@ export function MissionDialog({
                   {mission.xp_reward} XP
                   {isQuiz && " — proporcional aos acertos"}
                 </p>
+                {isRetry && progress && (
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    Você já ganhou {progress.xp_earned} XP aqui. Nesta
+                    tentativa, só a diferença dos novos acertos conta.
+                  </p>
+                )}
               </div>
             </div>
           </>
@@ -174,6 +201,13 @@ export function MissionDialog({
           <DialogClose asChild>
             <Button variant="outline">{result ? "Voltar" : "Fechar"}</Button>
           </DialogClose>
+
+          {canRetryNow && (
+            <Button className="bg-brand-gradient" onClick={resetAttempt}>
+              <RotateCcwIcon />
+              Tentar de novo
+            </Button>
+          )}
 
           {!result && (
             <Button
