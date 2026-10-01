@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api";
-import type { Attitude, AttitudeLogResult, Paginated } from "@/lib/types";
+import type { Attitude, AttitudeLog, AttitudeLogResult, Paginated } from "@/lib/types";
 
 export function listAttitudes(token: string) {
   const params = new URLSearchParams({ active: "true", limit: "100" });
@@ -18,4 +18,19 @@ export function applyAttitude(body: ApplyAttitudeBody, token: string) {
     body,
     token,
   });
+}
+
+export type AttitudeLogFilters = {
+  teacher?: string;
+  limit?: number;
+};
+
+export function listAttitudeLogs(token: string, filters: AttitudeLogFilters = {}) {
+  const params = new URLSearchParams({ limit: String(filters.limit ?? 10) });
+
+  if (filters.teacher) {
+    params.set("teacher", filters.teacher);
+  }
+
+  return apiFetch<Paginated<AttitudeLog>>(`/attitude-logs?${params}`, { token });
 }

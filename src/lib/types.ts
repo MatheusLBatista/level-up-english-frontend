@@ -7,6 +7,7 @@ export type QuizAnswer = "a" | "b" | "c" | "d";
 export type MissionQuestion = {
   question: string;
   options: Record<QuizAnswer, string>;
+  correct_answer?: QuizAnswer;
 };
 
 export type Paginated<T> = {
@@ -90,6 +91,11 @@ export type MissionProgressResult = {
     level: number;
     xp: number;
   } | null;
+};
+
+export type MissionWriteResult = Omit<Mission, "class_id" | "createdBy"> & {
+  class_id: string;
+  createdBy: string;
 };
 
 export type LevelProgress = {
@@ -176,6 +182,23 @@ export type AttitudeLogResult = {
   student: string;
   attitude: string;
   xp_applied: number;
+};
+
+export type ContactRef = {
+  _id: string;
+  name: string;
+  email: string;
+};
+
+export type AttitudeLog = {
+  _id: string;
+  student: ContactRef | null;
+  teacher: ContactRef | null;
+  attitude: Pick<Attitude, "_id" | "name" | "type" | "xp_value"> | null;
+  xp_applied: number;
+  applied_at: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type XpAdjustmentResult = {

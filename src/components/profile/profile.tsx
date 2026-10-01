@@ -2,16 +2,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { Role, User } from "@/lib/types";
-import { getInitials } from "@/lib/user";
+import type { User } from "@/lib/types";
+import { getInitials, roleLabels } from "@/lib/user";
 import { ChangePasswordDialog } from "@/components/profile/change-password-dialog";
 import { EditProfileDialog } from "@/components/profile/edit-profile-dialog";
-
-const roleLabels: Record<Role, string> = {
-  student: "Aluno",
-  teacher: "Professor",
-  admin: "Administrador",
-};
 
 const memberSinceFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "long",
