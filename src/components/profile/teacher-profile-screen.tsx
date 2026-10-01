@@ -6,10 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useTeacherClasses } from "@/hooks/use-teacher-classes";
+import { TeacherSummary } from "@/components/profile/teacher-summary";
+import { useMyAttitudeLogs } from "@/hooks/use-attitude-logs";
+import { summarizeClasses } from "@/lib/teacher";
 
 export function TeacherProfileScreen() {
   const userQuery = useCurrentUser();
   const classesQuery = useTeacherClasses();
+  const logsQuery = useMyAttitudeLogs();
+
+  const overview = classesQuery.data
+    ? summarizeClasses(classesQuery.data)
+    : undefined;
+
+  function retryNumbers() {
+    if (classesQuery.isError) void classesQuery.refetch();
+    if (logsQuery.isError) void logsQuery.refetch();
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -33,7 +46,18 @@ export function TeacherProfileScreen() {
           </Button>
         </div>
       ) : (
-        <TeacherBadgeCard user={userQuery.data} classes={classesQuery.data} />
+        <>
+          <TeacherBadgeCard user={userQuery.data} classes={classesQuery.data} />
+
+          <section aria-label="Resumo" className="py-2">
+            <TeacherSummary
+              overview={overview}
+              attitudeCount={logsQuery.data?.totalDocs}
+              isError={classesQuery.isError || logsQuery.isError}
+              onRetry={retryNumbers}
+            />
+          </section>
+        </>
       )}
     </div>
   );

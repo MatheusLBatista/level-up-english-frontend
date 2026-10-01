@@ -184,6 +184,23 @@ export type AttitudeLogResult = {
   xp_applied: number;
 };
 
+export type ContactRef = {
+  _id: string;
+  name: string;
+  email: string;
+};
+
+export type AttitudeLog = {
+  _id: string;
+  student: ContactRef | null;
+  teacher: ContactRef | null;
+  attitude: Pick<Attitude, "_id" | "name" | "type" | "xp_value"> | null;
+  xp_applied: number;
+  applied_at: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type XpAdjustmentResult = {
   _id: string;
   student: string;
