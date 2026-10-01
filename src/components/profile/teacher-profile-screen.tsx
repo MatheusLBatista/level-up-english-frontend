@@ -1,6 +1,7 @@
 "use client";
 
 import { UserRoundIcon } from "lucide-react";
+import { TeacherActivityCard } from "@/components/profile/teacher-activity-card";
 import { TeacherBadgeCard } from "@/components/profile/teacher-badge-card";
 import { TeacherClassesCard } from "@/components/profile/teacher-classes-card";
 import { TeacherSummary } from "@/components/profile/teacher-summary";
@@ -64,6 +65,11 @@ export function TeacherProfileScreen() {
               classes={classesQuery.data}
               isError={classesQuery.isError}
               onRetry={() => void classesQuery.refetch()}
+            />
+            <TeacherActivityCard
+              page={logsQuery.data}
+              isError={logsQuery.isError}
+              onRetry={() => void logsQuery.refetch()}
             />
           </div>
         </>
