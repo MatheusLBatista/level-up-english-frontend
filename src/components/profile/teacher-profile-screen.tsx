@@ -2,12 +2,13 @@
 
 import { UserRoundIcon } from "lucide-react";
 import { TeacherBadgeCard } from "@/components/profile/teacher-badge-card";
+import { TeacherClassesCard } from "@/components/profile/teacher-classes-card";
+import { TeacherSummary } from "@/components/profile/teacher-summary";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMyAttitudeLogs } from "@/hooks/use-attitude-logs";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useTeacherClasses } from "@/hooks/use-teacher-classes";
-import { TeacherSummary } from "@/components/profile/teacher-summary";
-import { useMyAttitudeLogs } from "@/hooks/use-attitude-logs";
 import { summarizeClasses } from "@/lib/teacher";
 
 export function TeacherProfileScreen() {
@@ -57,6 +58,14 @@ export function TeacherProfileScreen() {
               onRetry={retryNumbers}
             />
           </section>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <TeacherClassesCard
+              classes={classesQuery.data}
+              isError={classesQuery.isError}
+              onRetry={() => void classesQuery.refetch()}
+            />
+          </div>
         </>
       )}
     </div>
