@@ -1,4 +1,4 @@
-import type { Role } from "./types";
+import type { Role } from "@/lib/types";
 
 export function getInitials(name: string) {
   const parts = name.trim().split(/\s+/);
