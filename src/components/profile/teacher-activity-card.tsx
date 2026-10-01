@@ -21,10 +21,18 @@ export function TeacherActivityCard({
   return (
     <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-base">Atividade recente</CardTitle>
+        <CardTitle className="flex items-baseline justify-between gap-2 text-base">
+          Atividade recente
+          {page && page.totalDocs > 0 && (
+            <span className="text-muted-foreground text-xs font-normal tabular-nums">
+              {page.totalDocs}{" "}
+              {page.totalDocs === 1 ? "atitude aplicada" : "atitudes aplicadas"}
+            </span>
+          )}
+        </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col gap-4">
+      <CardContent>
         {isError ? (
           <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
             <p className="text-sm">Não foi possível carregar a atividade.</p>
@@ -52,19 +60,11 @@ export function TeacherActivityCard({
             </Button>
           </div>
         ) : (
-          <>
-            <ol className="border-border/60 ml-1.5 border-l">
-              {page.docs.map((log) => (
-                <ActivityItem key={log._id} log={log} />
-              ))}
-            </ol>
-
-            {page.totalDocs > page.docs.length && (
-              <p className="text-muted-foreground mt-auto text-xs tabular-nums">
-                {page.docs.length} mais recentes de {page.totalDocs}.
-              </p>
-            )}
-          </>
+          <ol className="border-border/60 ml-1.5 border-l">
+            {page.docs.map((log) => (
+              <ActivityItem key={log._id} log={log} />
+            ))}
+          </ol>
         )}
       </CardContent>
     </Card>

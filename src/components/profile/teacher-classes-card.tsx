@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { summarizeClasses } from "@/lib/teacher";
 import type { ClassSummary } from "@/lib/types";
 
 type TeacherClassesCardProps = {
@@ -17,19 +18,22 @@ export function TeacherClassesCard({
   isError,
   onRetry,
 }: TeacherClassesCardProps) {
-  const largest = Math.max(
-    1,
-    ...(classes ?? []).map((item) => item.students.length),
-  );
+  const sizes = (classes ?? []).map((item) => item.students.length);
+  const largest = Math.max(1, ...sizes);
+  const showBars = new Set(sizes).size > 1;
+  const overview = classes ? summarizeClasses(classes) : undefined;
 
   return (
-    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+    <Card className="border-border/40 bg-card/60 backdrop-blur-sm md:self-start">
       <CardHeader>
         <CardTitle className="flex items-baseline justify-between gap-2 text-base">
           Suas turmas
-          {classes && classes.length > 0 && (
+          {overview && overview.classCount > 0 && (
             <span className="text-muted-foreground text-xs font-normal tabular-nums">
-              {classes.length}
+              {overview.studentCount}{" "}
+              {overview.studentCount === 1 ? "aluno" : "alunos"} ·{" "}
+              {overview.missionCount}{" "}
+              {overview.missionCount === 1 ? "missão" : "missões"}
             </span>
           )}
         </CardTitle>
@@ -101,11 +105,13 @@ export function TeacherClassesCard({
                     </div>
                   </div>
 
-                  <Progress
-                    value={(studentCount / largest) * 100}
-                    aria-label={`${studentCount} alunos em ${item.name}`}
-                    className="h-1"
-                  />
+                  {showBars && (
+                    <Progress
+                      value={(studentCount / largest) * 100}
+                      aria-label={`${studentCount} alunos em ${item.name}`}
+                      className="h-1"
+                    />
+                  )}
                 </li>
               );
             })}
