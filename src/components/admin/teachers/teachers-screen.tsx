@@ -1,7 +1,19 @@
 "use client";
 
-import { GraduationCapIcon, SearchXIcon } from "lucide-react";
+import {
+  GraduationCapIcon,
+  Loader2Icon,
+  PencilIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  SearchXIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
+import { useState, type ReactNode } from "react";
+import { CreateTeacherDialog } from "@/components/admin/teachers/create-teacher-dialog";
+import { DeactivateTeacherDialog } from "@/components/admin/teachers/deactivate-teacher-dialog";
+import { EditTeacherDialog } from "@/components/admin/teachers/edit-teacher-dialog";
 import { TeacherRow } from "@/components/admin/teachers/teacher-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
@@ -9,8 +21,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminClasses } from "@/hooks/use-admin-classes";
 import { useTeachers } from "@/hooks/use-teachers";
+import { useUpdateUser } from "@/hooks/use-update-user";
 import { paginate } from "@/lib/paginate";
-import type { ClassSummary } from "@/lib/types";
+import type { ClassSummary, User } from "@/lib/types";
 
 const PAGE_SIZE = 10;
 
@@ -41,18 +54,50 @@ export function TeachersScreen() {
 
   const teachers = teachersQuery.data;
 
+  const [teacherToDeactivate, setTeacherToDeactivate] = useState<User | null>(
+    null,
+  );
+  const reactivate = useUpdateUser();
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [teacherToEdit, setTeacherToEdit] = useState<User | null>(null);
+
+  function openEdit(teacher: User) {
+    setTeacherToEdit(teacher);
+    setEditOpen(true);
+  }
+
+  function handleToggleActive(teacher: User) {
+    if (teacher.active) {
+      setTeacherToDeactivate(teacher);
+    } else {
+      reactivate.mutate({ user: teacher, body: { active: true } });
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <GraduationCapIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Professores</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight">
+              Professores
+            </h1>
             <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
               Gestão da equipe
             </p>
           </div>
         </div>
+
+        <Button
+          className="bg-brand-gradient"
+          onClick={() => setCreateOpen(true)}
+        >
+          <PlusIcon />
+          Novo professor
+        </Button>
       </div>
 
       <SegmentedFilter
@@ -61,6 +106,23 @@ export function TeachersScreen() {
         value={status}
         onChange={(next) => void setFilters({ status: next, pagina: 1 })}
       />
+
+      {reactivate.isError && (
+        <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
+          <p className="text-sm">
+            Não foi possível reativar {reactivate.variables?.user.name}:{" "}
+            {reactivate.error.message}
+          </p>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            onClick={() => reactivate.reset()}
+          >
+            Fechar
+          </Button>
+        </div>
+      )}
 
       {teachersQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-4">
@@ -95,17 +157,89 @@ export function TeachersScreen() {
           page={pagina}
           classesByTeacher={classesByTeacher}
           onPageChange={(value) => void setFilters({ pagina: value })}
+          renderActions={(teacher) => {
+            const busy =
+              reactivate.isPending &&
+              reactivate.variables?.user._id === teacher._id;
+
+            return (
+              <>
+                {teacher.active && (
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="ghost"
+                    aria-label={`Editar ${teacher.name}`}
+                    title="Editar"
+                    onClick={() => openEdit(teacher)}
+                  >
+                    <PencilIcon />
+                  </Button>
+                )}
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label={
+                    teacher.active
+                      ? `Desativar ${teacher.name}`
+                      : `Reativar ${teacher.name}`
+                  }
+                  title={teacher.active ? "Desativar" : "Reativar"}
+                  className={
+                    teacher.active
+                      ? "hover:text-destructive"
+                      : "hover:text-brand-done"
+                  }
+                  disabled={busy}
+                  onClick={() => handleToggleActive(teacher)}
+                >
+                  {busy ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : teacher.active ? (
+                    <Trash2Icon />
+                  ) : (
+                    <RotateCcwIcon />
+                  )}
+                </Button>
+              </>
+            );
+          }}
         />
       )}
+
+      <CreateTeacherDialog
+        open={createOpen}
+        classes={classesQuery.data ?? []}
+        onClose={() => setCreateOpen(false)}
+      />
+
+      <EditTeacherDialog
+        open={editOpen}
+        teacher={teacherToEdit}
+        classes={classesQuery.data ?? []}
+        onClose={() => setEditOpen(false)}
+      />
+
+      <DeactivateTeacherDialog
+        teacher={teacherToDeactivate}
+        classes={
+          teacherToDeactivate
+            ? (classesByTeacher.get(teacherToDeactivate._id) ?? [])
+            : []
+        }
+        onClose={() => setTeacherToDeactivate(null)}
+      />
     </div>
   );
 }
 
 type TeacherListProps = {
-  teachers: NonNullable<ReturnType<typeof useTeachers>["data"]>;
+  teachers: User[];
   page: number;
   classesByTeacher: Map<string, ClassSummary[]>;
   onPageChange: (page: number) => void;
+  renderActions: (teacher: User) => ReactNode;
 };
 
 function TeacherList({
@@ -113,6 +247,7 @@ function TeacherList({
   page,
   classesByTeacher,
   onPageChange,
+  renderActions,
 }: TeacherListProps) {
   const current = paginate(teachers, page, PAGE_SIZE);
 
@@ -124,6 +259,7 @@ function TeacherList({
             key={teacher._id}
             teacher={teacher}
             classes={classesByTeacher.get(teacher._id) ?? []}
+            actions={renderActions(teacher)}
           />
         ))}
       </ul>

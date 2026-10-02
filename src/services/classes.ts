@@ -44,11 +44,12 @@ export function createClass(body: SaveClassBody, token: string) {
   });
 }
 
-export function updateClass(
-  id: string,
-  body: Partial<SaveClassBody>,
-  token: string,
-) {
+export type UpdateClassBody = Partial<Omit<SaveClassBody, "teacher">> & {
+  /** `null` deixa a turma sem professor (só admin). */
+  teacher?: string | null;
+};
+
+export function updateClass(id: string, body: UpdateClassBody, token: string) {
   return apiFetch<ClassWriteResult>(`/classes/${id}`, {
     method: "PATCH",
     body,
