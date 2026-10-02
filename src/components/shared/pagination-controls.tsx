@@ -2,12 +2,12 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Paginated } from "@/lib/types";
 
-type MissionPaginationProps = {
+type PaginationControlsProps = {
   page: Paginated<unknown>;
   onChange: (page: number) => void;
 };
 
-export function MissionPagination({ page, onChange }: MissionPaginationProps) {
+export function PaginationControls({ page, onChange }: PaginationControlsProps) {
   if (page.totalPages <= 1) {
     return null;
   }

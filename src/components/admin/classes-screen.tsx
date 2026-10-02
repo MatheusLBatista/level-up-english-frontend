@@ -10,20 +10,24 @@ import {
   SearchXIcon,
   Trash2Icon,
 } from "lucide-react";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
 import { ClassFormDialog } from "@/components/admin/class-form-dialog";
 import { ClassRow } from "@/components/admin/class-row";
 import { ClassStatusFilter } from "@/components/admin/class-status-filter";
 import { DeactivateClassDialog } from "@/components/admin/deactivate-class-dialog";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { classStatuses, useAdminClasses } from "@/hooks/use-admin-classes";
 import { useSetClassActive } from "@/hooks/use-set-class-active";
+import { paginate } from "@/lib/paginate";
 import { matchesSearch } from "@/lib/text";
 import type { ClassSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 8;
 
 const emptyMessages = {
   ativas: "Nenhuma turma ativa.",
@@ -32,10 +36,10 @@ const emptyMessages = {
 } as const;
 
 export function ClassesScreen() {
-  const [status, setStatus] = useQueryState(
-    "status",
-    parseAsStringLiteral(classStatuses).withDefault("ativas"),
-  );
+  const [{ status, pagina }, setFilters] = useQueryStates({
+    status: parseAsStringLiteral(classStatuses).withDefault("ativas"),
+    pagina: parseAsInteger.withDefault(1),
+  });
   const [search, setSearch] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [classToEdit, setClassToEdit] = useState<ClassSummary | null>(null);
@@ -68,6 +72,7 @@ export function ClassesScreen() {
       matchesSearch(item.name, search) ||
       matchesSearch(item.teacher?.name ?? "", search),
   );
+  const page = paginate(classes, pagina, PAGE_SIZE);
 
   return (
     <div className="flex flex-col gap-6">
@@ -94,14 +99,20 @@ export function ClassesScreen() {
           <Input
             type="search"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              void setFilters({ pagina: 1 });
+            }}
             placeholder="Buscar por turma ou professor…"
             aria-label="Buscar turma"
             className="pl-9"
           />
         </div>
 
-        <ClassStatusFilter value={status} onChange={(next) => void setStatus(next)} />
+        <ClassStatusFilter
+          value={status}
+          onChange={(next) => void setFilters({ status: next, pagina: 1 })}
+        />
       </div>
 
       {reactivate.isError && (
@@ -155,7 +166,7 @@ export function ClassesScreen() {
             classesQuery.isPlaceholderData && "opacity-60",
           )}
         >
-          {classes.map((item) => {
+          {page.docs.map((item) => {
             const busy =
               reactivate.isPending &&
               reactivate.variables?.schoolClass._id === item._id;
@@ -208,6 +219,13 @@ export function ClassesScreen() {
             );
           })}
         </ul>
+      )}
+
+      {!classesQuery.isPending && !classesQuery.isError && (
+        <PaginationControls
+          page={page}
+          onChange={(value) => void setFilters({ pagina: value })}
+        />
       )}
 
       <ClassFormDialog
