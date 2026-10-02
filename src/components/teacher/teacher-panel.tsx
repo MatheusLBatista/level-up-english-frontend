@@ -13,10 +13,7 @@ import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialo
 import { AdjustXpDialog } from "@/components/teacher/adjust-xp-dialog";
 import { ClassSelect } from "@/components/teacher/class-select";
 import { useSelectedClass } from "@/hooks/use-selected-class";
-
-function normalize(text: string) {
-  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
-}
+import { matchesSearch } from "@/lib/text";
 
 export function TeacherPanel() {
   const [search, setSearch] = useState("");
@@ -27,10 +24,9 @@ export function TeacherPanel() {
   const studentsQuery = useClassStudents(classId);
 
   const students = useMemo(() => {
-    const term = normalize(search.trim());
     const list = studentsQuery.data ?? [];
 
-    return term ? list.filter((student) => normalize(student.name).includes(term)) : list;
+    return list.filter((student) => matchesSearch(student.name, search));
   }, [studentsQuery.data, search]);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
