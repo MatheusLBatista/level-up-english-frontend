@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useUpdateStudent } from "@/hooks/use-update-student";
+import { useUpdateUser } from "@/hooks/use-update-user";
 import type { User } from "@/lib/types";
 
 type DeactivateStudentDialogProps = {
@@ -23,7 +23,7 @@ export function DeactivateStudentDialog({
   student,
   onClose,
 }: DeactivateStudentDialogProps) {
-  const mutation = useUpdateStudent();
+  const mutation = useUpdateUser();
 
   function close() {
     mutation.reset();
@@ -42,7 +42,7 @@ export function DeactivateStudentDialog({
     }
 
     mutation.mutate(
-      { student, body: { active: false } },
+      { user: student, body: { active: false } },
       { onSuccess: close },
     );
   }

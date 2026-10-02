@@ -2,15 +2,19 @@
 
 import { skipToken, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
-import { listActiveTeachers } from "@/services/users";
+import { listTeachers } from "@/services/users";
 
-export function useActiveTeachers() {
+/** `null` traz ativos e inativos. */
+export function useTeachers(active: boolean | null = true) {
   const { token } = useAuth();
 
   return useQuery({
-    queryKey: ["users", "list", { role: "teacher", active: true }],
-    queryFn: token ? () => listActiveTeachers(token) : skipToken,
+    queryKey: ["users", "list", { role: "teacher", active }],
+    queryFn: token ? () => listTeachers(token, active) : skipToken,
     select: (page) => page.docs,
-    staleTime: 5 * 60 * 1000,
   });
+}
+
+export function useActiveTeachers() {
+  return useTeachers(true);
 }

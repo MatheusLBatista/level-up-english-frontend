@@ -38,7 +38,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminClasses } from "@/hooks/use-admin-classes";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useStudents } from "@/hooks/use-students";
-import { useUpdateStudent } from "@/hooks/use-update-student";
+import { useUpdateUser } from "@/hooks/use-update-user";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -92,7 +92,7 @@ export function StudentsScreen() {
   const [studentToDeactivate, setStudentToDeactivate] = useState<User | null>(
     null,
   );
-  const reactivate = useUpdateStudent();
+  const reactivate = useUpdateUser();
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [studentToView, setStudentToView] = useState<User | null>(null);
@@ -106,7 +106,7 @@ export function StudentsScreen() {
     if (student.active) {
       setStudentToDeactivate(student);
     } else {
-      reactivate.mutate({ student, body: { active: true } });
+      reactivate.mutate({ user: student, body: { active: true } });
     }
   }
   const hasFilters = Boolean(search || turma);
@@ -181,7 +181,7 @@ export function StudentsScreen() {
       {reactivate.isError && (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
           <p className="text-sm">
-            Não foi possível reativar {reactivate.variables?.student.name}:{" "}
+            Não foi possível reativar {reactivate.variables?.user.name}:{" "}
             {reactivate.error.message}
           </p>
           <Button
@@ -233,7 +233,7 @@ export function StudentsScreen() {
             {page.docs.map((student) => {
               const busy =
                 reactivate.isPending &&
-                reactivate.variables?.student._id === student._id;
+                reactivate.variables?.user._id === student._id;
 
               return (
                 <StudentRow

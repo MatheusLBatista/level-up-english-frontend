@@ -54,3 +54,17 @@ export function resetPassword(body: ResetPasswordBody) {
     body,
   });
 }
+
+export type RegisterTeacherBody = {
+  name: string;
+  email: string;
+  classes?: string[];
+};
+
+export function registerTeacher(body: RegisterTeacherBody, token: string) {
+  return apiFetch<User>("/auth/register-teacher", {
+    method: "POST",
+    body,
+    token,
+  });
+}
