@@ -44,7 +44,11 @@ export function createClass(body: SaveClassBody, token: string) {
   });
 }
 
-export function updateClass(id: string, body: SaveClassBody, token: string) {
+export function updateClass(
+  id: string,
+  body: Partial<SaveClassBody>,
+  token: string,
+) {
   return apiFetch<ClassWriteResult>(`/classes/${id}`, {
     method: "PATCH",
     body,

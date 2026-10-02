@@ -2,20 +2,25 @@
 
 import {
   BookOpenIcon,
+  Loader2Icon,
   PencilIcon,
   PlusIcon,
+  RotateCcwIcon,
   SearchIcon,
   SearchXIcon,
+  Trash2Icon,
 } from "lucide-react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useState } from "react";
 import { ClassFormDialog } from "@/components/admin/class-form-dialog";
 import { ClassRow } from "@/components/admin/class-row";
 import { ClassStatusFilter } from "@/components/admin/class-status-filter";
+import { DeactivateClassDialog } from "@/components/admin/deactivate-class-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { classStatuses, useAdminClasses } from "@/hooks/use-admin-classes";
+import { useSetClassActive } from "@/hooks/use-set-class-active";
 import { matchesSearch } from "@/lib/text";
 import type { ClassSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -43,6 +48,18 @@ export function ClassesScreen() {
   function openEdit(item: ClassSummary) {
     setClassToEdit(item);
     setFormOpen(true);
+  }
+
+  const [classToDeactivate, setClassToDeactivate] =
+    useState<ClassSummary | null>(null);
+  const reactivate = useSetClassActive();
+
+  function handleToggleActive(item: ClassSummary) {
+    if (item.active) {
+      setClassToDeactivate(item);
+    } else {
+      reactivate.mutate({ schoolClass: item, active: true });
+    }
   }
 
   const classesQuery = useAdminClasses(status);
@@ -87,6 +104,23 @@ export function ClassesScreen() {
         <ClassStatusFilter value={status} onChange={(next) => void setStatus(next)} />
       </div>
 
+      {reactivate.isError && (
+        <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
+          <p className="text-sm">
+            Não foi possível reativar “{reactivate.variables?.schoolClass.name}”:{" "}
+            {reactivate.error.message}
+          </p>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            onClick={() => reactivate.reset()}
+          >
+            Fechar
+          </Button>
+        </div>
+      )}
+
       {classesQuery.isPending ? (
         <div className="border-border/40 bg-card/60 divide-border/40 flex flex-col divide-y rounded-2xl border">
           {Array.from({ length: 4 }, (_, index) => (
@@ -121,24 +155,58 @@ export function ClassesScreen() {
             classesQuery.isPlaceholderData && "opacity-60",
           )}
         >
-          {classes.map((item) => (
-            <ClassRow
-              key={item._id}
-              item={item}
-              actions={
-                <Button
-                  type="button"
-                  size="icon-sm"
-                  variant="ghost"
-                  aria-label={`Editar ${item.name}`}
-                  title="Editar"
-                  onClick={() => openEdit(item)}
-                >
-                  <PencilIcon />
-                </Button>
-              }
-            />
-          ))}
+          {classes.map((item) => {
+            const busy =
+              reactivate.isPending &&
+              reactivate.variables?.schoolClass._id === item._id;
+
+            return (
+              <ClassRow
+                key={item._id}
+                item={item}
+                actions={
+                  <>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={`Editar ${item.name}`}
+                      title="Editar"
+                      onClick={() => openEdit(item)}
+                    >
+                      <PencilIcon />
+                    </Button>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={
+                        item.active
+                          ? `Desativar ${item.name}`
+                          : `Reativar ${item.name}`
+                      }
+                      title={item.active ? "Desativar" : "Reativar"}
+                      className={
+                        item.active
+                          ? "hover:text-destructive"
+                          : "hover:text-brand-done"
+                      }
+                      disabled={busy}
+                      onClick={() => handleToggleActive(item)}
+                    >
+                      {busy ? (
+                        <Loader2Icon className="animate-spin" />
+                      ) : item.active ? (
+                        <Trash2Icon />
+                      ) : (
+                        <RotateCcwIcon />
+                      )}
+                    </Button>
+                  </>
+                }
+              />
+            );
+          })}
         </ul>
       )}
 
@@ -146,6 +214,11 @@ export function ClassesScreen() {
         open={formOpen}
         schoolClass={classToEdit}
         onClose={() => setFormOpen(false)}
+      />
+
+      <DeactivateClassDialog
+        schoolClass={classToDeactivate}
+        onClose={() => setClassToDeactivate(null)}
       />
     </div>
   );
