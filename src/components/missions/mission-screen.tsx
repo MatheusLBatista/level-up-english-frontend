@@ -14,7 +14,7 @@ import { useMissions } from "@/hooks/use-mission";
 import { indexProgress } from "@/lib/missions";
 import type { MissionProgressEntry, MissionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { MissionPagination } from "./mission-pagination";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 
 const PAGE_SIZE = 6;
 
@@ -123,7 +123,7 @@ export function MissionsScreen() {
       )}
 
        {page && (
-        <MissionPagination
+        <PaginationControls
           page={page}
           onChange={(pagina) => setFilters({ pagina })}
         />
