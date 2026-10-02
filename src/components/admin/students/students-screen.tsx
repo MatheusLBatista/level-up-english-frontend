@@ -1,12 +1,19 @@
 "use client";
 
-import { SearchIcon, SearchXIcon, UsersRoundIcon } from "lucide-react";
+import {
+  PlusIcon,
+  SearchIcon,
+  SearchXIcon,
+  UsersRoundIcon,
+} from "lucide-react";
 import {
   parseAsInteger,
   parseAsString,
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs";
+import { useState } from "react";
+import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
 import { StudentRow } from "@/components/admin/students/student-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
@@ -62,6 +69,8 @@ export function StudentsScreen() {
   });
 
   const page = studentsQuery.data;
+  const [createOpen, setCreateOpen] = useState(false);
+  const activeClasses = (classesQuery.data ?? []).filter((item) => item.active);
   const hasFilters = Boolean(search || turma);
 
   return (
@@ -78,6 +87,11 @@ export function StudentsScreen() {
             </p>
           </div>
         </div>
+
+        <Button className="bg-brand-gradient" onClick={() => setCreateOpen(true)}>
+          <PlusIcon />
+          Criar aluno
+        </Button>
       </div>
 
       <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm lg:flex-row lg:items-center">
@@ -176,6 +190,13 @@ export function StudentsScreen() {
           />
         </>
       )}
+
+      <CreateStudentDialog
+        open={createOpen}
+        classes={activeClasses}
+        defaultClassId={turma}
+        onClose={() => setCreateOpen(false)}
+      />
     </div>
   );
 }
