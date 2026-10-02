@@ -6,10 +6,16 @@ import {
   PencilIcon,
   PlusIcon,
   RotateCcwIcon,
+  SearchIcon,
   SearchXIcon,
   Trash2Icon,
 } from "lucide-react";
-import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from "nuqs";
 import { useState, type ReactNode } from "react";
 import { CreateTeacherDialog } from "@/components/admin/teachers/create-teacher-dialog";
 import { DeactivateTeacherDialog } from "@/components/admin/teachers/deactivate-teacher-dialog";
@@ -18,11 +24,13 @@ import { TeacherRow } from "@/components/admin/teachers/teacher-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminClasses } from "@/hooks/use-admin-classes";
 import { useTeachers } from "@/hooks/use-teachers";
 import { useUpdateUser } from "@/hooks/use-update-user";
 import { paginate } from "@/lib/paginate";
+import { matchesSearch } from "@/lib/text";
 import type { ClassSummary, User } from "@/lib/types";
 
 const PAGE_SIZE = 10;
@@ -35,9 +43,10 @@ const statusOptions = [
 ] as const;
 
 export function TeachersScreen() {
-  const [{ status, pagina }, setFilters] = useQueryStates({
+  const [{ status, pagina, busca }, setFilters] = useQueryStates({
     status: parseAsStringLiteral(teacherStatuses).withDefault("ativos"),
     pagina: parseAsInteger.withDefault(1),
+    busca: parseAsString.withDefault(""),
   });
 
   const teachersQuery = useTeachers(status === "ativos");
@@ -52,7 +61,10 @@ export function TeachersScreen() {
     }
   }
 
-  const teachers = teachersQuery.data;
+  const teachers = teachersQuery.data?.filter(
+    (teacher) =>
+      matchesSearch(teacher.name, busca) || matchesSearch(teacher.email, busca),
+  );
 
   const [teacherToDeactivate, setTeacherToDeactivate] = useState<User | null>(
     null,
@@ -100,12 +112,28 @@ export function TeachersScreen() {
         </Button>
       </div>
 
-      <SegmentedFilter
-        label="Filtrar professores por status"
-        options={statusOptions}
-        value={status}
-        onChange={(next) => void setFilters({ status: next, pagina: 1 })}
-      />
+      <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Input
+            type="search"
+            value={busca}
+            onChange={(event) =>
+              void setFilters({ busca: event.target.value, pagina: 1 })
+            }
+            placeholder="Buscar professor pelo nome ou e-mail…"
+            aria-label="Buscar professor"
+            className="pl-9"
+          />
+        </div>
+
+        <SegmentedFilter
+          label="Filtrar professores por status"
+          options={statusOptions}
+          value={status}
+          onChange={(next) => void setFilters({ status: next, pagina: 1 })}
+        />
+      </div>
 
       {reactivate.isError && (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
@@ -147,9 +175,11 @@ export function TeachersScreen() {
       ) : teachers.length === 0 ? (
         <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
           <SearchXIcon className="size-6" />
-          {status === "ativos"
-            ? "Nenhum professor ativo ainda."
-            : "Nenhum professor desativado."}
+          {busca.trim()
+            ? `Nenhum professor encontrado para "${busca.trim()}".`
+            : status === "ativos"
+              ? "Nenhum professor ativo ainda."
+              : "Nenhum professor desativado."}
         </div>
       ) : (
         <TeacherList
