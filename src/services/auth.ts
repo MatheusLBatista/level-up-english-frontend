@@ -35,3 +35,22 @@ export function registerStudent(body: RegisterStudentBody, token: string) {
     token,
   });
 }
+
+export function forgotPassword(email: string) {
+  return apiFetch<null>("/auth/forgot-password", {
+    method: "POST",
+    body: { email },
+  });
+}
+
+export type ResetPasswordBody = {
+  code: string;
+  newPassword: string;
+};
+
+export function resetPassword(body: ResetPasswordBody) {
+  return apiFetch<null>("/auth/reset-password", {
+    method: "POST",
+    body,
+  });
+}
