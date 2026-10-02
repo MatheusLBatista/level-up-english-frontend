@@ -28,12 +28,13 @@ export function listStudentsByClass(classId: string, token: string) {
   return apiFetch<Paginated<User>>(`/users?${params}`, { token });
 }
 
-export function listActiveTeachers(token: string) {
-  const params = new URLSearchParams({
-    role: "teacher",
-    active: "true",
-    limit: "100",
-  });
+/** Professores da escola (são poucos: vem tudo de uma vez, até 100). */
+export function listTeachers(token: string, active: boolean | null = true) {
+  const params = new URLSearchParams({ role: "teacher", limit: "100" });
+
+  if (active !== null) {
+    params.set("active", String(active));
+  }
 
   return apiFetch<Paginated<User>>(`/users?${params}`, { token });
 }
