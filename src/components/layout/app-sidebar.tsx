@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BookOpenIcon,
   Gamepad2Icon,
   LayoutGridIcon,
   LogOutIcon,
@@ -22,6 +23,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/auth-context";
+import type { Role } from "@/lib/types";
 
 const studentNav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutGridIcon },
@@ -36,16 +38,29 @@ const teacherNav = [
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
 
+const adminNav = [
+  { href: "/geral", label: "Geral", icon: LayoutGridIcon },
+  { href: "/turmas", label: "Turmas", icon: BookOpenIcon },
+  { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
+  { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
+];
+
+const navByRole: Record<Role, typeof studentNav> = {
+  student: studentNav,
+  teacher: teacherNav,
+  admin: adminNav,
+};
+
 export function AppSidebar() {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
 
-  const navItems = user?.role === "student" ? studentNav : teacherNav;
+  const navItems = user ? navByRole[user.role] : [];
   const homeHref = user ? getHomeRoute(user.role) : "/dashboard";
 
   return (
     <Sidebar collapsible="icon">
-       <SidebarHeader className="h-16 justify-center p-4 group-data-[collapsible=icon]:p-2">
+      <SidebarHeader className="h-16 justify-center p-4 group-data-[collapsible=icon]:p-2">
         <Link href={homeHref} className="flex items-center gap-3">
           <span className="bg-brand-gradient grid size-9 shrink-0 place-items-center rounded-xl group-data-[collapsible=icon]:size-8">
             <Gamepad2Icon className="size-5 text-white group-data-[collapsible=icon]:size-4" />

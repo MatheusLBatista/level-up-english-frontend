@@ -1,6 +1,11 @@
 import type { Role } from "@/lib/types";
 
-//TODO: revisar roles
+const homeRoutes: Record<Role, string> = {
+  student: "/dashboard",
+  teacher: "/painel",
+  admin: "/geral",
+};
+
 export function getHomeRoute(role: Role) {
-  return role === "student" ? "/dashboard" : "/painel";
+  return homeRoutes[role];
 }
