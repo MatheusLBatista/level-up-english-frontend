@@ -1,25 +1,25 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import type { ClassStatus } from "@/hooks/use-admin-classes";
 import { cn } from "@/lib/utils";
 
-const options: { value: ClassStatus; label: string }[] = [
-  { value: "ativas", label: "Ativas" },
-  { value: "inativas", label: "Inativas" },
-  { value: "todas", label: "Todas" },
-];
-
-type ClassStatusFilterProps = {
-  value: ClassStatus;
-  onChange: (value: ClassStatus) => void;
+type SegmentedFilterProps<T extends string> = {
+  label: string;
+  options: readonly { value: T; label: string }[];
+  value: T;
+  onChange: (value: T) => void;
 };
 
-export function ClassStatusFilter({ value, onChange }: ClassStatusFilterProps) {
+export function SegmentedFilter<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: SegmentedFilterProps<T>) {
   return (
     <div
       role="group"
-      aria-label="Filtrar turmas por status"
+      aria-label={label}
       className="border-border/40 bg-card/60 inline-flex shrink-0 gap-1 rounded-xl border p-1"
     >
       {options.map((option) => {

@@ -16,3 +16,15 @@ export function useMyAttitudeLogs(limit = 6) {
         : skipToken,
   });
 }
+
+export function useStudentAttitudeLogs(studentId: string | null, limit = 8) {
+  const { token } = useAuth();
+
+  return useQuery({
+    queryKey: ["attitude-logs", "list", { student: studentId, limit }],
+    queryFn:
+      token && studentId
+        ? () => listAttitudeLogs(token, { student: studentId, limit })
+        : skipToken,
+  });
+}

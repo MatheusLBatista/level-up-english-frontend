@@ -14,9 +14,9 @@ import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
 import { ClassFormDialog } from "@/components/admin/class-form-dialog";
 import { ClassRow } from "@/components/admin/class-row";
-import { ClassStatusFilter } from "@/components/admin/class-status-filter";
 import { DeactivateClassDialog } from "@/components/admin/deactivate-class-dialog";
 import { PaginationControls } from "@/components/shared/pagination-controls";
+import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,6 +28,12 @@ import type { ClassSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 8;
+
+const statusOptions = [
+  { value: "ativas", label: "Ativas" },
+  { value: "inativas", label: "Inativas" },
+  { value: "todas", label: "Todas" },
+] as const;
 
 const emptyMessages = {
   ativas: "Nenhuma turma ativa.",
@@ -109,7 +115,9 @@ export function ClassesScreen() {
           />
         </div>
 
-        <ClassStatusFilter
+        <SegmentedFilter
+          label="Filtrar turmas por status"
+          options={statusOptions}
           value={status}
           onChange={(next) => void setFilters({ status: next, pagina: 1 })}
         />
