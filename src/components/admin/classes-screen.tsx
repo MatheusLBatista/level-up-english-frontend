@@ -1,8 +1,15 @@
 "use client";
 
-import { BookOpenIcon, SearchIcon, SearchXIcon } from "lucide-react";
+import {
+  BookOpenIcon,
+  PencilIcon,
+  PlusIcon,
+  SearchIcon,
+  SearchXIcon,
+} from "lucide-react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useState } from "react";
+import { ClassFormDialog } from "@/components/admin/class-form-dialog";
 import { ClassRow } from "@/components/admin/class-row";
 import { ClassStatusFilter } from "@/components/admin/class-status-filter";
 import { Button } from "@/components/ui/button";
@@ -10,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { classStatuses, useAdminClasses } from "@/hooks/use-admin-classes";
 import { matchesSearch } from "@/lib/text";
+import type { ClassSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const emptyMessages = {
@@ -24,6 +32,18 @@ export function ClassesScreen() {
     parseAsStringLiteral(classStatuses).withDefault("ativas"),
   );
   const [search, setSearch] = useState("");
+  const [formOpen, setFormOpen] = useState(false);
+  const [classToEdit, setClassToEdit] = useState<ClassSummary | null>(null);
+
+  function openCreate() {
+    setClassToEdit(null);
+    setFormOpen(true);
+  }
+
+  function openEdit(item: ClassSummary) {
+    setClassToEdit(item);
+    setFormOpen(true);
+  }
 
   const classesQuery = useAdminClasses(status);
   const classes = (classesQuery.data ?? []).filter(
@@ -34,14 +54,21 @@ export function ClassesScreen() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <BookOpenIcon className="text-primary size-8" />
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Turmas</h1>
-          <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-            Gestão de turmas e professores
-          </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <BookOpenIcon className="text-primary size-8" />
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight">Turmas</h1>
+            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+              Gestão de turmas e professores
+            </p>
+          </div>
         </div>
+
+        <Button className="bg-brand-gradient" onClick={openCreate}>
+          <PlusIcon />
+          Nova turma
+        </Button>
       </div>
 
       <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row sm:items-center">
@@ -95,10 +122,31 @@ export function ClassesScreen() {
           )}
         >
           {classes.map((item) => (
-            <ClassRow key={item._id} item={item} />
+            <ClassRow
+              key={item._id}
+              item={item}
+              actions={
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label={`Editar ${item.name}`}
+                  title="Editar"
+                  onClick={() => openEdit(item)}
+                >
+                  <PencilIcon />
+                </Button>
+              }
+            />
           ))}
         </ul>
       )}
+
+      <ClassFormDialog
+        open={formOpen}
+        schoolClass={classToEdit}
+        onClose={() => setFormOpen(false)}
+      />
     </div>
   );
 }

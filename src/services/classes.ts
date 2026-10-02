@@ -25,3 +25,29 @@ export function listClasses(token: string, filters: ClassFilters = {}) {
 
   return apiFetch<Paginated<ClassSummary>>(`/classes?${params}`, { token });
 }
+
+export type ClassWriteResult = Omit<ClassSummary, "teacher"> & {
+  teacher: string | null;
+};
+
+export type SaveClassBody = {
+  name: string;
+  teacher: string;
+  active?: boolean;
+};
+
+export function createClass(body: SaveClassBody, token: string) {
+  return apiFetch<ClassWriteResult>("/classes", {
+    method: "POST",
+    body,
+    token,
+  });
+}
+
+export function updateClass(id: string, body: SaveClassBody, token: string) {
+  return apiFetch<ClassWriteResult>(`/classes/${id}`, {
+    method: "PATCH",
+    body,
+    token,
+  });
+}
