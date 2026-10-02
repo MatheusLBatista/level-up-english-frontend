@@ -3,7 +3,7 @@ import type { Role } from "@/lib/types";
 const homeRoutes: Record<Role, string> = {
   student: "/dashboard",
   teacher: "/painel",
-  admin: "/geral",
+  admin: "/turmas",
 };
 
 export function getHomeRoute(role: Role) {

@@ -39,7 +39,6 @@ const teacherNav = [
 ];
 
 const adminNav = [
-  { href: "/geral", label: "Geral", icon: LayoutGridIcon },
   { href: "/turmas", label: "Turmas", icon: BookOpenIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
