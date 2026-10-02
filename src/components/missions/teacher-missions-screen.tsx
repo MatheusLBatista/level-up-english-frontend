@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Gamepad2Icon, PlusIcon, SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { ManageMissionCard } from "@/components/missions/manage-mission-card";
-import { MissionPagination } from "@/components/missions/mission-pagination";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { MissionTypeFilter } from "@/components/missions/mission-type-filter";
 import { ClassSelect } from "@/components/teacher/class-select";
 import { Button } from "@/components/ui/button";
@@ -192,7 +192,7 @@ export function TeacherMissionsScreen() {
       )}
 
       {page && (
-        <MissionPagination
+        <PaginationControls
           page={page}
           onChange={(value) => void setFilters({ pagina: value })}
         />
