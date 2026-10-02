@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  EyeIcon,
   Loader2Icon,
   PencilIcon,
   PlusIcon,
@@ -20,6 +21,7 @@ import { useState } from "react";
 import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
 import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
 import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
+import { StudentProfileSheet } from "@/components/admin/students/student-profile-sheet";
 import { StudentRow } from "@/components/admin/students/student-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
@@ -91,6 +93,14 @@ export function StudentsScreen() {
     null,
   );
   const reactivate = useUpdateStudent();
+
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [studentToView, setStudentToView] = useState<User | null>(null);
+
+  function openProfile(student: User) {
+    setStudentToView(student);
+    setProfileOpen(true);
+  }
 
   function handleToggleActive(student: User) {
     if (student.active) {
@@ -238,6 +248,16 @@ export function StudentsScreen() {
                         type="button"
                         size="icon-sm"
                         variant="ghost"
+                        aria-label={`Ver perfil de ${student.name}`}
+                        title="Ver perfil"
+                        onClick={() => openProfile(student)}
+                      >
+                        <EyeIcon />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
                         aria-label={`Editar ${student.name}`}
                         title="Editar"
                         onClick={() => openEdit(student)}
@@ -296,6 +316,17 @@ export function StudentsScreen() {
         student={studentToEdit}
         classes={classesQuery.data ?? []}
         onClose={() => setEditOpen(false)}
+      />
+
+      <StudentProfileSheet
+        open={profileOpen}
+        student={studentToView}
+        classLabel={
+          studentToView?.class
+            ? (classNames.get(studentToView.class) ?? null)
+            : null
+        }
+        onClose={() => setProfileOpen(false)}
       />
 
       <DeactivateStudentDialog

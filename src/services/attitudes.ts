@@ -22,6 +22,7 @@ export function applyAttitude(body: ApplyAttitudeBody, token: string) {
 
 export type AttitudeLogFilters = {
   teacher?: string;
+  student?: string;
   limit?: number;
 };
 
@@ -30,6 +31,10 @@ export function listAttitudeLogs(token: string, filters: AttitudeLogFilters = {}
 
   if (filters.teacher) {
     params.set("teacher", filters.teacher);
+  }
+
+  if (filters.student) {
+    params.set("student", filters.student);
   }
 
   return apiFetch<Paginated<AttitudeLog>>(`/attitude-logs?${params}`, { token });
