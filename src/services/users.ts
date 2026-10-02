@@ -7,6 +7,10 @@ export function getUserById(id: string, token: string) {
 
 export type UpdateUserBody = {
   name?: string;
+  /** Só admin. `null` tira o aluno da turma. */
+  class?: string | null;
+  /** Só admin. */
+  active?: boolean;
 };
 
 export function updateUser(id: string, body: UpdateUserBody, token: string) {

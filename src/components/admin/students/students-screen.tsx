@@ -1,9 +1,13 @@
 "use client";
 
 import {
+  Loader2Icon,
+  PencilIcon,
   PlusIcon,
+  RotateCcwIcon,
   SearchIcon,
   SearchXIcon,
+  Trash2Icon,
   UsersRoundIcon,
 } from "lucide-react";
 import {
@@ -14,6 +18,8 @@ import {
 } from "nuqs";
 import { useState } from "react";
 import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
+import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
+import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
 import { StudentRow } from "@/components/admin/students/student-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
@@ -30,6 +36,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAdminClasses } from "@/hooks/use-admin-classes";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useStudents } from "@/hooks/use-students";
+import { useUpdateStudent } from "@/hooks/use-update-student";
+import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 12;
@@ -71,6 +79,26 @@ export function StudentsScreen() {
   const page = studentsQuery.data;
   const [createOpen, setCreateOpen] = useState(false);
   const activeClasses = (classesQuery.data ?? []).filter((item) => item.active);
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [studentToEdit, setStudentToEdit] = useState<User | null>(null);
+
+  function openEdit(student: User) {
+    setStudentToEdit(student);
+    setEditOpen(true);
+  }
+  const [studentToDeactivate, setStudentToDeactivate] = useState<User | null>(
+    null,
+  );
+  const reactivate = useUpdateStudent();
+
+  function handleToggleActive(student: User) {
+    if (student.active) {
+      setStudentToDeactivate(student);
+    } else {
+      reactivate.mutate({ student, body: { active: true } });
+    }
+  }
   const hasFilters = Boolean(search || turma);
 
   return (
@@ -140,6 +168,23 @@ export function StudentsScreen() {
         />
       </div>
 
+      {reactivate.isError && (
+        <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
+          <p className="text-sm">
+            Não foi possível reativar {reactivate.variables?.student.name}:{" "}
+            {reactivate.error.message}
+          </p>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            onClick={() => reactivate.reset()}
+          >
+            Fechar
+          </Button>
+        </div>
+      )}
+
       {studentsQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-4">
           <p className="text-sm">{studentsQuery.error.message}</p>
@@ -175,13 +220,61 @@ export function StudentsScreen() {
               studentsQuery.isPlaceholderData && "opacity-60",
             )}
           >
-            {page.docs.map((student) => (
-              <StudentRow
-                key={student._id}
-                student={student}
-                classLabel={student.class ? classNames.get(student.class) : null}
-              />
-            ))}
+            {page.docs.map((student) => {
+              const busy =
+                reactivate.isPending &&
+                reactivate.variables?.student._id === student._id;
+
+              return (
+                <StudentRow
+                  key={student._id}
+                  student={student}
+                  classLabel={
+                    student.class ? classNames.get(student.class) : null
+                  }
+                  actions={
+                    <>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label={`Editar ${student.name}`}
+                        title="Editar"
+                        onClick={() => openEdit(student)}
+                      >
+                        <PencilIcon />
+                      </Button>
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label={
+                          student.active
+                            ? `Desativar ${student.name}`
+                            : `Reativar ${student.name}`
+                        }
+                        title={student.active ? "Desativar" : "Reativar"}
+                        className={
+                          student.active
+                            ? "hover:text-destructive"
+                            : "hover:text-brand-done"
+                        }
+                        disabled={busy}
+                        onClick={() => handleToggleActive(student)}
+                      >
+                        {busy ? (
+                          <Loader2Icon className="animate-spin" />
+                        ) : student.active ? (
+                          <Trash2Icon />
+                        ) : (
+                          <RotateCcwIcon />
+                        )}
+                      </Button>
+                    </>
+                  }
+                />
+              );
+            })}
           </ul>
 
           <PaginationControls
@@ -196,6 +289,18 @@ export function StudentsScreen() {
         classes={activeClasses}
         defaultClassId={turma}
         onClose={() => setCreateOpen(false)}
+      />
+
+      <EditStudentDialog
+        open={editOpen}
+        student={studentToEdit}
+        classes={classesQuery.data ?? []}
+        onClose={() => setEditOpen(false)}
+      />
+
+      <DeactivateStudentDialog
+        student={studentToDeactivate}
+        onClose={() => setStudentToDeactivate(null)}
       />
     </div>
   );
