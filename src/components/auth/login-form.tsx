@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -74,7 +75,15 @@ export function LoginForm() {
             </Field>
 
             <Field data-invalid={Boolean(errors.password)}>
-              <FieldLabel htmlFor="password">Senha</FieldLabel>
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="password">Senha</FieldLabel>
+                <Link
+                  href="/esqueci-senha"
+                  className="text-muted-foreground hover:text-primary text-xs underline-offset-4 hover:underline"
+                >
+                  Esqueci minha senha
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"

@@ -7,6 +7,7 @@ import {
   LogOutIcon,
   TrophyIcon,
   UserRoundIcon,
+  UsersRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -40,6 +41,7 @@ const teacherNav = [
 
 const adminNav = [
   { href: "/turmas", label: "Turmas", icon: BookOpenIcon },
+  { href: "/alunos", label: "Alunos", icon: UsersRoundIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
