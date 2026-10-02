@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useUpdateStudent } from "@/hooks/use-update-student";
+import { useUpdateUser } from "@/hooks/use-update-user";
 import { ApiError } from "@/lib/api";
 import type { ClassSummary, User } from "@/lib/types";
 import {
@@ -52,7 +52,7 @@ export function EditStudentDialog({
   classes,
   onClose,
 }: EditStudentDialogProps) {
-  const mutation = useUpdateStudent();
+  const mutation = useUpdateUser();
 
   function close() {
     mutation.reset();
@@ -90,7 +90,7 @@ function isFormField(path: string): path is keyof EditStudentInput {
 type EditStudentFormProps = {
   student: User;
   classes: ClassSummary[];
-  mutation: ReturnType<typeof useUpdateStudent>;
+  mutation: ReturnType<typeof useUpdateUser>;
   onSaved: () => void;
 };
 
@@ -112,7 +112,6 @@ function EditStudentForm({
   const { errors } = form.formState;
   const hasFieldErrors = Object.keys(errors).length > 0;
 
-  // Turmas ativas + a atual do aluno, mesmo que esteja inativa.
   const options = classes.filter(
     (item) => item.active || item._id === student.class,
   );
@@ -120,7 +119,7 @@ function EditStudentForm({
   function handleSubmit(values: EditStudentInput) {
     mutation.mutate(
       {
-        student,
+        user: student,
         body: {
           name: values.name,
           class: values.class === NO_CLASS ? null : values.class,
