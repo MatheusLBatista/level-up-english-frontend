@@ -6,6 +6,7 @@ import {
   GraduationCapIcon,
   LayoutGridIcon,
   LogOutIcon,
+  ShieldCheckIcon,
   TrophyIcon,
   UserRoundIcon,
   UsersRoundIcon,
@@ -44,6 +45,7 @@ const adminNav = [
   { href: "/turmas", label: "Turmas", icon: BookOpenIcon },
   { href: "/alunos", label: "Alunos", icon: UsersRoundIcon },
   { href: "/professores", label: "Professores", icon: GraduationCapIcon },
+  { href: "/atitudes", label: "Atitudes", icon: ShieldCheckIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];

@@ -1,8 +1,12 @@
 import { apiFetch } from "@/lib/api";
 import type { Attitude, AttitudeLog, AttitudeLogResult, Paginated } from "@/lib/types";
 
-export function listAttitudes(token: string) {
-  const params = new URLSearchParams({ active: "true", limit: "100" });
+export function listAttitudes(token: string, active: boolean | null = true) {
+  const params = new URLSearchParams({ limit: "100" });
+
+  if (active !== null) {
+    params.set("active", String(active));
+  }
 
   return apiFetch<Paginated<Attitude>>(`/attitudes?${params}`, { token });
 }
