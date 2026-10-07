@@ -38,15 +38,18 @@ const studentNav = [
 const teacherNav = [
   { href: "/painel", label: "Painel", icon: LayoutGridIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
+  { href: "/ranking", label: "Ranking", icon: TrophyIcon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
 
 const adminNav = [
+  { href: "/painel", label: "Painel", icon: LayoutGridIcon },
   { href: "/turmas", label: "Turmas", icon: BookOpenIcon },
   { href: "/alunos", label: "Alunos", icon: UsersRoundIcon },
   { href: "/professores", label: "Professores", icon: GraduationCapIcon },
   { href: "/atitudes", label: "Atitudes", icon: ShieldCheckIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
+  { href: "/ranking", label: "Ranking", icon: TrophyIcon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
 
@@ -89,7 +92,9 @@ export function AppSidebar() {
                 <SidebarMenuItem key={href}>
                   <SidebarMenuButton
                     asChild
-                    isActive={pathname === href || pathname.startsWith(`${href}/`)}
+                    isActive={
+                      pathname === href || pathname.startsWith(`${href}/`)
+                    }
                     tooltip={label}
                   >
                     <Link href={href}>

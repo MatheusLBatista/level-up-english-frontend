@@ -8,12 +8,14 @@ import { summarizeClasses } from "@/lib/teacher";
 import type { ClassSummary } from "@/lib/types";
 
 type TeacherClassesCardProps = {
+  title?: string;
   classes?: ClassSummary[];
   isError: boolean;
   onRetry: () => void;
 };
 
 export function TeacherClassesCard({
+  title = "Suas turmas",
   classes,
   isError,
   onRetry,
@@ -27,7 +29,7 @@ export function TeacherClassesCard({
     <Card className="border-border/40 bg-card/60 backdrop-blur-sm md:self-start">
       <CardHeader>
         <CardTitle className="flex items-baseline justify-between gap-2 text-base">
-          Suas turmas
+          {title}
           {overview && overview.classCount > 0 && (
             <span className="text-muted-foreground text-xs font-normal tabular-nums">
               {overview.studentCount}{" "}
@@ -42,7 +44,7 @@ export function TeacherClassesCard({
       <CardContent>
         {isError ? (
           <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
-            <p className="text-sm">Não foi possível carregar suas turmas.</p>
+            <p className="text-sm">Não foi possível carregar as turmas.</p>
             <Button
               size="sm"
               variant="outline"

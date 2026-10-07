@@ -1,7 +1,8 @@
 "use client";
 
-import { SearchIcon, UsersRoundIcon } from "lucide-react";
+import { SearchIcon, UserPlusIcon, UsersRoundIcon } from "lucide-react";
 import { useMemo, useState } from "react";
+import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
 import { StudentCard } from "@/components/teacher/student-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +18,9 @@ import { matchesSearch } from "@/lib/text";
 
 export function TeacherPanel() {
   const [search, setSearch] = useState("");
-  const [openDialog, setOpenDialog] = useState<"attitudes" | "xp" | null>(null);
+  const [openDialog, setOpenDialog] = useState<
+    "attitudes" | "xp" | "student" | null
+  >(null);
 
   const { classesQuery, classes, classId, setClassId } = useSelectedClass();
 
@@ -32,12 +35,16 @@ export function TeacherPanel() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
   const selectedStudents = useMemo(
-    () => (studentsQuery.data ?? []).filter((student) => selectedIds.has(student._id)),
+    () =>
+      (studentsQuery.data ?? []).filter((student) =>
+        selectedIds.has(student._id),
+      ),
     [studentsQuery.data, selectedIds],
   );
 
   const allVisibleSelected =
-    students.length > 0 && students.every((student) => selectedIds.has(student._id));
+    students.length > 0 &&
+    students.every((student) => selectedIds.has(student._id));
 
   function toggleStudent(id: string) {
     setSelectedIds((previous) => {
@@ -75,16 +82,29 @@ export function TeacherPanel() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <span className="bg-brand-gradient grid size-12 place-items-center rounded-2xl">
-          <UsersRoundIcon className="size-6 text-white" />
-        </span>
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Painel de Controle</h1>
-          <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-            Gerenciar alunos
-          </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span className="bg-brand-gradient grid size-12 place-items-center rounded-2xl">
+            <UsersRoundIcon className="size-6 text-white" />
+          </span>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight">
+              Painel de Controle
+            </h1>
+            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+              Gerenciar alunos
+            </p>
+          </div>
         </div>
+
+        <Button
+          className="bg-brand-gradient"
+          disabled={classes.length === 0}
+          onClick={() => setOpenDialog("student")}
+        >
+          <UserPlusIcon />
+          Novo aluno
+        </Button>
       </div>
 
       <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row">
@@ -121,7 +141,9 @@ export function TeacherPanel() {
             variant="outline"
             className="ml-auto"
             onClick={() =>
-              void (classesQuery.isError ? classesQuery.refetch() : studentsQuery.refetch())
+              void (classesQuery.isError
+                ? classesQuery.refetch()
+                : studentsQuery.refetch())
             }
           >
             Tentar de novo
@@ -146,7 +168,10 @@ export function TeacherPanel() {
         </div>
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <SelectAllCard allSelected={allVisibleSelected} onToggle={toggleAllVisible} />
+          <SelectAllCard
+            allSelected={allVisibleSelected}
+            onToggle={toggleAllVisible}
+          />
           {students.map((student) => (
             <StudentCard
               key={student._id}
@@ -172,6 +197,14 @@ export function TeacherPanel() {
         onOpenChange={(open) => setOpenDialog(open ? "attitudes" : null)}
         students={selectedStudents}
         onFinished={clearSelection}
+      />
+
+      <CreateStudentDialog
+        open={openDialog === "student"}
+        classes={classes}
+        defaultClassId={classId}
+        allowNoClass={false}
+        onClose={() => setOpenDialog(null)}
       />
 
       <AdjustXpDialog

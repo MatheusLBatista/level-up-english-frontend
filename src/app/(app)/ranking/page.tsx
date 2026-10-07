@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function RankingPage() {
   return (
-    <RoleGuard allow={["student"]}>
+    <RoleGuard allow={["student", "teacher", "admin"]}>
       <main className="flex flex-1 flex-col p-4 sm:p-6">
         <RankingScreen />
       </main>
