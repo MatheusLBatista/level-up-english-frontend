@@ -9,17 +9,22 @@ import {
   ShieldCheckIcon,
   Trash2Icon,
 } from "lucide-react";
-import { parseAsStringLiteral, useQueryStates } from "nuqs";
-import { useState } from "react";
+import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
+import { useState, type ReactNode } from "react";
 import { AttitudeCard } from "@/components/admin/attitudes/attitude-card";
 import { AttitudeFormDialog } from "@/components/admin/attitudes/attitude-form-dialog";
 import { DeactivateAttitudeDialog } from "@/components/admin/attitudes/deactivate-attitude-dialog";
+import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAttitudes } from "@/hooks/use-attitudes";
 import { useSetAttitudeActive } from "@/hooks/use-set-attitude-active";
+import { paginate } from "@/lib/paginate";
 import type { Attitude } from "@/lib/types";
+
+/** Par, para a grade de 2 colunas fechar certinho. */
+const PAGE_SIZE = 20;
 
 const attitudeStatuses = ["ativas", "desativadas"] as const;
 
@@ -29,8 +34,9 @@ const statusOptions = [
 ] as const;
 
 export function AttitudesScreen() {
-  const [{ status }, setFilters] = useQueryStates({
+  const [{ status, pagina }, setFilters] = useQueryStates({
     status: parseAsStringLiteral(attitudeStatuses).withDefault("ativas"),
+    pagina: parseAsInteger.withDefault(1),
   });
 
   const attitudesQuery = useAttitudes(status === "ativas");
@@ -76,7 +82,7 @@ export function AttitudesScreen() {
             label="Filtrar atitudes por status"
             options={statusOptions}
             value={status}
-            onChange={(next) => void setFilters({ status: next })}
+            onChange={(next) => void setFilters({ status: next, pagina: 1 })}
           />
           <Button className="bg-brand-gradient" onClick={() => openForm(null)}>
             <PlusIcon />
@@ -128,62 +134,59 @@ export function AttitudesScreen() {
             : "Nenhuma atitude desativada."}
         </div>
       ) : (
-        <ul className="grid gap-3 md:grid-cols-2">
-          {attitudes.map((attitude) => {
+        <AttitudeList
+          attitudes={attitudes}
+          page={pagina}
+          onPageChange={(value) => void setFilters({ pagina: value })}
+          renderActions={(attitude) => {
             const busy =
               reactivate.isPending &&
               reactivate.variables?.attitude._id === attitude._id;
 
             return (
-              <AttitudeCard
-                key={attitude._id}
-                attitude={attitude}
-                actions={
-                  <>
-                    {attitude.active && (
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="ghost"
-                        aria-label={`Editar ${attitude.name}`}
-                        title="Editar"
-                        onClick={() => openForm(attitude)}
-                      >
-                        <PencilIcon />
-                      </Button>
-                    )}
-                    <Button
-                      type="button"
-                      size="icon-sm"
-                      variant="ghost"
-                      aria-label={
-                        attitude.active
-                          ? `Desativar ${attitude.name}`
-                          : `Reativar ${attitude.name}`
-                      }
-                      title={attitude.active ? "Desativar" : "Reativar"}
-                      className={
-                        attitude.active
-                          ? "hover:text-destructive"
-                          : "hover:text-brand-done"
-                      }
-                      disabled={busy}
-                      onClick={() => handleToggleActive(attitude)}
-                    >
-                      {busy ? (
-                        <Loader2Icon className="animate-spin" />
-                      ) : attitude.active ? (
-                        <Trash2Icon />
-                      ) : (
-                        <RotateCcwIcon />
-                      )}
-                    </Button>
-                  </>
-                }
-              />
+              <>
+                {attitude.active && (
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="ghost"
+                    aria-label={`Editar ${attitude.name}`}
+                    title="Editar"
+                    onClick={() => openForm(attitude)}
+                  >
+                    <PencilIcon />
+                  </Button>
+                )}
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label={
+                    attitude.active
+                      ? `Desativar ${attitude.name}`
+                      : `Reativar ${attitude.name}`
+                  }
+                  title={attitude.active ? "Desativar" : "Reativar"}
+                  className={
+                    attitude.active
+                      ? "hover:text-destructive"
+                      : "hover:text-brand-done"
+                  }
+                  disabled={busy}
+                  onClick={() => handleToggleActive(attitude)}
+                >
+                  {busy ? (
+                    <Loader2Icon className="animate-spin" />
+                  ) : attitude.active ? (
+                    <Trash2Icon />
+                  ) : (
+                    <RotateCcwIcon />
+                  )}
+                </Button>
+              </>
             );
-          })}
-        </ul>
+          }}
+        />
       )}
 
       <AttitudeFormDialog
@@ -197,5 +200,37 @@ export function AttitudesScreen() {
         onClose={() => setAttitudeToDeactivate(null)}
       />
     </div>
+  );
+}
+
+type AttitudeListProps = {
+  attitudes: Attitude[];
+  page: number;
+  onPageChange: (page: number) => void;
+  renderActions: (attitude: Attitude) => ReactNode;
+};
+
+function AttitudeList({
+  attitudes,
+  page,
+  onPageChange,
+  renderActions,
+}: AttitudeListProps) {
+  const current = paginate(attitudes, page, PAGE_SIZE);
+
+  return (
+    <>
+      <ul className="grid gap-3 md:grid-cols-2">
+        {current.docs.map((attitude) => (
+          <AttitudeCard
+            key={attitude._id}
+            attitude={attitude}
+            actions={renderActions(attitude)}
+          />
+        ))}
+      </ul>
+
+      <PaginationControls page={current} onChange={onPageChange} />
+    </>
   );
 }
