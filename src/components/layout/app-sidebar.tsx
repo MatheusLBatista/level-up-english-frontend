@@ -38,6 +38,7 @@ const studentNav = [
 const teacherNav = [
   { href: "/painel", label: "Painel", icon: LayoutGridIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
+  { href: "/ranking", label: "Ranking", icon: TrophyIcon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
 
@@ -48,6 +49,7 @@ const adminNav = [
   { href: "/professores", label: "Professores", icon: GraduationCapIcon },
   { href: "/atitudes", label: "Atitudes", icon: ShieldCheckIcon },
   { href: "/missoes", label: "Missões", icon: Gamepad2Icon },
+  { href: "/ranking", label: "Ranking", icon: TrophyIcon },
   { href: "/perfil", label: "Perfil", icon: UserRoundIcon },
 ];
 
