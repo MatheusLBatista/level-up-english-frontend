@@ -1,12 +1,22 @@
 "use client";
 
-import { SearchXIcon, ShieldCheckIcon } from "lucide-react";
+import {
+  Loader2Icon,
+  RotateCcwIcon,
+  SearchXIcon,
+  ShieldCheckIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { parseAsStringLiteral, useQueryStates } from "nuqs";
+import { useState } from "react";
 import { AttitudeCard } from "@/components/admin/attitudes/attitude-card";
+import { DeactivateAttitudeDialog } from "@/components/admin/attitudes/deactivate-attitude-dialog";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAttitudes } from "@/hooks/use-attitudes";
+import { useSetAttitudeActive } from "@/hooks/use-set-attitude-active";
+import type { Attitude } from "@/lib/types";
 
 const attitudeStatuses = ["ativas", "desativadas"] as const;
 
@@ -22,6 +32,18 @@ export function AttitudesScreen() {
 
   const attitudesQuery = useAttitudes(status === "ativas");
   const attitudes = attitudesQuery.data;
+
+  const [attitudeToDeactivate, setAttitudeToDeactivate] =
+    useState<Attitude | null>(null);
+  const reactivate = useSetAttitudeActive();
+
+  function handleToggleActive(attitude: Attitude) {
+    if (attitude.active) {
+      setAttitudeToDeactivate(attitude);
+    } else {
+      reactivate.mutate({ attitude, active: true });
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,6 +67,23 @@ export function AttitudesScreen() {
           onChange={(next) => void setFilters({ status: next })}
         />
       </div>
+
+      {reactivate.isError && (
+        <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
+          <p className="text-sm">
+            Não foi possível reativar {reactivate.variables?.attitude.name}:{" "}
+            {reactivate.error.message}
+          </p>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto"
+            onClick={() => reactivate.reset()}
+          >
+            Fechar
+          </Button>
+        </div>
+      )}
 
       {attitudesQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-4">
@@ -73,11 +112,53 @@ export function AttitudesScreen() {
         </div>
       ) : (
         <ul className="grid gap-3 md:grid-cols-2">
-          {attitudes.map((attitude) => (
-            <AttitudeCard key={attitude._id} attitude={attitude} />
-          ))}
+          {attitudes.map((attitude) => {
+            const busy =
+              reactivate.isPending &&
+              reactivate.variables?.attitude._id === attitude._id;
+
+            return (
+              <AttitudeCard
+                key={attitude._id}
+                attitude={attitude}
+                actions={
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    variant="ghost"
+                    aria-label={
+                      attitude.active
+                        ? `Desativar ${attitude.name}`
+                        : `Reativar ${attitude.name}`
+                    }
+                    title={attitude.active ? "Desativar" : "Reativar"}
+                    className={
+                      attitude.active
+                        ? "hover:text-destructive"
+                        : "hover:text-brand-done"
+                    }
+                    disabled={busy}
+                    onClick={() => handleToggleActive(attitude)}
+                  >
+                    {busy ? (
+                      <Loader2Icon className="animate-spin" />
+                    ) : attitude.active ? (
+                      <Trash2Icon />
+                    ) : (
+                      <RotateCcwIcon />
+                    )}
+                  </Button>
+                }
+              />
+            );
+          })}
         </ul>
       )}
+
+      <DeactivateAttitudeDialog
+        attitude={attitudeToDeactivate}
+        onClose={() => setAttitudeToDeactivate(null)}
+      />
     </div>
   );
 }
