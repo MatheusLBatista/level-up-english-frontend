@@ -42,6 +42,11 @@ type CreateStudentDialogProps = {
   /** Turmas ativas: o backend só aceita vincular a turma ativa. */
   classes: ClassSummary[];
   defaultClassId: string | null;
+  /**
+   * `false` esconde "Sem turma" e exige uma turma — é o caso do painel, onde o
+   * professor só pode cadastrar alunos nas próprias turmas.
+   */
+  allowNoClass?: boolean;
   onClose: () => void;
 };
 
@@ -49,6 +54,7 @@ export function CreateStudentDialog({
   open,
   classes,
   defaultClassId,
+  allowNoClass = true,
   onClose,
 }: CreateStudentDialogProps) {
   const mutation = useRegisterStudent();
@@ -77,6 +83,7 @@ export function CreateStudentDialog({
           <StudentForm
             classes={classes}
             defaultClassId={defaultClassId}
+            allowNoClass={allowNoClass}
             mutation={mutation}
           />
         )}
@@ -94,18 +101,34 @@ function isFormField(path: string): path is keyof StudentFormInput {
 type StudentFormProps = {
   classes: ClassSummary[];
   defaultClassId: string | null;
+  allowNoClass: boolean;
   mutation: ReturnType<typeof useRegisterStudent>;
 };
 
-function StudentForm({ classes, defaultClassId, mutation }: StudentFormProps) {
+function getInitialClass(
+  classes: ClassSummary[],
+  defaultClassId: string | null,
+  allowNoClass: boolean,
+) {
+  if (defaultClassId && classes.some((item) => item._id === defaultClassId)) {
+    return defaultClassId;
+  }
+
+  return allowNoClass ? NO_CLASS : (classes[0]?._id ?? NO_CLASS);
+}
+
+function StudentForm({
+  classes,
+  defaultClassId,
+  allowNoClass,
+  mutation,
+}: StudentFormProps) {
   const form = useForm<StudentFormInput>({
     resolver: zodResolver(studentFormSchema),
     defaultValues: {
       name: "",
       email: "",
-      class: classes.some((item) => item._id === defaultClassId)
-        ? (defaultClassId ?? NO_CLASS)
-        : NO_CLASS,
+      class: getInitialClass(classes, defaultClassId, allowNoClass),
     },
   });
 
@@ -113,6 +136,11 @@ function StudentForm({ classes, defaultClassId, mutation }: StudentFormProps) {
   const hasFieldErrors = Object.keys(errors).length > 0;
 
   function handleSubmit(values: StudentFormInput) {
+    if (!allowNoClass && values.class === NO_CLASS) {
+      form.setError("class", { message: "Escolha uma das suas turmas." });
+      return;
+    }
+
     mutation.mutate(values, {
       onError: (error) => {
         if (!(error instanceof ApiError)) {
@@ -177,7 +205,10 @@ function StudentForm({ classes, defaultClassId, mutation }: StudentFormProps) {
               name="class"
               render={({ field }) => (
                 <Select
-                  value={field.value}
+                  // "" mostra o placeholder quando "Sem turma" não é opção.
+                  value={
+                    !allowNoClass && field.value === NO_CLASS ? "" : field.value
+                  }
                   onValueChange={field.onChange}
                   disabled={mutation.isPending}
                 >
@@ -186,10 +217,14 @@ function StudentForm({ classes, defaultClassId, mutation }: StudentFormProps) {
                     className="w-full"
                     aria-invalid={Boolean(errors.class)}
                   >
-                    <SelectValue />
+                    <SelectValue placeholder="Escolha a turma" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={NO_CLASS}>Sem turma por enquanto</SelectItem>
+                    {allowNoClass && (
+                      <SelectItem value={NO_CLASS}>
+                        Sem turma por enquanto
+                      </SelectItem>
+                    )}
                     {classes.map((item) => (
                       <SelectItem key={item._id} value={item._id}>
                         {item.name}
@@ -203,7 +238,9 @@ function StudentForm({ classes, defaultClassId, mutation }: StudentFormProps) {
               <FieldError errors={[errors.class]} />
             ) : (
               <FieldDescription>
-                Sem turma, o aluno não aparece no painel de nenhum professor.
+                {allowNoClass
+                  ? "Sem turma, o aluno não aparece no painel de nenhum professor."
+                  : "O aluno entra direto nesta turma e aparece no painel."}
               </FieldDescription>
             )}
           </Field>
@@ -263,8 +300,8 @@ function CreatedStep({ name, email, onCreateAnother }: CreatedStepProps) {
           senha.
         </p>
         <p className="text-muted-foreground text-xs">
-          O link vale por 24 horas. Se expirar, o aluno pode usar “Esqueci
-          minha senha” na tela de login.
+          O link vale por 24 horas. Se expirar, o aluno pode usar “Esqueci minha
+          senha” na tela de login.
         </p>
       </div>
 
