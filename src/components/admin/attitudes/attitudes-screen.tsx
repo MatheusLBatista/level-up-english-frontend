@@ -2,6 +2,8 @@
 
 import {
   Loader2Icon,
+  PencilIcon,
+  PlusIcon,
   RotateCcwIcon,
   SearchXIcon,
   ShieldCheckIcon,
@@ -10,6 +12,7 @@ import {
 import { parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
 import { AttitudeCard } from "@/components/admin/attitudes/attitude-card";
+import { AttitudeFormDialog } from "@/components/admin/attitudes/attitude-form-dialog";
 import { DeactivateAttitudeDialog } from "@/components/admin/attitudes/deactivate-attitude-dialog";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
@@ -37,6 +40,14 @@ export function AttitudesScreen() {
     useState<Attitude | null>(null);
   const reactivate = useSetAttitudeActive();
 
+  const [formOpen, setFormOpen] = useState(false);
+  const [attitudeToEdit, setAttitudeToEdit] = useState<Attitude | null>(null);
+
+  function openForm(attitude: Attitude | null) {
+    setAttitudeToEdit(attitude);
+    setFormOpen(true);
+  }
+
   function handleToggleActive(attitude: Attitude) {
     if (attitude.active) {
       setAttitudeToDeactivate(attitude);
@@ -60,12 +71,18 @@ export function AttitudesScreen() {
           </div>
         </div>
 
-        <SegmentedFilter
-          label="Filtrar atitudes por status"
-          options={statusOptions}
-          value={status}
-          onChange={(next) => void setFilters({ status: next })}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          <SegmentedFilter
+            label="Filtrar atitudes por status"
+            options={statusOptions}
+            value={status}
+            onChange={(next) => void setFilters({ status: next })}
+          />
+          <Button className="bg-brand-gradient" onClick={() => openForm(null)}>
+            <PlusIcon />
+            Nova atitude
+          </Button>
+        </div>
       </div>
 
       {reactivate.isError && (
@@ -122,38 +139,58 @@ export function AttitudesScreen() {
                 key={attitude._id}
                 attitude={attitude}
                 actions={
-                  <Button
-                    type="button"
-                    size="icon-sm"
-                    variant="ghost"
-                    aria-label={
-                      attitude.active
-                        ? `Desativar ${attitude.name}`
-                        : `Reativar ${attitude.name}`
-                    }
-                    title={attitude.active ? "Desativar" : "Reativar"}
-                    className={
-                      attitude.active
-                        ? "hover:text-destructive"
-                        : "hover:text-brand-done"
-                    }
-                    disabled={busy}
-                    onClick={() => handleToggleActive(attitude)}
-                  >
-                    {busy ? (
-                      <Loader2Icon className="animate-spin" />
-                    ) : attitude.active ? (
-                      <Trash2Icon />
-                    ) : (
-                      <RotateCcwIcon />
+                  <>
+                    {attitude.active && (
+                      <Button
+                        type="button"
+                        size="icon-sm"
+                        variant="ghost"
+                        aria-label={`Editar ${attitude.name}`}
+                        title="Editar"
+                        onClick={() => openForm(attitude)}
+                      >
+                        <PencilIcon />
+                      </Button>
                     )}
-                  </Button>
+                    <Button
+                      type="button"
+                      size="icon-sm"
+                      variant="ghost"
+                      aria-label={
+                        attitude.active
+                          ? `Desativar ${attitude.name}`
+                          : `Reativar ${attitude.name}`
+                      }
+                      title={attitude.active ? "Desativar" : "Reativar"}
+                      className={
+                        attitude.active
+                          ? "hover:text-destructive"
+                          : "hover:text-brand-done"
+                      }
+                      disabled={busy}
+                      onClick={() => handleToggleActive(attitude)}
+                    >
+                      {busy ? (
+                        <Loader2Icon className="animate-spin" />
+                      ) : attitude.active ? (
+                        <Trash2Icon />
+                      ) : (
+                        <RotateCcwIcon />
+                      )}
+                    </Button>
+                  </>
                 }
               />
             );
           })}
         </ul>
       )}
+
+      <AttitudeFormDialog
+        open={formOpen}
+        attitude={attitudeToEdit}
+        onClose={() => setFormOpen(false)}
+      />
 
       <DeactivateAttitudeDialog
         attitude={attitudeToDeactivate}

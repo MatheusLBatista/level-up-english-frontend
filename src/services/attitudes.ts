@@ -18,6 +18,21 @@ export function listAttitudes(token: string, active: boolean | null = true) {
   return apiFetch<Paginated<Attitude>>(`/attitudes?${params}`, { token });
 }
 
+export type CreateAttitudeBody = {
+  name: string;
+  description?: string;
+  xp_value: number;
+  type: AttitudeType;
+};
+
+export function createAttitude(body: CreateAttitudeBody, token: string) {
+  return apiFetch<Attitude>("/attitudes", {
+    method: "POST",
+    body,
+    token,
+  });
+}
+
 export type UpdateAttitudeBody = {
   name?: string;
   description?: string;
