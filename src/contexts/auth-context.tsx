@@ -64,17 +64,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Sair pelo botão também derruba a sessão no servidor. Limpa a local antes,
   // para a tela não esperar a rede; se a chamada falhar, o usuário sai igual.
   const signOut = useCallback(() => {
-    const token = session?.accessToken;
+    const refreshToken = session?.refreshToken;
 
     clearLocalSession();
 
-    if (token) {
-      logout(token).catch(() => {});
+    if (refreshToken) {
+      logout(refreshToken).catch(() => {});
     }
   }, [session, clearLocalSession]);
 
-  // Sessão já recusada pela API: não adianta (nem convém) chamar o logout,
-  // que responderia 401 de novo.
+  // Sessão já recusada pela API (refresh também falhou): não há o que
+  // encerrar no servidor, só limpar o navegador.
   useEffect(() => onUnauthorized(clearLocalSession), [clearLocalSession]);
   useEffect(
     () =>

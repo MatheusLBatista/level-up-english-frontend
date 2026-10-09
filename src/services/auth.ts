@@ -9,11 +9,15 @@ export function login(creditials: LoginInput) {
   });
 }
 
-/** Apaga os tokens do usuário no banco: o access e o refresh param de valer. */
-export function logout(token: string) {
+/**
+ * Apaga os tokens do usuário no banco: o access e o refresh param de valer.
+ * Vai pelo refresh token (sem header), então funciona mesmo com o access
+ * token já expirado.
+ */
+export function logout(refreshToken: string) {
   return apiFetch<null>("/auth/logout", {
     method: "POST",
-    token,
+    body: { refreshToken },
   });
 }
 
