@@ -1,10 +1,9 @@
+import { redirect } from "next/navigation";
+
+/**
+ * A raiz não tem conteúdo próprio: manda para o login, e o `GuestGuard` de lá
+ * leva quem já está logado para a home do seu papel.
+ */
 export default function Home() {
-  return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center">
-      <h1 className="text-3xl font-semibold tracking-tight">LevelUp English</h1>
-      <p className="text-muted-foreground max-w-md text-lg">
-        Plataforma de gamificação para aprendizado de inglês.
-      </p>
-    </main>
-  );
+  redirect("/login");
 }
