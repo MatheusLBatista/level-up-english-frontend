@@ -28,7 +28,8 @@ function youtubeEmbed(url: URL) {
 
 export function MissionMedia({ mission }: { mission: Mission }) {
   const url = mission.content_url ? parseUrl(mission.content_url) : null;
-  const embed = url && YOUTUBE_HOSTS.has(url.hostname) ? youtubeEmbed(url) : null;
+  const embed =
+    url && YOUTUBE_HOSTS.has(url.hostname) ? youtubeEmbed(url) : null;
 
   return (
     <div className="flex flex-col gap-4">

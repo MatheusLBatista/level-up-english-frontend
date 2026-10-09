@@ -31,20 +31,21 @@ export function LoginForm() {
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
-  })
+  });
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (session) => {
       signIn(session);
-    }
+    },
   });
 
   const { errors } = form.formState;
 
   const requestError = loginMutation.error
     ? loginMutation.error instanceof ApiError
-      ? loginMutation.error.message : "Não foi possível entrar agora. Verifique sua conexão e tente de novo."
+      ? loginMutation.error.message
+      : "Não foi possível entrar agora. Verifique sua conexão e tente de novo."
     : null;
 
   return (
@@ -56,8 +57,8 @@ export function LoginForm() {
 
       <CardContent>
         <form
-        noValidate
-        onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
+          noValidate
+          onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
         >
           <FieldGroup>
             <Field data-invalid={Boolean(errors.email)}>
@@ -71,7 +72,7 @@ export function LoginForm() {
                 disabled={loginMutation.isPending}
                 {...form.register("email")}
               />
-               <FieldError errors={[errors.email]} />
+              <FieldError errors={[errors.email]} />
             </Field>
 
             <Field data-invalid={Boolean(errors.password)}>
@@ -103,15 +104,15 @@ export function LoginForm() {
               size="lg"
               className="w-full"
               disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending && (
-                  <Loader2Icon className="animate-spin" />
-                )}
-                {loginMutation.isPending ? "Entrando..." : "Entrar"}
-              </Button>
+            >
+              {loginMutation.isPending && (
+                <Loader2Icon className="animate-spin" />
+              )}
+              {loginMutation.isPending ? "Entrando..." : "Entrar"}
+            </Button>
           </FieldGroup>
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

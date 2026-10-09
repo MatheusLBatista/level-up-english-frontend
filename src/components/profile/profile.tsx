@@ -33,7 +33,9 @@ export function ProfileIdentity({ user }: { user: User }) {
               <Badge variant="outline">{roleLabels[user.role]}</Badge>
             </div>
 
-            <p className="text-muted-foreground truncate text-sm">{user.email}</p>
+            <p className="text-muted-foreground truncate text-sm">
+              {user.email}
+            </p>
             {user.createdAt && (
               <p className="text-muted-foreground text-xs">
                 Membro desde{" "}

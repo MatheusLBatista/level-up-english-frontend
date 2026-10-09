@@ -33,7 +33,10 @@ export function ClassSelect({
       onValueChange={onChange}
       disabled={disabled || classes.length === 0}
     >
-      <SelectTrigger className={cn("w-full sm:w-56", className)} aria-label="Turma">
+      <SelectTrigger
+        className={cn("w-full sm:w-56", className)}
+        aria-label="Turma"
+      >
         <SelectValue placeholder={isPending ? "Carregando…" : "Sem turmas"} />
       </SelectTrigger>
       <SelectContent>

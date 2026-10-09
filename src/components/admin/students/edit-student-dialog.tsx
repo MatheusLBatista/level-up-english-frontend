@@ -147,7 +147,9 @@ function EditStudentForm({
     <>
       <DialogHeader>
         <DialogTitle>Editar aluno</DialogTitle>
-        <DialogDescription className="break-all">{student.email}</DialogDescription>
+        <DialogDescription className="break-all">
+          {student.email}
+        </DialogDescription>
       </DialogHeader>
 
       <form

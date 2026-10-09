@@ -12,8 +12,12 @@ export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(6, "A senha atual precisa ter ao menos 6 caracteres."),
-    newPassword: z.string().min(6, "A nova senha precisa ter ao menos 6 caracteres."),
+    currentPassword: z
+      .string()
+      .min(6, "A senha atual precisa ter ao menos 6 caracteres."),
+    newPassword: z
+      .string()
+      .min(6, "A nova senha precisa ter ao menos 6 caracteres."),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword !== data.currentPassword, {

@@ -19,7 +19,11 @@ type RankingRowProps = {
   isCurrentUser: boolean;
 };
 
-export function RankingRow({ entry, position, isCurrentUser }: RankingRowProps) {
+export function RankingRow({
+  entry,
+  position,
+  isCurrentUser,
+}: RankingRowProps) {
   const podium = podiumStyles[position];
 
   return (
@@ -40,7 +44,12 @@ export function RankingRow({ entry, position, isCurrentUser }: RankingRowProps) 
         <span className="sr-only">{position}º lugar</span>
       </span>
 
-      <Avatar className={cn("size-10 shrink-0", position === 1 && "ring-brand-level/60 ring-2")}>
+      <Avatar
+        className={cn(
+          "size-10 shrink-0",
+          position === 1 && "ring-brand-level/60 ring-2",
+        )}
+      >
         <AvatarFallback className="bg-brand-gradient text-xs font-semibold text-white">
           {getInitials(entry.user.name)}
         </AvatarFallback>
@@ -57,7 +66,10 @@ export function RankingRow({ entry, position, isCurrentUser }: RankingRowProps) 
           )}
 
           {isCurrentUser && (
-            <Badge variant="outline" className="text-[10px] tracking-wider uppercase">
+            <Badge
+              variant="outline"
+              className="text-[10px] tracking-wider uppercase"
+            >
               Você
             </Badge>
           )}

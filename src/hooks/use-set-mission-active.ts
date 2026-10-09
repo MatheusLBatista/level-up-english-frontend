@@ -22,7 +22,7 @@ export function useSetMissionActive() {
 
       return updateMission(mission._id, { active }, token);
     },
-    
+
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["missions"] }),
   });
 }

@@ -22,7 +22,8 @@ export function StudentCard({ student, selected, onToggle }: StudentCardProps) {
         onClick={() => onToggle(student._id)}
         className={cn(
           "border-border/40 bg-card/60 hover:bg-card/80 focus-visible:ring-ring/50 relative flex h-full w-full flex-col items-center gap-3 rounded-2xl border p-4 text-center backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]",
-          selected && "border-primary bg-primary/10 hover:bg-primary/15 ring-primary/40 ring-2",
+          selected &&
+            "border-primary bg-primary/10 hover:bg-primary/15 ring-primary/40 ring-2",
         )}
       >
         {selected && (

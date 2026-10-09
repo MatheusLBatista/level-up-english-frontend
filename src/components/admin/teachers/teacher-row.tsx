@@ -39,11 +39,16 @@ export function TeacherRow({ teacher, classes, actions }: TeacherRowProps) {
               </Badge>
             )}
           </div>
-          <p className="text-muted-foreground truncate text-xs">{teacher.email}</p>
+          <p className="text-muted-foreground truncate text-xs">
+            {teacher.email}
+          </p>
         </div>
       </div>
 
-      <ul className="flex shrink-0 flex-wrap gap-1.5 sm:max-w-xs sm:justify-end" aria-label="Turmas">
+      <ul
+        className="flex shrink-0 flex-wrap gap-1.5 sm:max-w-xs sm:justify-end"
+        aria-label="Turmas"
+      >
         {classes.length === 0 ? (
           <li className="text-muted-foreground text-xs">Sem turma</li>
         ) : (

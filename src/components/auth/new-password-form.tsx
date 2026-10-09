@@ -13,7 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api";
 import { newPasswordSchema, type NewPasswordInput } from "@/schemas/auth";
@@ -22,7 +27,8 @@ import { resetPassword } from "@/services/auth";
 const copy = {
   welcome: {
     title: "Crie sua senha",
-    description: "Bem-vindo ao LevelUp English! Escolha a senha que você vai usar para entrar.",
+    description:
+      "Bem-vindo ao LevelUp English! Escolha a senha que você vai usar para entrar.",
     submit: "Criar senha",
   },
   reset: {

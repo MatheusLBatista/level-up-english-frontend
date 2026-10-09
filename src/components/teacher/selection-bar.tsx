@@ -32,7 +32,12 @@ export function SelectionBar({
               : `${count} alunos selecionados`}
         </p>
         {hasSelection && (
-          <Button variant="ghost" size="sm" className="ml-auto text-xs" onClick={onClear}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-auto text-xs"
+            onClick={onClear}
+          >
             Limpar
           </Button>
         )}

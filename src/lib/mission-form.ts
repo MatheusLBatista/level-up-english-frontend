@@ -57,10 +57,22 @@ function contentFields(values: MissionFormInput) {
   }
 }
 
-export function toCreateMissionBody(values: MissionFormInput): CreateMissionBody {
-  return { type: values.type, ...commonFields(values), ...contentFields(values) };
+export function toCreateMissionBody(
+  values: MissionFormInput,
+): CreateMissionBody {
+  return {
+    type: values.type,
+    ...commonFields(values),
+    ...contentFields(values),
+  };
 }
 
-export function toUpdateMissionBody(values: MissionFormInput): UpdateMissionBody {
-  return { ...commonFields(values), active: values.active, ...contentFields(values) };
+export function toUpdateMissionBody(
+  values: MissionFormInput,
+): UpdateMissionBody {
+  return {
+    ...commonFields(values),
+    active: values.active,
+    ...contentFields(values),
+  };
 }

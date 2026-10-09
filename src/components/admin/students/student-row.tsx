@@ -42,7 +42,9 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
               </Badge>
             )}
           </div>
-          <p className="text-muted-foreground truncate text-xs">{student.email}</p>
+          <p className="text-muted-foreground truncate text-xs">
+            {student.email}
+          </p>
         </div>
       </div>
 
@@ -58,7 +60,9 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
       </div>
 
       <div className="flex w-48 shrink-0 items-center gap-3 text-sm tabular-nums">
-        <span className="text-brand-level font-semibold">Nv {student.level}</span>
+        <span className="text-brand-level font-semibold">
+          Nv {student.level}
+        </span>
         <Progress
           value={student.progress?.percentage ?? 0}
           aria-label={`${student.progress?.percentage ?? 0}% para o próximo nível`}

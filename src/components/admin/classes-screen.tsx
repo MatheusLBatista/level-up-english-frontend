@@ -126,8 +126,8 @@ export function ClassesScreen() {
       {reactivate.isError && (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
           <p className="text-sm">
-            Não foi possível reativar “{reactivate.variables?.schoolClass.name}”:{" "}
-            {reactivate.error.message}
+            Não foi possível reativar “{reactivate.variables?.schoolClass.name}
+            ”: {reactivate.error.message}
           </p>
           <Button
             size="sm"

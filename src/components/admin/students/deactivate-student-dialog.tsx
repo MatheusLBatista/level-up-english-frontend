@@ -53,8 +53,8 @@ export function DeactivateStudentDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Desativar aluno?</AlertDialogTitle>
           <AlertDialogDescription>
-            {student?.name} não vai mais conseguir entrar na plataforma. O XP,
-            o nível e o histórico ficam guardados, e você pode reativar a conta
+            {student?.name} não vai mais conseguir entrar na plataforma. O XP, o
+            nível e o histórico ficam guardados, e você pode reativar a conta
             quando quiser.
           </AlertDialogDescription>
         </AlertDialogHeader>

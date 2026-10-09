@@ -1,5 +1,8 @@
 export function normalizeText(text: string) {
-  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  return text
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
 }
 
 export function matchesSearch(text: string, search: string) {

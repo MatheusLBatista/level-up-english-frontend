@@ -58,7 +58,11 @@ export function useEditTeacher() {
   const invalidate = useInvalidateSchool();
 
   return useMutation({
-    mutationFn: async ({ teacher, currentClassIds, values }: EditTeacherVariables) => {
+    mutationFn: async ({
+      teacher,
+      currentClassIds,
+      values,
+    }: EditTeacherVariables) => {
       if (!token) {
         throw new Error("Sua sessão expirou. Entre de novo para continuar.");
       }

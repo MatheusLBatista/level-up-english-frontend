@@ -126,7 +126,10 @@ export function StudentsScreen() {
           </div>
         </div>
 
-        <Button className="bg-brand-gradient" onClick={() => setCreateOpen(true)}>
+        <Button
+          className="bg-brand-gradient"
+          onClick={() => setCreateOpen(true)}
+        >
           <PlusIcon />
           Criar aluno
         </Button>
@@ -156,7 +159,10 @@ export function StudentsScreen() {
             })
           }
         >
-          <SelectTrigger className="w-full lg:w-52" aria-label="Filtrar por turma">
+          <SelectTrigger
+            className="w-full lg:w-52"
+            aria-label="Filtrar por turma"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

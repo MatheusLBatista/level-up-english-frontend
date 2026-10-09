@@ -53,10 +53,14 @@ export function ClassChecklist({
               <Checkbox
                 id={checkboxId}
                 checked={isChecked}
-                onCheckedChange={(checked) => toggle(item._id, checked === true)}
+                onCheckedChange={(checked) =>
+                  toggle(item._id, checked === true)
+                }
                 disabled={disabled}
               />
-              <span className="min-w-0 flex-1 truncate text-sm">{item.name}</span>
+              <span className="min-w-0 flex-1 truncate text-sm">
+                {item.name}
+              </span>
               {otherTeacher ? (
                 <span
                   className={

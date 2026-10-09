@@ -21,13 +21,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAdjustXp } from "@/hooks/use-adjust-xp";
 import { formatXpDelta } from "@/lib/attitudes";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { xpAdjustmentSchema, type XpAdjustmentInput } from "@/schemas/xp-adjustment";
+import {
+  xpAdjustmentSchema,
+  type XpAdjustmentInput,
+} from "@/schemas/xp-adjustment";
 
 type Mode = "add" | "remove";
 
@@ -64,9 +72,10 @@ export function AdjustXpDialog({
       ? students.filter((student) => student.xp < amount)
       : [];
 
-  const capped = result?.succeeded.filter(
-    (outcome) => outcome.xpApplied !== result.amount,
-  ) ?? [];
+  const capped =
+    result?.succeeded.filter(
+      (outcome) => outcome.xpApplied !== result.amount,
+    ) ?? [];
 
   function handleOpenChange(next: boolean) {
     if (!next) {
@@ -101,7 +110,10 @@ export function AdjustXpDialog({
           <DialogTitle>Ajustar saldo</DialogTitle>
           <DialogDescription>
             Ajuste de XP para{" "}
-            {students.length === 1 ? students[0].name : `${students.length} alunos`}.
+            {students.length === 1
+              ? students[0].name
+              : `${students.length} alunos`}
+            .
           </DialogDescription>
         </DialogHeader>
 
@@ -128,8 +140,9 @@ export function AdjustXpDialog({
                 <ul className="flex flex-col gap-1">
                   {capped.map(({ student, xpApplied }) => (
                     <li key={student._id}>
-                      <span className="font-medium">{student.name}</span>: removidos{" "}
-                      {Math.abs(xpApplied)} de {Math.abs(result.amount)} XP
+                      <span className="font-medium">{student.name}</span>:
+                      removidos {Math.abs(xpApplied)} de{" "}
+                      {Math.abs(result.amount)} XP
                     </li>
                   ))}
                 </ul>
@@ -241,7 +254,9 @@ export function AdjustXpDialog({
                 </p>
               )}
 
-              {mutation.isError && <FieldError>{mutation.error.message}</FieldError>}
+              {mutation.isError && (
+                <FieldError>{mutation.error.message}</FieldError>
+              )}
             </FieldGroup>
           </form>
         )}

@@ -11,5 +11,9 @@ export function MissionsByRole() {
     return null;
   }
 
-  return user.role === "student" ? <MissionsScreen /> : <TeacherMissionsScreen />;
+  return user.role === "student" ? (
+    <MissionsScreen />
+  ) : (
+    <TeacherMissionsScreen />
+  );
 }

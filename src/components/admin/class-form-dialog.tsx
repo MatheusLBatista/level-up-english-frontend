@@ -112,7 +112,10 @@ function ClassForm({ schoolClass, mutation, onSaved }: ClassFormProps) {
 
   // Professor desativado continua ligado à turma, mas não vem na lista de ativos.
   const currentTeacher = schoolClass?.teacher;
-  if (currentTeacher && !teachers.some((item) => item.id === currentTeacher._id)) {
+  if (
+    currentTeacher &&
+    !teachers.some((item) => item.id === currentTeacher._id)
+  ) {
     teachers.unshift({
       id: currentTeacher._id,
       label: `${currentTeacher.name} (inativo)`,
@@ -237,9 +240,7 @@ function ClassForm({ schoolClass, mutation, onSaved }: ClassFormProps) {
                     onCheckedChange={field.onChange}
                     disabled={mutation.isPending}
                   />
-                  <FieldLabel htmlFor="class-active">
-                    Turma ativa
-                  </FieldLabel>
+                  <FieldLabel htmlFor="class-active">Turma ativa</FieldLabel>
                 </Field>
               )}
             />

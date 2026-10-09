@@ -63,7 +63,9 @@ export function DeactivateMissionDialog({
         )}
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={mutation.isPending}>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel disabled={mutation.isPending}>
+            Cancelar
+          </AlertDialogCancel>
           <Button
             variant="destructive"
             disabled={mutation.isPending}

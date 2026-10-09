@@ -116,7 +116,9 @@ function EditTeacherForm({
     <>
       <DialogHeader>
         <DialogTitle>Editar professor</DialogTitle>
-        <DialogDescription className="break-all">{teacher.email}</DialogDescription>
+        <DialogDescription className="break-all">
+          {teacher.email}
+        </DialogDescription>
       </DialogHeader>
 
       <form

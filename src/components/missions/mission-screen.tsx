@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  Gamepad2Icon,
-  SearchXIcon,
-} from "lucide-react";
+import { Gamepad2Icon, SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { MissionDialog } from "@/components/missions/mission-dialog";
 import { MissionTypeFilter } from "@/components/missions/mission-type-filter";
@@ -122,7 +119,7 @@ export function MissionsScreen() {
         </div>
       )}
 
-       {page && (
+      {page && (
         <PaginationControls
           page={page}
           onChange={(pagina) => setFilters({ pagina })}

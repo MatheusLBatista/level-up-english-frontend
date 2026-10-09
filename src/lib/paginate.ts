@@ -6,7 +6,11 @@ import type { Paginated } from "@/lib/types";
  * Página fora do intervalo cai na mais próxima (ex.: depois de desativar o
  * último item da última página).
  */
-export function paginate<T>(items: T[], page: number, limit: number): Paginated<T> {
+export function paginate<T>(
+  items: T[],
+  page: number,
+  limit: number,
+): Paginated<T> {
   const totalDocs = items.length;
   const totalPages = Math.max(1, Math.ceil(totalDocs / limit));
   const current = Math.min(Math.max(1, page), totalPages);
