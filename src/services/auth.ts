@@ -9,6 +9,14 @@ export function login(creditials: LoginInput) {
   });
 }
 
+/** Apaga os tokens do usuário no banco: o access e o refresh param de valer. */
+export function logout(token: string) {
+  return apiFetch<null>("/auth/logout", {
+    method: "POST",
+    token,
+  });
+}
+
 export type ChangePasswordBody = {
   currentPassword: string;
   newPassword: string;

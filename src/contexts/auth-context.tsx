@@ -19,6 +19,7 @@ import type { User } from "@/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
 import { onUnauthorized } from "@/lib/auth-events";
 import { onSessionRefreshed } from "@/lib/auth-events";
+import { logout } from "@/services/auth";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
@@ -53,14 +54,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("authenticated");
   }, []);
 
-  const signOut = useCallback(() => {
+  const clearLocalSession = useCallback(() => {
     clearSession();
     queryClient.clear();
     setSession(null);
     setStatus("unauthenticated");
   }, [queryClient]);
 
-  useEffect(() => onUnauthorized(signOut), [signOut]);
+  // Sair pelo botão também derruba a sessão no servidor. Limpa a local antes,
+  // para a tela não esperar a rede; se a chamada falhar, o usuário sai igual.
+  const signOut = useCallback(() => {
+    const token = session?.accessToken;
+
+    clearLocalSession();
+
+    if (token) {
+      logout(token).catch(() => {});
+    }
+  }, [session, clearLocalSession]);
+
+  // Sessão já recusada pela API: não adianta (nem convém) chamar o logout,
+  // que responderia 401 de novo.
+  useEffect(() => onUnauthorized(clearLocalSession), [clearLocalSession]);
   useEffect(
     () =>
       onSessionRefreshed((next) => {
