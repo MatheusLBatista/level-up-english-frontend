@@ -16,11 +16,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/lib/api";
-import { changePasswordSchema, type ChangePasswordInput } from "@/schemas/profile";
+import {
+  changePasswordSchema,
+  type ChangePasswordInput,
+} from "@/schemas/profile";
 import { changePassword } from "@/services/auth";
 
 export function ChangePasswordDialog() {
@@ -29,7 +37,11 @@ export function ChangePasswordDialog() {
 
   const form = useForm<ChangePasswordInput>({
     resolver: zodResolver(changePasswordSchema),
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
   const mutation = useMutation({
@@ -118,7 +130,9 @@ export function ChangePasswordDialog() {
               </Field>
 
               <Field data-invalid={Boolean(errors.confirmPassword)}>
-                <FieldLabel htmlFor="confirmPassword">Confirmar nova senha</FieldLabel>
+                <FieldLabel htmlFor="confirmPassword">
+                  Confirmar nova senha
+                </FieldLabel>
                 <Input
                   id="confirmPassword"
                   type="password"

@@ -88,7 +88,7 @@ export function createMission(body: CreateMissionBody, token: string) {
 export function updateMission(
   id: string,
   body: UpdateMissionBody,
-  token: string
+  token: string,
 ) {
   return apiFetch<MissionWriteResult>(`/missions/${id}`, {
     method: "PATCH",

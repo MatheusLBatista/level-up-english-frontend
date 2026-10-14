@@ -6,7 +6,7 @@ import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { ManageMissionCard } from "@/components/missions/manage-mission-card";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { MissionTypeFilter } from "@/components/missions/mission-type-filter";
-import { ClassSelect } from "@/components/teacher/class-select";
+import { ClassSelect } from "@/components/shared/class-select";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";

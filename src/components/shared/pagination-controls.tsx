@@ -7,7 +7,10 @@ type PaginationControlsProps = {
   onChange: (page: number) => void;
 };
 
-export function PaginationControls({ page, onChange }: PaginationControlsProps) {
+export function PaginationControls({
+  page,
+  onChange,
+}: PaginationControlsProps) {
   if (page.totalPages <= 1) {
     return null;
   }

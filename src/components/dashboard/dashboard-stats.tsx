@@ -45,7 +45,9 @@ export function DashboardStats() {
 
   const user = userQuery.data;
   const doneIds = new Set(
-    user.mission_progress.filter((entry) => entry.done).map((e) => e.mission_id),
+    user.mission_progress
+      .filter((entry) => entry.done)
+      .map((e) => e.mission_id),
   );
   const activeMissions = missionsQuery.data?.docs.filter(
     (mission) => !doneIds.has(mission._id),

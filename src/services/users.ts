@@ -56,8 +56,8 @@ export function listStudents(token: string, filters: StudentFilters = {}) {
   });
 
   if (filters.name) {
-    // O backend usa o texto direto num $regex: escapar evita 500 com "(" ou "+".
-    params.set("name", filters.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+    // Vai cru: o backend escapa o texto antes de usar no $regex.
+    params.set("name", filters.name);
   }
 
   if (filters.classId) {

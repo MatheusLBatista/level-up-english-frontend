@@ -16,12 +16,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/lib/api";
 import type { User } from "@/lib/types";
-import { updateProfileSchema, type UpdateProfileInput } from "@/schemas/profile";
+import {
+  updateProfileSchema,
+  type UpdateProfileInput,
+} from "@/schemas/profile";
 import { updateUser } from "@/services/users";
 
 export function EditProfileDialog({ user }: { user: User }) {
