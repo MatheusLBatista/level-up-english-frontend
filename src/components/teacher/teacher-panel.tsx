@@ -2,7 +2,7 @@
 
 import { SearchIcon, UserPlusIcon, UsersRoundIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
+import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
 import { StudentCard } from "@/components/teacher/student-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import { SelectAllCard } from "@/components/teacher/select-all-card";
 import { SelectionBar } from "@/components/teacher/selection-bar";
 import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialog";
 import { AdjustXpDialog } from "@/components/teacher/adjust-xp-dialog";
-import { ClassSelect } from "@/components/teacher/class-select";
+import { ClassSelect } from "@/components/shared/class-select";
 import { useSelectedClass } from "@/hooks/use-selected-class";
 import { matchesSearch } from "@/lib/text";
 

@@ -42,7 +42,9 @@ export function StudentProfileSheet({
   return (
     <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
       <SheetContent className="w-full gap-0 overflow-y-auto sm:max-w-md">
-        {student && <ProfileContent student={student} classLabel={classLabel} />}
+        {student && (
+          <ProfileContent student={student} classLabel={classLabel} />
+        )}
       </SheetContent>
     </Sheet>
   );
@@ -56,7 +58,10 @@ function ProfileContent({
   classLabel: string | null;
 }) {
   const completed = student.mission_progress.filter((entry) => entry.done);
-  const missionXp = completed.reduce((total, entry) => total + entry.xp_earned, 0);
+  const missionXp = completed.reduce(
+    (total, entry) => total + entry.xp_earned,
+    0,
+  );
   const { progress } = student;
 
   return (
@@ -80,7 +85,9 @@ function ProfileContent({
                 </Badge>
               )}
             </SheetTitle>
-            <SheetDescription className="truncate">{student.email}</SheetDescription>
+            <SheetDescription className="truncate">
+              {student.email}
+            </SheetDescription>
           </div>
         </div>
       </SheetHeader>
@@ -106,12 +113,19 @@ function ProfileContent({
         <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
           <div>
             <dt className="text-muted-foreground text-xs">Turma</dt>
-            <dd className={cn("font-medium", !student.class && "text-brand-level")}>
+            <dd
+              className={cn(
+                "font-medium",
+                !student.class && "text-brand-level",
+              )}
+            >
               {student.class ? (classLabel ?? "…") : "Sem turma"}
             </dd>
           </div>
           <div>
-            <dt className="text-muted-foreground text-xs">Na plataforma desde</dt>
+            <dt className="text-muted-foreground text-xs">
+              Na plataforma desde
+            </dt>
             <dd className="font-medium">
               {student.createdAt
                 ? sinceFormatter.format(new Date(student.createdAt))
@@ -119,11 +133,15 @@ function ProfileContent({
             </dd>
           </div>
           <div>
-            <dt className="text-muted-foreground text-xs">Missões concluídas</dt>
+            <dt className="text-muted-foreground text-xs">
+              Missões concluídas
+            </dt>
             <dd className="font-medium tabular-nums">{completed.length}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground text-xs">XP vindo de missões</dt>
+            <dt className="text-muted-foreground text-xs">
+              XP vindo de missões
+            </dt>
             <dd className="font-medium tabular-nums">
               {numberFormatter.format(missionXp)} XP
             </dd>
@@ -141,7 +159,10 @@ function RecentAttitudes({ studentId }: { studentId: string }) {
 
   return (
     <section aria-labelledby="recent-attitudes" className="flex flex-col gap-3">
-      <h3 id="recent-attitudes" className="flex items-baseline justify-between text-sm font-semibold">
+      <h3
+        id="recent-attitudes"
+        className="flex items-baseline justify-between text-sm font-semibold"
+      >
         Últimas atitudes
         {logsQuery.data && logsQuery.data.totalDocs > 0 && (
           <span className="text-muted-foreground text-xs font-normal tabular-nums">
@@ -195,7 +216,10 @@ function AttitudeItem({ log }: { log: AttitudeLog }) {
         </p>
         <p className="text-muted-foreground text-xs">
           {log.teacher?.name ?? "Professor removido"} ·{" "}
-          <time dateTime={log.applied_at} title={formatFullDate(log.applied_at)}>
+          <time
+            dateTime={log.applied_at}
+            title={formatFullDate(log.applied_at)}
+          >
             {formatRelativeTime(log.applied_at)}
           </time>
         </p>

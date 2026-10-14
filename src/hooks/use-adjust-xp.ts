@@ -45,7 +45,10 @@ export function useAdjustXp() {
         const student = students[index];
 
         if (result.status === "fulfilled") {
-          summary.succeeded.push({ student, xpApplied: result.value.xp_applied });
+          summary.succeeded.push({
+            student,
+            xpApplied: result.value.xp_applied,
+          });
         } else {
           summary.failures.push({
             student,

@@ -17,12 +17,18 @@ export function onSessionRefreshed(listener: SessionListener) {
   };
 }
 
-type Listener = () => void;
+/**
+ * Por que a API recusou a sessão: `expired` quando nem o refresh funcionou,
+ * `disabled` quando o admin desativou a conta durante o uso.
+ */
+export type UnauthorizedReason = "expired" | "disabled";
+
+type Listener = (reason: UnauthorizedReason) => void;
 const listeners = new Set<Listener>();
 
-export function emitUnauthorized() {
+export function emitUnauthorized(reason: UnauthorizedReason = "expired") {
   for (const listener of listeners) {
-    listener();
+    listener(reason);
   }
 }
 

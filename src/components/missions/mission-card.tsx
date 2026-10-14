@@ -1,4 +1,10 @@
-import { ListChecksIcon, TargetIcon, TrophyIcon, Volume2Icon, ZapIcon } from "lucide-react";
+import {
+  ListChecksIcon,
+  TargetIcon,
+  TrophyIcon,
+  Volume2Icon,
+  ZapIcon,
+} from "lucide-react";
 import type { LucideProps } from "lucide-react";
 import type { ComponentType, ReactNode } from "react";
 
@@ -35,11 +41,7 @@ type MissionCardProps = {
   action?: ReactNode;
 };
 
-export function MissionCard({
-  mission,
-  progress,
-  action,
-}: MissionCardProps) {
+export function MissionCard({ mission, progress, action }: MissionCardProps) {
   const { icon: Icon, label, tile } = missionStyles[mission.type];
   const status = getMissionStatus(progress);
 

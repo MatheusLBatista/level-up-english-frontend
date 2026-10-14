@@ -18,7 +18,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { useState } from "react";
-import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
+import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
 import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
 import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
 import { StudentProfileSheet } from "@/components/admin/students/student-profile-sheet";
@@ -126,7 +126,10 @@ export function StudentsScreen() {
           </div>
         </div>
 
-        <Button className="bg-brand-gradient" onClick={() => setCreateOpen(true)}>
+        <Button
+          className="bg-brand-gradient"
+          onClick={() => setCreateOpen(true)}
+        >
           <PlusIcon />
           Criar aluno
         </Button>
@@ -156,7 +159,10 @@ export function StudentsScreen() {
             })
           }
         >
-          <SelectTrigger className="w-full lg:w-52" aria-label="Filtrar por turma">
+          <SelectTrigger
+            className="w-full lg:w-52"
+            aria-label="Filtrar por turma"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

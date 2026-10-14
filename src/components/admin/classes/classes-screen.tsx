@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
-import { ClassFormDialog } from "@/components/admin/class-form-dialog";
-import { ClassRow } from "@/components/admin/class-row";
-import { DeactivateClassDialog } from "@/components/admin/deactivate-class-dialog";
+import { ClassFormDialog } from "@/components/admin/classes/class-form-dialog";
+import { ClassRow } from "@/components/admin/classes/class-row";
+import { DeactivateClassDialog } from "@/components/admin/classes/deactivate-class-dialog";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
@@ -126,8 +126,8 @@ export function ClassesScreen() {
       {reactivate.isError && (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
           <p className="text-sm">
-            Não foi possível reativar “{reactivate.variables?.schoolClass.name}”:{" "}
-            {reactivate.error.message}
+            Não foi possível reativar “{reactivate.variables?.schoolClass.name}
+            ”: {reactivate.error.message}
           </p>
           <Button
             size="sm"

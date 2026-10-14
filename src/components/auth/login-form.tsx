@@ -25,26 +25,33 @@ import { ApiError } from "@/lib/api";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { login } from "@/services/auth";
 
+const signOutNotices = {
+  disabled:
+    "Sua conta foi desativada. Fale com a coordenação da escola para reativá-la.",
+  expired: "Sua sessão expirou. Entre de novo para continuar.",
+};
+
 export function LoginForm() {
-  const { signIn } = useAuth();
+  const { signIn, signOutReason } = useAuth();
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
-  })
+  });
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (session) => {
       signIn(session);
-    }
+    },
   });
 
   const { errors } = form.formState;
 
   const requestError = loginMutation.error
     ? loginMutation.error instanceof ApiError
-      ? loginMutation.error.message : "Não foi possível entrar agora. Verifique sua conexão e tente de novo."
+      ? loginMutation.error.message
+      : "Não foi possível entrar agora. Verifique sua conexão e tente de novo."
     : null;
 
   return (
@@ -55,9 +62,22 @@ export function LoginForm() {
       </CardHeader>
 
       <CardContent>
+        {signOutReason && !loginMutation.isPending && (
+          <p
+            role="status"
+            className={
+              signOutReason === "disabled"
+                ? "border-destructive/40 bg-destructive/10 mb-4 rounded-xl border p-3 text-sm"
+                : "border-border/40 bg-muted/40 mb-4 rounded-xl border p-3 text-sm"
+            }
+          >
+            {signOutNotices[signOutReason]}
+          </p>
+        )}
+
         <form
-        noValidate
-        onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
+          noValidate
+          onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
         >
           <FieldGroup>
             <Field data-invalid={Boolean(errors.email)}>
@@ -71,7 +91,7 @@ export function LoginForm() {
                 disabled={loginMutation.isPending}
                 {...form.register("email")}
               />
-               <FieldError errors={[errors.email]} />
+              <FieldError errors={[errors.email]} />
             </Field>
 
             <Field data-invalid={Boolean(errors.password)}>
@@ -103,15 +123,15 @@ export function LoginForm() {
               size="lg"
               className="w-full"
               disabled={loginMutation.isPending}
-              >
-                {loginMutation.isPending && (
-                  <Loader2Icon className="animate-spin" />
-                )}
-                {loginMutation.isPending ? "Entrando..." : "Entrar"}
-              </Button>
+            >
+              {loginMutation.isPending && (
+                <Loader2Icon className="animate-spin" />
+              )}
+              {loginMutation.isPending ? "Entrando..." : "Entrar"}
+            </Button>
           </FieldGroup>
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

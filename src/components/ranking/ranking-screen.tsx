@@ -4,7 +4,7 @@ import { TrophyIcon, UsersRoundIcon } from "lucide-react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { RankingRow } from "@/components/ranking/ranking-row";
 import { RankingScopeFilter } from "@/components/ranking/ranking-scope-filter";
-import { ClassSelect } from "@/components/teacher/class-select";
+import { ClassSelect } from "@/components/shared/class-select";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";

@@ -5,7 +5,11 @@ import { Button } from "@/components/ui/button";
 import type { RankingScope } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const options: { value: RankingScope; label: string; icon: typeof GlobeIcon }[] = [
+const options: {
+  value: RankingScope;
+  label: string;
+  icon: typeof GlobeIcon;
+}[] = [
   { value: "global", label: "Geral", icon: GlobeIcon },
   { value: "class", label: "Turma", icon: UsersIcon },
 ];
@@ -15,7 +19,10 @@ type RankingScopeFilterProps = {
   onChange: (value: RankingScope) => void;
 };
 
-export function RankingScopeFilter({ value, onChange }: RankingScopeFilterProps) {
+export function RankingScopeFilter({
+  value,
+  onChange,
+}: RankingScopeFilterProps) {
   return (
     <div
       role="group"

@@ -14,12 +14,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import {
-  forgotPasswordSchema,
-  type ForgotPasswordInput,
-} from "@/schemas/auth";
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { forgotPasswordSchema, type ForgotPasswordInput } from "@/schemas/auth";
 import { forgotPassword } from "@/services/auth";
 
 export function ForgotPasswordForm() {

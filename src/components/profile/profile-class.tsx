@@ -12,7 +12,9 @@ export function ProfileClass({ user }: { user: User }) {
   const rankingQuery = useRanking("class");
 
   const position = rankingQuery.data
-    ? rankingQuery.data.entries.findIndex((entry) => entry.user._id === user._id) + 1
+    ? rankingQuery.data.entries.findIndex(
+        (entry) => entry.user._id === user._id,
+      ) + 1
     : 0;
 
   if (!user.class) {
