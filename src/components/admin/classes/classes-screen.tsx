@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
-import { ClassFormDialog } from "@/components/admin/class-form-dialog";
-import { ClassRow } from "@/components/admin/class-row";
-import { DeactivateClassDialog } from "@/components/admin/deactivate-class-dialog";
+import { ClassFormDialog } from "@/components/admin/classes/class-form-dialog";
+import { ClassRow } from "@/components/admin/classes/class-row";
+import { DeactivateClassDialog } from "@/components/admin/classes/deactivate-class-dialog";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";

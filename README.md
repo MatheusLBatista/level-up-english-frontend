@@ -117,7 +117,7 @@ src/
 │   ├── missions/        # listagem, resolução e gestão de missões
 │   ├── profile/         # perfis do aluno e do professor/admin
 │   ├── ranking/         # ranking
-│   ├── shared/          # peças usadas por várias telas (paginação, filtros)
+│   ├── shared/          # peças de mais de um papel (paginação, filtros, turma, novo aluno)
 │   ├── teacher/         # painel do professor
 │   └── ui/              # componentes do shadcn/ui
 ├── contexts/            # AuthProvider (sessão do usuário)

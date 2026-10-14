@@ -18,7 +18,7 @@ import {
   useQueryStates,
 } from "nuqs";
 import { useState } from "react";
-import { CreateStudentDialog } from "@/components/admin/students/create-student-dialog";
+import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
 import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
 import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
 import { StudentProfileSheet } from "@/components/admin/students/student-profile-sheet";

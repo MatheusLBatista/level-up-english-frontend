@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ClassesScreen } from "@/components/admin/classes-screen";
+import { ClassesScreen } from "@/components/admin/classes/classes-screen";
 import { RoleGuard } from "@/components/auth/role-guard";
 
 export const metadata: Metadata = {

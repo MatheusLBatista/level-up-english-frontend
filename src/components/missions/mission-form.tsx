@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { Controller, useForm, useWatch, type FieldPath } from "react-hook-form";
-import { ClassSelect } from "@/components/teacher/class-select";
+import { ClassSelect } from "@/components/shared/class-select";
 import { QuizQuestionsEditor } from "@/components/missions/quiz-questions-editor";
 import { Button } from "@/components/ui/button";
 import {

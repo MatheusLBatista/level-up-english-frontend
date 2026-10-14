@@ -19,12 +19,6 @@ export function countCompleted(user: User): number {
   return user.mission_progress.filter((entry) => entry.done).length;
 }
 
-export function countActive(missions: Mission[], user: User): number {
-  const progress = indexProgress(user);
-
-  return missions.filter((mission) => !progress.get(mission._id)?.done).length;
-}
-
 export function selectRecommended(
   missions: Mission[],
   user: User,
