@@ -1,6 +1,23 @@
 import { z } from "zod";
+import type { MissionType } from "@/lib/types";
 
-export const MIN_QUIZ_QUESTIONS = 5;
+/** Quantas perguntas cada tipo exige — as mesmas regras do backend. */
+export const questionLimits: Record<
+  MissionType,
+  { min: number; max: number | null }
+> = {
+  quiz: { min: 5, max: null },
+  vocabulary: { min: 1, max: 3 },
+  audio: { min: 1, max: 3 },
+};
+
+export function describeQuestionLimit(type: MissionType) {
+  const { min, max } = questionLimits[type];
+
+  return max === null
+    ? `O quiz precisa de no mínimo ${min} perguntas.`
+    : `Cadastre de ${min} a ${max} perguntas de checagem.`;
+}
 
 export const answerKeys = ["a", "b", "c", "d"] as const;
 
@@ -57,15 +74,14 @@ export const missionFormSchema = z
       }
     }
 
-    if (data.type !== "quiz") {
-      return;
-    }
+    const { min, max } = questionLimits[data.type];
+    const count = data.questions.length;
 
-    if (data.questions.length < MIN_QUIZ_QUESTIONS) {
+    if (count < min || (max !== null && count > max)) {
       ctx.addIssue({
         code: "custom",
         path: ["questions"],
-        message: `O quiz precisa de no mínimo ${MIN_QUIZ_QUESTIONS} perguntas.`,
+        message: describeQuestionLimit(data.type),
       });
     }
 
