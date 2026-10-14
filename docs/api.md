@@ -93,12 +93,23 @@ token.
 | GET    | `/users/{id}`               | A, P, Al |
 | PATCH  | `/users/{id}`               | A, P, Al |
 | DELETE | `/users/{id}`               | A, P, Al |
+| GET    | `/users/{id}/xp-history`    | A, P, Al |
 | POST   | `/users/recalculate-levels` | A        |
 
 Só o admin edita outros usuários. Professor e aluno editam só a própria conta,
 e sem mudar papel, XP, nível, turma, status, e-mail ou senha (a senha tem rota
 própria). Filtros do `GET /users`: `role`, `active`, `class` (`none` = sem turma,
 só admin).
+
+O `xp-history` junta numa linha do tempo, da mais recente para a mais antiga,
+tudo o que mexeu no XP do aluno: atitudes aplicadas (`kind: "attitude"`),
+ajustes manuais (`"adjustment"`) e missões que renderam XP (`"mission"`). Cada
+item traz `id`, `kind`, `xp` (com sinal: o que entrou de fato, já com o piso em
+0), `title`, `detail` e `date`. O `detail` muda conforme a origem: na atitude é
+quem aplicou; no ajuste, o motivo (quem ajustou vem em `teacher`); na missão,
+"Melhor nota: X%". Paginado com `page` e `limit` (padrão 10, máximo 50). O
+aluno só vê o próprio histórico, o professor só o de alunos das turmas dele e o
+admin o de qualquer aluno; um id que não seja de aluno responde 404.
 
 ### Turmas
 
@@ -124,10 +135,16 @@ deixa a turma sem professor.
 | DELETE | `/missions/{id}`          | A, P     |
 | POST   | `/missions/{id}/progress` | Al       |
 
-No `progress`, o quiz manda `answers` e o servidor corrige; vocabulário e áudio
-mandam `score`. O XP é `xp_reward × melhor nota / 100`, descontado o que já foi
-creditado — refazer a missão só paga a diferença. O progresso guarda a melhor
-nota (`best_score` na resposta).
+O quiz exige no mínimo 5 perguntas; vocabulário e áudio, de 1 a 3 perguntas de
+checagem. Missões antigas de vocabulário e áudio, sem perguntas, continuam
+valendo até serem editadas.
+
+No `progress`, toda missão com perguntas manda `answers` na ordem das questões
+e o servidor corrige — o `score` do corpo é ignorado. Vocabulário e áudio
+antigos, sem perguntas, mandam só `{ done: true }`. O XP é
+`xp_reward × melhor nota / 100`, descontado o que já foi creditado — refazer a
+missão só paga a diferença. O progresso guarda a melhor nota (`best_score` na
+resposta).
 
 ### Atitudes
 
@@ -155,7 +172,8 @@ nunca fica abaixo de 0.
 | POST   | `/xp-adjustments` | A, P   |
 
 Corpo `{ student, amount, reason? }`. Como o XP não fica negativo, o
-`xp_applied` da resposta pode ser menor que o `amount` pedido.
+`xp_applied` da resposta pode ser menor que o `amount` pedido. Não há listagem
+própria: os ajustes aparecem no `GET /users/{id}/xp-history`.
 
 ### Ranking
 

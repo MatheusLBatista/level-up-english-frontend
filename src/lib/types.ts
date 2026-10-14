@@ -79,6 +79,8 @@ export type MissionProgressResult = {
   student: string;
   done: boolean;
   score: number;
+  /** Melhor nota do aluno nesta missão; é a que fica salva no progresso. */
+  best_score: number;
   correct_answers: number | null;
   total_questions: number | null;
   xp_earned: number;
@@ -209,4 +211,16 @@ export type XpAdjustmentResult = {
   xp_applied: number;
   reason?: string | null;
   applied_at: string;
+};
+
+export type XpHistoryKind = "attitude" | "adjustment" | "mission";
+
+export type XpHistoryItem = {
+  id: string;
+  kind: XpHistoryKind;
+  xp: number;
+  title: string;
+  detail: string | null;
+  teacher?: string | null;
+  date: string | null;
 };

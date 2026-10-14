@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DashboardStats } from "@/components/dashboard/dashboard-stats";
 import { WelcomeBanner } from "@/components/dashboard/banner";
 import { RecommendedMissions } from "@/components/dashboard/recommended-missions";
+import { XpHistory } from "@/components/dashboard/xp-history";
 import { RoleGuard } from "@/components/auth/role-guard";
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function DashboardPage() {
         <WelcomeBanner />
         <DashboardStats />
         <RecommendedMissions />
+        <XpHistory />
       </main>
     </RoleGuard>
   );

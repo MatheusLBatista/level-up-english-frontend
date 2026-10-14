@@ -1,6 +1,7 @@
-import type { Mission } from "@/lib/types";
+import type { Mission, MissionType } from "@/lib/types";
 import {
-  MIN_QUIZ_QUESTIONS,
+  answerKeys,
+  questionLimits,
   type MissionFormInput,
   type QuestionFormInput,
 } from "@/schemas/mission";
@@ -14,12 +15,45 @@ export function createEmptyQuestion(): QuestionFormInput {
   };
 }
 
+function hasContent(question: QuestionFormInput) {
+  return (
+    question.question.trim() !== "" ||
+    answerKeys.some((key) => question.options[key].trim() !== "")
+  );
+}
+
+/**
+ * Ajusta a lista ao limite do tipo: corta o que passa do máximo e completa o
+ * mínimo com perguntas em branco. Com `dropEmpty`, descarta antes os rascunhos
+ * vazios — usado na troca de tipo, para as 5 perguntas em branco do quiz não
+ * virarem 3 checagens obrigatórias.
+ */
+export function fitQuestionsToType(
+  questions: QuestionFormInput[],
+  type: MissionType,
+  { dropEmpty = false } = {},
+): QuestionFormInput[] {
+  const { min, max } = questionLimits[type];
+  const base = dropEmpty ? questions.filter(hasContent) : questions;
+  const kept = max === null ? base : base.slice(0, max);
+  const missing = Math.max(min - kept.length, 0);
+
+  return [...kept, ...Array.from({ length: missing }, createEmptyQuestion)];
+}
+
 export function getMissionFormDefaults(
   mission: Mission | null,
   classId: string | null,
 ): MissionFormInput {
+  const type = mission?.type ?? "quiz";
+  const saved = (mission?.questions ?? []).map((question) => ({
+    question: question.question,
+    options: question.options,
+    correct_answer: question.correct_answer ?? "a",
+  }));
+
   return {
-    type: mission?.type ?? "quiz",
+    type,
     title: mission?.title ?? "",
     description: mission?.description ?? "",
     xp_reward: mission?.xp_reward ?? 100,
@@ -27,13 +61,9 @@ export function getMissionFormDefaults(
     active: mission?.active ?? true,
     content: mission?.content ?? "",
     content_url: mission?.content_url ?? "",
-    questions: mission
-      ? (mission.questions ?? []).map((question) => ({
-          question: question.question,
-          options: question.options,
-          correct_answer: question.correct_answer ?? "a",
-        }))
-      : Array.from({ length: MIN_QUIZ_QUESTIONS }, createEmptyQuestion),
+    // Missão nova: 5 em branco (quiz). Vocabulário/áudio antigo, sem
+    // perguntas: 1 em branco, porque o backend exige ao editar.
+    questions: fitQuestionsToType(saved, type),
   };
 }
 
@@ -51,9 +81,13 @@ function contentFields(values: MissionFormInput) {
     case "quiz":
       return { questions: values.questions };
     case "vocabulary":
-      return { content: values.content };
+      return { content: values.content, questions: values.questions };
     case "audio":
-      return { content_url: values.content_url, content: values.content };
+      return {
+        content_url: values.content_url,
+        content: values.content,
+        questions: values.questions,
+      };
   }
 }
 

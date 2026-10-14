@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { PaginationControls } from "@/components/shared/pagination-controls";
+import { XpHistoryList } from "@/components/shared/xp-history-list";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,10 +15,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useStudentAttitudeLogs } from "@/hooks/use-attitude-logs";
-import { formatXpDelta } from "@/lib/attitudes";
-import { formatFullDate, formatRelativeTime } from "@/lib/date";
-import type { AttitudeLog, User } from "@/lib/types";
+import { useXpHistory } from "@/hooks/use-xp-history";
+import type { User } from "@/lib/types";
 import { getInitials } from "@/lib/user";
 import { cn } from "@/lib/utils";
 
@@ -148,94 +149,62 @@ function ProfileContent({
           </div>
         </dl>
 
-        <RecentAttitudes studentId={student._id} />
+        <XpHistorySection key={student._id} studentId={student._id} />
       </div>
     </>
   );
 }
 
-function RecentAttitudes({ studentId }: { studentId: string }) {
-  const logsQuery = useStudentAttitudeLogs(studentId);
+function XpHistorySection({ studentId }: { studentId: string }) {
+  const [page, setPage] = useState(1);
+  const historyQuery = useXpHistory(studentId, { page, limit: 5 });
+  const current = historyQuery.data;
 
   return (
-    <section aria-labelledby="recent-attitudes" className="flex flex-col gap-3">
+    <section aria-labelledby="xp-history" className="flex flex-col gap-3">
       <h3
-        id="recent-attitudes"
+        id="xp-history"
         className="flex items-baseline justify-between text-sm font-semibold"
       >
-        Últimas atitudes
-        {logsQuery.data && logsQuery.data.totalDocs > 0 && (
+        Histórico de XP
+        {current && current.totalDocs > 0 && (
           <span className="text-muted-foreground text-xs font-normal tabular-nums">
-            {logsQuery.data.totalDocs} no total
+            {current.totalDocs} no total
           </span>
         )}
       </h3>
 
-      {logsQuery.isError ? (
+      {historyQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
-          <p className="text-sm">Não foi possível carregar as atitudes.</p>
+          <p className="text-sm">Não foi possível carregar o histórico.</p>
           <Button
             size="sm"
             variant="outline"
             className="ml-auto"
-            onClick={() => void logsQuery.refetch()}
+            onClick={() => void historyQuery.refetch()}
           >
             Tentar de novo
           </Button>
         </div>
-      ) : !logsQuery.data ? (
+      ) : !current ? (
         <div className="flex flex-col gap-2">
           {Array.from({ length: 3 }, (_, index) => (
             <Skeleton key={index} className="h-10 rounded-lg" />
           ))}
         </div>
-      ) : logsQuery.data.docs.length === 0 ? (
+      ) : current.docs.length === 0 ? (
         <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-4 text-center text-xs">
-          Nenhuma atitude aplicada a este aluno ainda.
+          Nenhuma movimentação de XP para este aluno ainda.
         </p>
       ) : (
-        <ul className="divide-border/40 divide-y">
-          {logsQuery.data.docs.map((log) => (
-            <AttitudeItem key={log._id} log={log} />
-          ))}
-        </ul>
+        <>
+          <XpHistoryList
+            items={current.docs}
+            dimmed={historyQuery.isPlaceholderData}
+          />
+          <PaginationControls page={current} onChange={setPage} />
+        </>
       )}
     </section>
-  );
-}
-
-function AttitudeItem({ log }: { log: AttitudeLog }) {
-  const xp = log.xp_applied;
-  const isNegative = log.attitude ? log.attitude.type === "negative" : xp < 0;
-
-  return (
-    <li className="flex items-baseline justify-between gap-3 py-2">
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium">
-          {log.attitude?.name ?? "Atitude removida"}
-        </p>
-        <p className="text-muted-foreground text-xs">
-          {log.teacher?.name ?? "Professor removido"} ·{" "}
-          <time
-            dateTime={log.applied_at}
-            title={formatFullDate(log.applied_at)}
-          >
-            {formatRelativeTime(log.applied_at)}
-          </time>
-        </p>
-      </div>
-      <span
-        className={cn(
-          "shrink-0 text-sm font-semibold tabular-nums",
-          xp === 0
-            ? "text-muted-foreground"
-            : isNegative
-              ? "text-destructive"
-              : "text-brand-done",
-        )}
-      >
-        {formatXpDelta(xp)}
-      </span>
-    </li>
   );
 }

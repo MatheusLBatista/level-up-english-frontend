@@ -22,6 +22,7 @@ export function useSubmitMissionProgress(missionId: string) {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["users", user?._id] });
       void queryClient.invalidateQueries({ queryKey: ["missions"] });
+      void queryClient.invalidateQueries({ queryKey: ["xp-history"] });
     },
   });
 }
