@@ -212,3 +212,15 @@ export type XpAdjustmentResult = {
   reason?: string | null;
   applied_at: string;
 };
+
+export type XpHistoryKind = "attitude" | "adjustment" | "mission";
+
+export type XpHistoryItem = {
+  id: string;
+  kind: XpHistoryKind;
+  xp: number;
+  title: string;
+  detail: string | null;
+  teacher?: string | null;
+  date: string | null;
+};
