@@ -12,38 +12,47 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { createEmptyQuestion } from "@/lib/mission-form";
+import type { MissionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import {
   answerKeys,
-  MIN_QUIZ_QUESTIONS,
+  questionLimits,
   type MissionFormInput,
 } from "@/schemas/mission";
 
-type QuizQuestionsEditorProps = {
+type QuestionsEditorProps = {
   form: UseFormReturn<MissionFormInput>;
+  type: MissionType;
   disabled: boolean;
 };
 
-export function QuizQuestionsEditor({
+export function QuestionsEditor({
   form,
+  type,
   disabled,
-}: QuizQuestionsEditorProps) {
+}: QuestionsEditorProps) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "questions",
   });
   const { errors } = useFormState({ control: form.control, name: "questions" });
 
+  const { min, max } = questionLimits[type];
+  const isQuiz = type === "quiz";
   const questionErrors = errors.questions;
-  const canRemove = fields.length > MIN_QUIZ_QUESTIONS;
+  const canRemove = fields.length > min;
+  const canAdd = max === null || fields.length < max;
 
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <p className="text-sm font-medium">Perguntas</p>
+        <p className="text-sm font-medium">
+          {isQuiz ? "Perguntas" : "Perguntas de checagem"}
+        </p>
         <p className="text-muted-foreground text-xs">
-          {fields.length} cadastradas · mínimo {MIN_QUIZ_QUESTIONS}. Marque a
-          alternativa correta de cada uma.
+          {isQuiz
+            ? `${fields.length} cadastradas · mínimo ${min}. Marque a alternativa correta de cada uma.`
+            : `${fields.length} de ${max} · o aluno responde depois de estudar o conteúdo. Marque a alternativa correta.`}
         </p>
       </div>
 
@@ -73,7 +82,7 @@ export function QuizQuestionsEditor({
                   title={
                     canRemove
                       ? "Remover"
-                      : `O quiz precisa de pelo menos ${MIN_QUIZ_QUESTIONS} perguntas`
+                      : `Mantenha pelo menos ${min} ${min === 1 ? "pergunta" : "perguntas"}`
                   }
                   className="hover:text-destructive"
                   disabled={disabled || !canRemove}
@@ -92,7 +101,11 @@ export function QuizQuestionsEditor({
                 </FieldLabel>
                 <Input
                   id={`questions.${index}.question`}
-                  placeholder="Ex.: What color is the sky?"
+                  placeholder={
+                    isQuiz
+                      ? "Ex.: What color is the sky?"
+                      : "Ex.: What does “apple” mean?"
+                  }
                   aria-invalid={Boolean(itemErrors?.question)}
                   disabled={disabled}
                   {...form.register(`questions.${index}.question`)}
@@ -167,7 +180,8 @@ export function QuizQuestionsEditor({
         type="button"
         variant="outline"
         className="border-dashed"
-        disabled={disabled}
+        disabled={disabled || !canAdd}
+        title={canAdd ? undefined : `No máximo ${max} perguntas de checagem`}
         onClick={() => append(createEmptyQuestion())}
       >
         <PlusIcon />

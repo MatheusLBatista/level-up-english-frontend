@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api";
-import type { Paginated, User } from "@/lib/types";
+import type { Paginated, User, XpHistoryItem } from "@/lib/types";
 
 export function getUserById(id: string, token: string) {
   return apiFetch<User>(`/users/${id}`, { token });
@@ -69,4 +69,25 @@ export function listStudents(token: string, filters: StudentFilters = {}) {
   }
 
   return apiFetch<Paginated<User>>(`/users?${params}`, { token });
+}
+
+export type XpHistoryFilters = {
+  page?: number;
+  limit?: number;
+};
+
+export function getXpHistory(
+  studentId: string,
+  token: string,
+  filters: XpHistoryFilters = {},
+) {
+  const params = new URLSearchParams({
+    page: String(filters.page ?? 1),
+    limit: String(filters.limit ?? 10),
+  });
+
+  return apiFetch<Paginated<XpHistoryItem>>(
+    `/users/${studentId}/xp-history?${params}`,
+    { token },
+  );
 }

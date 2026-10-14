@@ -38,9 +38,9 @@ export type MissionFilters = {
   limit?: number;
 };
 
+/** O score é sempre calculado pelo servidor: com perguntas, a partir das `answers`. */
 export type SubmitProgressBody = {
   done: boolean;
-  score?: number;
   answers?: QuizAnswer[];
 };
 

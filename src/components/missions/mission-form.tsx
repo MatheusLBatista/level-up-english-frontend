@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
 import { Controller, useForm, useWatch, type FieldPath } from "react-hook-form";
 import { ClassSelect } from "@/components/shared/class-select";
-import { QuizQuestionsEditor } from "@/components/missions/quiz-questions-editor";
+import { QuestionsEditor } from "@/components/missions/questions-editor";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
@@ -25,8 +25,8 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type { useSaveMission } from "@/hooks/use-save-mission";
 import { ApiError } from "@/lib/api";
-import { getMissionFormDefaults } from "@/lib/mission-form";
-import type { ClassSummary, Mission } from "@/lib/types";
+import { fitQuestionsToType, getMissionFormDefaults } from "@/lib/mission-form";
+import type { ClassSummary, Mission, MissionType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { missionFormSchema, type MissionFormInput } from "@/schemas/mission";
 
@@ -91,6 +91,28 @@ export function MissionForm({
   const { errors } = form.formState;
   const hasFieldErrors = Object.keys(errors).length > 0;
 
+  // Vocabulário/áudio criado antes das perguntas de checagem: o backend só
+  // aceita salvar alterações se vierem de 1 a 3 perguntas.
+  const isLegacyCheck =
+    mission !== null &&
+    mission.type !== "quiz" &&
+    (mission.questions?.length ?? 0) === 0;
+
+  function changeType(next: MissionType) {
+    if (next === type) {
+      return;
+    }
+
+    form.setValue("type", next);
+    form.setValue(
+      "questions",
+      fitQuestionsToType(form.getValues("questions"), next, {
+        dropEmpty: true,
+      }),
+    );
+    form.clearErrors("questions");
+  }
+
   function handleSubmit(values: MissionFormInput) {
     mutation.mutate(
       { missionId: mission?._id ?? null, values },
@@ -142,7 +164,7 @@ export function MissionForm({
                     variant="ghost"
                     aria-pressed={isActive}
                     disabled={isEditing || mutation.isPending}
-                    onClick={() => form.setValue("type", value)}
+                    onClick={() => changeType(value)}
                     className={cn(
                       "rounded-lg text-xs font-semibold tracking-wide uppercase",
                       isActive &&
@@ -278,9 +300,18 @@ export function MissionForm({
             </>
           )}
 
-          {type === "quiz" && (
-            <QuizQuestionsEditor form={form} disabled={mutation.isPending} />
+          {isLegacyCheck && (
+            <p className="border-brand-level/40 bg-brand-level/10 rounded-xl border p-3 text-sm">
+              Esta missão foi criada antes das perguntas de checagem. Para
+              salvar alterações, cadastre de 1 a 3 perguntas sobre o conteúdo.
+            </p>
           )}
+
+          <QuestionsEditor
+            form={form}
+            type={type}
+            disabled={mutation.isPending}
+          />
 
           {isEditing && (
             <Controller
