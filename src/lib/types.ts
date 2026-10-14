@@ -79,6 +79,8 @@ export type MissionProgressResult = {
   student: string;
   done: boolean;
   score: number;
+  /** Melhor nota do aluno nesta missão; é a que fica salva no progresso. */
+  best_score: number;
   correct_answers: number | null;
   total_questions: number | null;
   xp_earned: number;

@@ -43,14 +43,17 @@ export function MissionDialog({
 
   const questions = mission.questions ?? [];
   const isQuiz = mission.type === "quiz";
-  const withoutQuestions = isQuiz && questions.length === 0;
+  // Vocabulário e áudio antigos não têm perguntas: concluem com um clique.
+  const hasQuestions = questions.length > 0;
+  const withoutQuestions = isQuiz && !hasQuestions;
   const allAnswered =
     questions.length > 0 && answers.filter(Boolean).length === questions.length;
   const result = mutation.data;
 
   const status = getMissionStatus(progress);
   const isRetry = canRetryMission(mission, progress);
-  const canRetryNow = isQuiz && result !== undefined && result.score < 100;
+  const canRetryNow =
+    hasQuestions && result !== undefined && result.score < 100;
 
   const actionLabel = isRetry
     ? "Tentar de novo"
@@ -96,9 +99,9 @@ export function MissionDialog({
 
   function handleSubmit() {
     mutation.mutate(
-      isQuiz
+      hasQuestions
         ? { done: true, answers: answers as QuizAnswer[] }
-        : { done: true, score: 100 },
+        : { done: true },
     );
   }
 
@@ -135,6 +138,11 @@ export function MissionDialog({
                 ? `Você acertou ${result.correct_answers} de ${result.total_questions} (${result.score}%).`
                 : "Progresso salvo."}
             </p>
+            {result.best_score > result.score && (
+              <p className="text-muted-foreground text-sm">
+                Sua melhor nota nesta missão continua {result.best_score}%.
+              </p>
+            )}
             {result.already_rewarded && (
               <p className="text-muted-foreground text-sm">
                 {result.xp_earned > 0
@@ -150,22 +158,34 @@ export function MissionDialog({
           </div>
         ) : (
           <>
-            {isQuiz ? (
-              withoutQuestions ? (
-                <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-8 text-center text-sm">
-                  Esta missão ainda não tem questões cadastradas. Fale com seu
-                  professor.
-                </p>
-              ) : (
-                <MissionQuiz
-                  questions={questions}
-                  answers={answers}
-                  disabled={mutation.isPending}
-                  onAnswer={handleAnswer}
-                />
-              )
+            {!isQuiz && <MissionMedia mission={mission} />}
+
+            {withoutQuestions ? (
+              <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-8 text-center text-sm">
+                Esta missão ainda não tem questões cadastradas. Fale com seu
+                professor.
+              </p>
             ) : (
-              <MissionMedia mission={mission} />
+              hasQuestions && (
+                <section className="flex flex-col gap-3">
+                  {!isQuiz && (
+                    <div>
+                      <h3 className="text-sm font-semibold">
+                        Responda para concluir
+                      </h3>
+                      <p className="text-muted-foreground text-xs">
+                        Use o conteúdo acima para responder.
+                      </p>
+                    </div>
+                  )}
+                  <MissionQuiz
+                    questions={questions}
+                    answers={answers}
+                    disabled={mutation.isPending}
+                    onAnswer={handleAnswer}
+                  />
+                </section>
+              )
             )}
 
             <div className="border-brand-xp/30 bg-brand-xp/10 flex items-center gap-3 rounded-xl border p-4">
@@ -178,7 +198,7 @@ export function MissionDialog({
                 </p>
                 <p className="text-muted-foreground text-sm">
                   {mission.xp_reward} XP
-                  {isQuiz && " — proporcional aos acertos"}
+                  {hasQuestions && " — proporcional aos acertos"}
                 </p>
                 {isRetry && progress && (
                   <p className="text-muted-foreground mt-1 text-xs">
@@ -215,7 +235,7 @@ export function MissionDialog({
               disabled={
                 mutation.isPending ||
                 withoutQuestions ||
-                (isQuiz && !allAnswered)
+                (hasQuestions && !allAnswered)
               }
               onClick={handleSubmit}
             >

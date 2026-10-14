@@ -41,9 +41,12 @@ export function selectRecommended(
     .slice(0, limit);
 }
 
+/** Refazer só faz sentido onde há o que errar: missões com perguntas. */
 export function canRetryMission(
   mission: Mission,
   entry?: MissionProgressEntry,
 ): boolean {
-  return mission.type === "quiz" && entry?.done === true && entry.score < 100;
+  const hasQuestions = (mission.questions?.length ?? 0) > 0;
+
+  return hasQuestions && entry?.done === true && entry.score < 100;
 }
