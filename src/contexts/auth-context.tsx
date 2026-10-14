@@ -17,7 +17,7 @@ import {
 } from "@/lib/auth-storage";
 import type { User } from "@/lib/types";
 import { useQueryClient } from "@tanstack/react-query";
-import { onUnauthorized } from "@/lib/auth-events";
+import { onUnauthorized, type UnauthorizedReason } from "@/lib/auth-events";
 import { onSessionRefreshed } from "@/lib/auth-events";
 import { logout } from "@/services/auth";
 
@@ -30,6 +30,8 @@ type AuthContextValue = {
   signIn: (session: Session) => void;
   signOut: () => void;
   updateUser: (user: User) => void;
+  /** Por que a última sessão caiu sozinha; o login usa para avisar. */
+  signOutReason: UnauthorizedReason | null;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -37,6 +39,9 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
+  const [signOutReason, setSignOutReason] = useState<UnauthorizedReason | null>(
+    null,
+  );
 
   useEffect(() => {
     const stored = readSession();
@@ -52,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     writeSession(next);
     setSession(next);
     setStatus("authenticated");
+    setSignOutReason(null);
   }, []);
 
   const clearLocalSession = useCallback(() => {
@@ -67,15 +73,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const refreshToken = session?.refreshToken;
 
     clearLocalSession();
+    setSignOutReason(null);
 
     if (refreshToken) {
       logout(refreshToken).catch(() => {});
     }
   }, [session, clearLocalSession]);
 
-  // Sessão já recusada pela API (refresh também falhou): não há o que
-  // encerrar no servidor, só limpar o navegador.
-  useEffect(() => onUnauthorized(clearLocalSession), [clearLocalSession]);
+  // Sessão recusada pela API (refresh falhou ou conta desativada): não há o
+  // que encerrar no servidor, só limpar o navegador e guardar o motivo.
+  useEffect(
+    () =>
+      onUnauthorized((reason) => {
+        clearLocalSession();
+        setSignOutReason(reason);
+      }),
+    [clearLocalSession],
+  );
   useEffect(
     () =>
       onSessionRefreshed((next) => {
@@ -107,8 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signOut,
       updateUser,
+      signOutReason,
     }),
-    [status, session, signIn, signOut, updateUser],
+    [status, session, signIn, signOut, updateUser, signOutReason],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

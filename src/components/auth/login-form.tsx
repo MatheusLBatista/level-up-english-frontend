@@ -25,8 +25,14 @@ import { ApiError } from "@/lib/api";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { login } from "@/services/auth";
 
+const signOutNotices = {
+  disabled:
+    "Sua conta foi desativada. Fale com a coordenação da escola para reativá-la.",
+  expired: "Sua sessão expirou. Entre de novo para continuar.",
+};
+
 export function LoginForm() {
-  const { signIn } = useAuth();
+  const { signIn, signOutReason } = useAuth();
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -56,6 +62,19 @@ export function LoginForm() {
       </CardHeader>
 
       <CardContent>
+        {signOutReason && !loginMutation.isPending && (
+          <p
+            role="status"
+            className={
+              signOutReason === "disabled"
+                ? "border-destructive/40 bg-destructive/10 mb-4 rounded-xl border p-3 text-sm"
+                : "border-border/40 bg-muted/40 mb-4 rounded-xl border p-3 text-sm"
+            }
+          >
+            {signOutNotices[signOutReason]}
+          </p>
+        )}
+
         <form
           noValidate
           onSubmit={form.handleSubmit((values) => loginMutation.mutate(values))}
