@@ -11,7 +11,7 @@ export function useXpHistory(
   const { token } = useAuth();
 
   return useQuery({
-    queryKey: ["users", studentId, "xp-history", filters],
+    queryKey: ["xp-history", studentId, filters],
     queryFn:
       token && studentId
         ? () => getXpHistory(studentId, token, filters)

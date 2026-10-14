@@ -67,6 +67,7 @@ export function useApplyAttitudes() {
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ["users", "students"] });
       void queryClient.invalidateQueries({ queryKey: ["rankings"] });
+      void queryClient.invalidateQueries({ queryKey: ["xp-history"] });
     },
   });
 }
