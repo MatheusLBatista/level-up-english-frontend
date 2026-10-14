@@ -16,7 +16,7 @@ A navegação muda conforme o papel de quem entra. Cada página checa o papel
 
 | Tela      | Rota         | O que faz                                                                          |
 | --------- | ------------ | ---------------------------------------------------------------------------------- |
-| Dashboard | `/dashboard` | Nível, XP, progresso até o próximo nível e missões recomendadas.                   |
+| Dashboard | `/dashboard` | Nível, XP, progresso, missões recomendadas e histórico de XP.                      |
 | Missões   | `/missoes`   | Missões da turma (quiz, vocabulário, áudio) com filtro por tipo; resolve no modal. |
 | Ranking   | `/ranking`   | Ranking geral e da própria turma.                                                  |
 | Perfil    | `/perfil`    | Dados, turma, conquistas; edição do nome e troca de senha.                         |
@@ -32,16 +32,16 @@ A navegação muda conforme o papel de quem entra. Cada página checa o papel
 
 ### Admin
 
-| Tela        | Rota           | O que faz                                                              |
-| ----------- | -------------- | ---------------------------------------------------------------------- |
-| Painel      | `/painel`      | O mesmo painel do professor, com acesso a todas as turmas.             |
-| Turmas      | `/turmas`      | Criar, editar, desativar e reativar turmas e escolher o professor.     |
-| Alunos      | `/alunos`      | Cadastrar (com e-mail de convite), editar, mudar de turma e desativar. |
-| Professores | `/professores` | Cadastrar, definir as turmas de cada professor e desativar.            |
-| Atitudes    | `/atitudes`    | Catálogo de atitudes (prêmios e punições em XP) usadas no painel.      |
-| Missões     | `/missoes`     | Gerencia as missões de qualquer turma.                                 |
-| Ranking     | `/ranking`     | Ranking geral e de qualquer turma.                                     |
-| Perfil      | `/perfil`      | Crachá, turmas da escola e as últimas atitudes que aplicou.            |
+| Tela        | Rota           | O que faz                                                                                     |
+| ----------- | -------------- | --------------------------------------------------------------------------------------------- |
+| Painel      | `/painel`      | O mesmo painel do professor, com acesso a todas as turmas.                                    |
+| Turmas      | `/turmas`      | Criar, editar, desativar e reativar turmas e escolher o professor.                            |
+| Alunos      | `/alunos`      | Cadastrar (com e-mail de convite), editar, mudar de turma, desativar e ver o histórico de XP. |
+| Professores | `/professores` | Cadastrar, definir as turmas de cada professor e desativar.                                   |
+| Atitudes    | `/atitudes`    | Catálogo de atitudes (prêmios e punições em XP) usadas no painel.                             |
+| Missões     | `/missoes`     | Gerencia as missões de qualquer turma.                                                        |
+| Ranking     | `/ranking`     | Ranking geral e de qualquer turma.                                                            |
+| Perfil      | `/perfil`      | Crachá, turmas da escola e as últimas atitudes que aplicou.                                   |
 
 ### Telas públicas
 
