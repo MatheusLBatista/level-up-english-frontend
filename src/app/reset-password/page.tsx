@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { GuestGuard } from "@/components/auth/guest-guard";
 import { NewPasswordForm } from "@/components/auth/new-password-form";
 
@@ -15,12 +16,12 @@ export default async function ResetPasswordPage({ searchParams }: PageProps) {
 
   return (
     <GuestGuard>
-      <main className="flex flex-1 items-center justify-center p-6">
+      <AuthShell>
         <NewPasswordForm
           mode="reset"
           code={typeof code === "string" && code ? code : null}
         />
-      </main>
+      </AuthShell>
     </GuestGuard>
   );
 }

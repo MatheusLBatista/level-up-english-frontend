@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 import { GuestGuard } from "@/components/auth/guest-guard";
 
@@ -9,9 +10,9 @@ export const metadata: Metadata = {
 export default function EsqueciSenhaPage() {
   return (
     <GuestGuard>
-      <main className="flex flex-1 items-center justify-center p-6">
+      <AuthShell>
         <ForgotPasswordForm />
-      </main>
+      </AuthShell>
     </GuestGuard>
   );
 }
