@@ -1,4 +1,16 @@
-import type { Mission, MissionProgressEntry, User } from "@/lib/types";
+import type {
+  Mission,
+  MissionProgressEntry,
+  MissionType,
+  User,
+} from "@/lib/types";
+
+export const missionTypeLabels: Record<MissionType, string> = {
+  quiz: "Quiz",
+  vocabulary: "Vocabulário",
+  audio: "Áudio",
+};
+
 export type MissionStatus = "todo" | "in-progress" | "done";
 
 export function getMissionStatus(entry?: MissionProgressEntry): MissionStatus {

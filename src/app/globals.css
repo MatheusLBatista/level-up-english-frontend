@@ -80,6 +80,7 @@
 
   --notebook-rule: oklch(0.96 0.01 290 / 4%);
   --notebook-margin: oklch(0.66 0.17 20 / 45%);
+  --stamp: oklch(0.72 0.16 20);
 }
 
 @theme inline {
@@ -142,6 +143,7 @@
   --color-brand-mission: var(--brand-mission);
   --color-brand-done: var(--brand-done);
   --color-brand-reward: var(--brand-reward);
+  --color-stamp: var(--stamp);
 }
 
 @layer base {

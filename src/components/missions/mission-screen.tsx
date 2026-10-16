@@ -2,7 +2,8 @@
 
 import { SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
-import { MissionDialog } from "@/components/missions/mission-dialog";
+import { MissionAction } from "@/components/missions/mission-action";
+import { MissionCard } from "@/components/missions/mission-card";
 import { MissionTypeFilter } from "@/components/missions/mission-type-filter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -108,11 +109,16 @@ export function MissionsScreen() {
           )}
         >
           {missions.map((mission) => (
-            <MissionDialog
+            <MissionCard
               key={mission._id}
               mission={mission}
               progress={progress.get(mission._id)}
-              withAction
+              action={
+                <MissionAction
+                  mission={mission}
+                  progress={progress.get(mission._id)}
+                />
+              }
             />
           ))}
         </div>

@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissions } from "@/hooks/use-mission";
 import { indexProgress, selectRecommended } from "@/lib/missions";
-import { MissionDialog } from "@/components/missions/mission-dialog";
+import { MissionCard } from "@/components/missions/mission-card";
 
 function MissionsGrid() {
   const userQuery = useCurrentUser();
@@ -64,11 +64,13 @@ function MissionsGrid() {
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {recommended.map((mission) => (
-        <MissionDialog
+        <Link
           key={mission._id}
-          mission={mission}
-          progress={progress.get(mission._id)}
-        />
+          href={`/missoes/${mission._id}`}
+          className="focus-visible:ring-ring/60 rounded-xl outline-none focus-visible:ring-3"
+        >
+          <MissionCard mission={mission} progress={progress.get(mission._id)} />
+        </Link>
       ))}
     </div>
   );
