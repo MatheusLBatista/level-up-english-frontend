@@ -23,12 +23,12 @@ A navegação muda conforme o papel de quem entra. Cada página checa o papel
 
 ### Professor
 
-| Tela    | Rota       | O que faz                                                                                      |
-| ------- | ---------- | ---------------------------------------------------------------------------------------------- |
-| Painel  | `/painel`  | Grade de alunos da turma: aplicar atitudes, ajustar XP e cadastrar alunos nas próprias turmas. |
-| Missões | `/missoes` | Criar, editar, desativar e reativar missões das suas turmas (inclui editor de quiz).           |
-| Ranking | `/ranking` | Ranking geral e de cada uma das suas turmas.                                                   |
-| Perfil  | `/perfil`  | Crachá, suas turmas com atalhos e as últimas atitudes aplicadas.                               |
+| Tela    | Rota       | O que faz                                                                                                                         |
+| ------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Painel  | `/painel`  | Grade de alunos da turma: aplicar atitudes, ajustar XP, ver a ficha com o histórico de XP e cadastrar alunos nas próprias turmas. |
+| Missões | `/missoes` | Criar, editar, desativar e reativar missões das suas turmas (inclui editor de quiz).                                              |
+| Ranking | `/ranking` | Ranking geral e de cada uma das suas turmas.                                                                                      |
+| Perfil  | `/perfil`  | Crachá, suas turmas com atalhos e as últimas atitudes aplicadas.                                                                  |
 
 ### Admin
 
@@ -117,7 +117,7 @@ src/
 │   ├── missions/        # listagem, resolução e gestão de missões
 │   ├── profile/         # perfis do aluno e do professor/admin
 │   ├── ranking/         # ranking
-│   ├── shared/          # peças de mais de um papel (paginação, filtros, turma, novo aluno)
+│   ├── shared/          # peças de mais de um papel (paginação, filtros, turma, novo aluno, ficha do aluno)
 │   ├── teacher/         # painel do professor
 │   └── ui/              # componentes do shadcn/ui
 ├── contexts/            # AuthProvider (sessão do usuário)
@@ -198,6 +198,10 @@ Uma tela nova que use nuqs **fora** da área logada precisa do `<Suspense>`.
   histórico (XP ganho, atitudes aplicadas, progresso) continua íntegro.
 - **Sem moedas.** O protótipo previa moedas, mas a API trabalha só com XP e
   nível; os cards de moedas viraram nível e barra de progresso.
+- **Conquistas calculadas no front.** O backend não preenche `badges`, então o
+  perfil calcula as conquistas a partir do `mission_progress`: missões
+  concluídas, notas 100% e XP ganho em missões. Nenhuma delas regride — por
+  isso não há conquista de nível, que pode cair com atitude negativa.
 - **Cor da atitude vem do tipo.** Verde para atitudes positivas e vermelho para
   negativas; no formulário o XP tem sinal (negativo = punição).
 - **Tokens no `localStorage`.** A API devolve os tokens no corpo, não em cookie.
