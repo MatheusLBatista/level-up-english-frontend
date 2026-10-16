@@ -21,7 +21,7 @@ import { useState } from "react";
 import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
 import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
 import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
-import { StudentProfileSheet } from "@/components/admin/students/student-profile-sheet";
+import { StudentProfileSheet } from "@/components/shared/student-profile-sheet";
 import { StudentRow } from "@/components/admin/students/student-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { SegmentedFilter } from "@/components/shared/segmented-filter";

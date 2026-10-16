@@ -1,25 +1,49 @@
-import { AwardIcon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import {
+  CrownIcon,
+  FlagIcon,
+  LockIcon,
+  StarIcon,
+  TargetIcon,
+  TrophyIcon,
+  ZapIcon,
+  type LucideIcon,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  getAchievements,
+  type Achievement,
+  type AchievementId,
+} from "@/lib/achievements";
 import { countCompleted } from "@/lib/missions";
 import type { User } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
-function humanizeBadge(badge: string) {
-  const label = badge.replaceAll(/[_-]/g, " ");
-
-  return label.charAt(0).toUpperCase() + label.slice(1);
-}
+const icons: Record<AchievementId, LucideIcon> = {
+  "first-mission": FlagIcon,
+  "missions-5": TargetIcon,
+  "missions-10": TrophyIcon,
+  "perfect-1": StarIcon,
+  "perfect-5": CrownIcon,
+  "mission-xp-500": ZapIcon,
+};
 
 export function ProfileBadges({ user }: { user: User }) {
   const completed = countCompleted(user);
+  const achievements = getAchievements(user);
+  const unlocked = achievements.filter((item) => item.unlocked).length;
 
   return (
     <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-base">Conquistas</CardTitle>
+        <CardTitle className="flex items-baseline justify-between gap-2 text-base">
+          Conquistas
+          <span className="text-muted-foreground text-xs font-normal tabular-nums">
+            {unlocked} de {achievements.length}
+          </span>
+        </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-1 flex-col justify-between gap-6">
+      <CardContent className="flex flex-1 flex-col gap-6">
         <div>
           <p className="text-brand-done text-2xl font-bold tabular-nums">
             {completed}
@@ -29,21 +53,54 @@ export function ProfileBadges({ user }: { user: User }) {
           </p>
         </div>
 
-        {user.badges.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {user.badges.map((badge) => (
-              <Badge key={badge} variant="outline" className="gap-1.5">
-                <AwardIcon className="text-brand-level" />
-                {humanizeBadge(badge)}
-              </Badge>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            Nenhuma medalha ainda. Conclua missões para desbloquear.
-          </p>
-        )}
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-2 xl:grid-cols-3">
+          {achievements.map((achievement) => (
+            <AchievementItem key={achievement.id} achievement={achievement} />
+          ))}
+        </ul>
       </CardContent>
     </Card>
+  );
+}
+
+function AchievementItem({ achievement }: { achievement: Achievement }) {
+  const Icon = achievement.unlocked ? icons[achievement.id] : LockIcon;
+
+  return (
+    <li
+      className={cn(
+        "flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center",
+        achievement.unlocked
+          ? "border-brand-level/40 bg-brand-level/10"
+          : "border-border/40 bg-card/40",
+      )}
+    >
+      <span
+        className={cn(
+          "grid size-9 place-items-center rounded-full",
+          achievement.unlocked
+            ? "bg-brand-level/20 text-brand-level"
+            : "bg-muted text-muted-foreground",
+        )}
+      >
+        <Icon className="size-4" aria-hidden />
+      </span>
+
+      <p className="text-xs leading-tight font-semibold">
+        {achievement.title}
+        <span className="sr-only">
+          {achievement.unlocked ? " (desbloqueada)" : " (bloqueada)"}
+        </span>
+      </p>
+      <p className="text-muted-foreground text-[11px] leading-tight">
+        {achievement.description}
+      </p>
+
+      {!achievement.unlocked && (
+        <p className="text-muted-foreground text-[11px] font-medium tabular-nums">
+          {achievement.current}/{achievement.target}
+        </p>
+      )}
+    </li>
   );
 }
