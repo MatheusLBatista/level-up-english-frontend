@@ -198,6 +198,10 @@ Uma tela nova que use nuqs **fora** da área logada precisa do `<Suspense>`.
   histórico (XP ganho, atitudes aplicadas, progresso) continua íntegro.
 - **Sem moedas.** O protótipo previa moedas, mas a API trabalha só com XP e
   nível; os cards de moedas viraram nível e barra de progresso.
+- **Conquistas calculadas no front.** O backend não preenche `badges`, então o
+  perfil calcula as conquistas a partir do `mission_progress`: missões
+  concluídas, notas 100% e XP ganho em missões. Nenhuma delas regride — por
+  isso não há conquista de nível, que pode cair com atitude negativa.
 - **Cor da atitude vem do tipo.** Verde para atitudes positivas e vermelho para
   negativas; no formulário o XP tem sinal (negativo = punição).
 - **Tokens no `localStorage`.** A API devolve os tokens no corpo, não em cookie.
