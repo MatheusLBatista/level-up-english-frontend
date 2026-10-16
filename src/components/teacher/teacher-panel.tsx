@@ -116,8 +116,8 @@ export function TeacherPanel() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
+      <div className="flex gap-2 sm:gap-3">
+        <div className="relative min-w-0 flex-1">
           <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
             type="search"
@@ -130,6 +130,7 @@ export function TeacherPanel() {
         </div>
 
         <ClassSelect
+          className="w-40 shrink-0 sm:w-56"
           classes={classes}
           value={classId}
           isPending={classesQuery.isPending}
@@ -159,9 +160,12 @@ export function TeacherPanel() {
           </Button>
         </div>
       ) : classesQuery.isPending || (classId && studentsQuery.isPending) ? (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           {Array.from({ length: 5 }, (_, index) => (
-            <Skeleton key={index} className="h-44 rounded-2xl" />
+            <Skeleton
+              key={index}
+              className="h-16 rounded-xl sm:h-44 sm:rounded-2xl"
+            />
           ))}
         </ul>
       ) : students.length === 0 ? (
@@ -176,7 +180,7 @@ export function TeacherPanel() {
           </p>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           <SelectAllCard
             selectedCount={
               students.filter((student) => selectedIds.has(student._id)).length
