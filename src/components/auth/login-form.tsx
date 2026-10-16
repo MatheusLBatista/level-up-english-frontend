@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { AuthInput } from "@/components/auth/auth-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +20,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/lib/api";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
@@ -55,10 +55,14 @@ export function LoginForm() {
     : null;
 
   return (
-    <Card className="w-full max-w-sm gap-6 bg-transparent ring-0 [--card-spacing:0]">
+    <Card className="w-full max-w-md gap-8 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold">Entrar</CardTitle>
-        <CardDescription>Acesse sua conta</CardDescription>
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          Entrar
+        </CardTitle>
+        <CardDescription className="text-foreground/85">
+          Acesse sua conta
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -82,11 +86,11 @@ export function LoginForm() {
           <FieldGroup>
             <Field data-invalid={Boolean(errors.email)}>
               <FieldLabel htmlFor="email">E-mail</FieldLabel>
-              <Input
+              <AuthInput
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="aluno@gmail.com"
+                placeholder="seu@email.com"
                 aria-invalid={Boolean(errors.email)}
                 disabled={loginMutation.isPending}
                 {...form.register("email")}
@@ -99,16 +103,15 @@ export function LoginForm() {
                 <FieldLabel htmlFor="password">Senha</FieldLabel>
                 <Link
                   href="/esqueci-senha"
-                  className="text-muted-foreground hover:text-primary text-xs underline-offset-4 hover:underline"
+                  className="text-foreground/85 hover:text-primary text-sm underline-offset-4 hover:underline"
                 >
                   Esqueci minha senha
                 </Link>
               </div>
-              <Input
+              <AuthInput
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                placeholder="••••••"
                 aria-invalid={Boolean(errors.password)}
                 disabled={loginMutation.isPending}
                 {...form.register("password")}
@@ -129,6 +132,10 @@ export function LoginForm() {
               )}
               {loginMutation.isPending ? "Entrando..." : "Entrar"}
             </Button>
+
+            <p className="text-foreground/80 text-center text-sm">
+              Não tem acesso? Fale com seu professor.
+            </p>
           </FieldGroup>
         </form>
       </CardContent>

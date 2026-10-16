@@ -38,7 +38,7 @@ export function AuthShowcase() {
         <MessageCircleIcon className="size-4 text-violet-500" />
         Hello!
       </Bubble>
-      <Bubble className="top-[42%] -right-2 rotate-3 rounded-bl-sm">
+      <Bubble className="top-6 right-32 hidden rotate-3 rounded-br-sm lg:flex">
         How are you?
       </Bubble>
       <Bubble className="-bottom-1 left-2 rotate-2 rounded-tl-sm">
@@ -47,16 +47,14 @@ export function AuthShowcase() {
 
       <div className="bg-card/95 text-card-foreground relative flex flex-col gap-4 rounded-2xl p-5 shadow-2xl ring-1 ring-white/10">
         <div className="flex items-center justify-between">
-          <span className="bg-brand-mission/15 text-brand-mission rounded-full px-2.5 py-1 text-xs font-semibold">
+          <span className="bg-brand-mission/30 rounded-full px-2.5 py-1 text-xs font-semibold text-white">
             Missão · Quiz
           </span>
-          <span className="text-muted-foreground text-xs tabular-nums">
-            2 de 5
-          </span>
+          <span className="text-xs text-white/85 tabular-nums">2 de 5</span>
         </div>
 
         <div>
-          <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+          <p className="text-xs font-medium tracking-wider text-white/80 uppercase">
             Simple Past
           </p>
           <p className="mt-1 text-lg font-semibold">
@@ -93,9 +91,7 @@ export function AuthShowcase() {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="text-brand-level font-semibold">Nível 4</span>
-            <span className="text-muted-foreground tabular-nums">
-              320 / 400 XP
-            </span>
+            <span className="text-white/80 tabular-nums">320 / 400 XP</span>
           </div>
           <div className="bg-muted h-2 overflow-hidden rounded-full">
             <div className="bg-brand-gradient h-full w-4/5 rounded-full" />
@@ -112,7 +108,7 @@ export function AuthShowcase() {
             <TrophyIcon className="text-brand-level size-4" />
           </span>
           <div className="leading-tight">
-            <p className="text-[10px] tracking-wider text-white/60 uppercase">
+            <p className="text-[10px] tracking-wider text-white/80 uppercase">
               Conquista
             </p>
             <p className="text-xs font-semibold">Nota máxima</p>

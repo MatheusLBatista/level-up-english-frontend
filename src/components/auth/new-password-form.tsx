@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { CircleCheckIcon, Loader2Icon, TriangleAlertIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { AuthInput } from "@/components/auth/auth-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +20,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api";
 import { newPasswordSchema, type NewPasswordInput } from "@/schemas/auth";
 import { resetPassword } from "@/services/auth";
@@ -65,10 +65,14 @@ export function NewPasswordForm({ code, mode }: NewPasswordFormProps) {
       mutation.error.errors.some((item) => item.path === "code"));
 
   return (
-    <Card className="w-full max-w-sm gap-6 bg-transparent ring-0 [--card-spacing:0]">
+    <Card className="w-full max-w-md gap-8 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-2xl font-semibold">{text.title}</CardTitle>
-        <CardDescription>{text.description}</CardDescription>
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          {text.title}
+        </CardTitle>
+        <CardDescription className="text-foreground/85">
+          {text.description}
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -99,7 +103,7 @@ export function NewPasswordForm({ code, mode }: NewPasswordFormProps) {
             <FieldGroup>
               <Field data-invalid={Boolean(errors.password)}>
                 <FieldLabel htmlFor="password">Senha</FieldLabel>
-                <Input
+                <AuthInput
                   id="password"
                   type="password"
                   autoComplete="new-password"
@@ -113,7 +117,7 @@ export function NewPasswordForm({ code, mode }: NewPasswordFormProps) {
 
               <Field data-invalid={Boolean(errors.confirm)}>
                 <FieldLabel htmlFor="confirm">Repita a senha</FieldLabel>
-                <Input
+                <AuthInput
                   id="confirm"
                   type="password"
                   autoComplete="new-password"
