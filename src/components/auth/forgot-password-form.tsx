@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { ArrowLeftIcon, Loader2Icon, MailCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { AuthInput } from "@/components/auth/auth-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +21,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { forgotPasswordSchema, type ForgotPasswordInput } from "@/schemas/auth";
 import { forgotPassword } from "@/services/auth";
 
@@ -37,10 +37,12 @@ export function ForgotPasswordForm() {
   const { errors } = form.formState;
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-md gap-8 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-xl">Esqueci minha senha</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          Esqueci minha senha
+        </CardTitle>
+        <CardDescription className="text-foreground/85">
           Informe seu e-mail e enviaremos um link para criar uma senha nova.
         </CardDescription>
       </CardHeader>
@@ -66,11 +68,11 @@ export function ForgotPasswordForm() {
             <FieldGroup>
               <Field data-invalid={Boolean(errors.email)}>
                 <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                <Input
+                <AuthInput
                   id="email"
                   type="email"
                   autoComplete="email"
-                  placeholder="aluno@gmail.com"
+                  placeholder="seu@email.com"
                   aria-invalid={Boolean(errors.email)}
                   disabled={mutation.isPending}
                   {...form.register("email")}
