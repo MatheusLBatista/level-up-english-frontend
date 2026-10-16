@@ -119,7 +119,7 @@ export function AttitudesScreen() {
           </Button>
         </div>
       ) : !attitudes ? (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} className="h-20 rounded-2xl" />
           ))}
@@ -218,7 +218,7 @@ function AttitudeList({
 
   return (
     <>
-      <ul className="grid gap-3 md:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {current.docs.map((attitude) => (
           <AttitudeCard
             key={attitude._id}

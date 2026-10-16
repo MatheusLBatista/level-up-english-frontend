@@ -19,7 +19,7 @@ export function DashboardStats() {
 
   if (userQuery.isPending) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {Array.from({ length: 4 }, (_, index) => (
           <Skeleton key={index} className="h-36 rounded-xl" />
         ))}
@@ -54,7 +54,7 @@ export function DashboardStats() {
   ).length;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
       <StatCard
         icon={TrophyIcon}
         label="Total XP"

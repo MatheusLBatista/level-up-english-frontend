@@ -50,7 +50,7 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
           {formatXpDelta(getAttitudeXp(attitude))}
         </p>
         {attitude.description && (
-          <p className="text-muted-foreground truncate text-xs">
+          <p className="text-muted-foreground line-clamp-2 text-xs">
             {attitude.description}
           </p>
         )}

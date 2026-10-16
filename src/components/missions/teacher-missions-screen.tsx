@@ -147,7 +147,7 @@ export function TeacherMissionsScreen() {
           </Button>
         </div>
       ) : classesQuery.isPending || (classId && missionsQuery.isPending) ? (
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} className="h-56 rounded-xl" />
           ))}

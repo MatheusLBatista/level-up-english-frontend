@@ -45,7 +45,7 @@ export function TeacherProfileScreen() {
             classes={isAdmin ? undefined : classesQuery.data}
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <TeacherClassesCard
               title={isAdmin ? "Turmas da escola" : "Suas turmas"}
               classes={classesQuery.data}

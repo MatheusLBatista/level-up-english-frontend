@@ -19,7 +19,7 @@ export function ProfileScreen() {
       {userQuery.isPending ? (
         <div className="flex flex-col gap-4">
           <Skeleton className="h-52 rounded-xl" />
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Skeleton className="h-48 rounded-xl" />
             <Skeleton className="h-48 rounded-xl" />
           </div>
@@ -40,7 +40,7 @@ export function ProfileScreen() {
         <div className="flex flex-col gap-4">
           <ProfileIdentity user={userQuery.data} />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <ProfileClass user={userQuery.data} />
             <ProfileBadges user={userQuery.data} />
           </div>
