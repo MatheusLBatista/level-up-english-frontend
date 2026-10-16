@@ -3,6 +3,7 @@
 import { SearchIcon, UserPlusIcon, UsersRoundIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
+import { StudentProfileSheet } from "@/components/shared/student-profile-sheet";
 import { StudentCard } from "@/components/teacher/student-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,15 @@ export function TeacherPanel() {
   }, [studentsQuery.data, search]);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [profileId, setProfileId] = useState<string | null>(null);
+
+  const profileStudent =
+    (studentsQuery.data ?? []).find((student) => student._id === profileId) ??
+    null;
+
+  const className = classes.find((item) => item._id === classId)?.name ?? null;
 
   const selectedStudents = useMemo(
     () =>
@@ -78,6 +88,11 @@ export function TeacherPanel() {
 
   function clearSelection() {
     setSelectedIds(new Set());
+  }
+
+  function openProfile(id: string) {
+    setProfileId(id);
+    setProfileOpen(true);
   }
 
   return (
@@ -178,6 +193,7 @@ export function TeacherPanel() {
               student={student}
               selected={selectedIds.has(student._id)}
               onToggle={toggleStudent}
+              onOpenProfile={openProfile}
             />
           ))}
         </ul>
@@ -212,6 +228,13 @@ export function TeacherPanel() {
         onOpenChange={(open) => setOpenDialog(open ? "xp" : null)}
         students={selectedStudents}
         onFinished={clearSelection}
+      />
+
+      <StudentProfileSheet
+        open={profileOpen}
+        student={profileStudent}
+        classLabel={className}
+        onClose={() => setProfileOpen(false)}
       />
     </div>
   );

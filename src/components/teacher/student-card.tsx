@@ -1,6 +1,7 @@
-import { CheckIcon, TrophyIcon } from "lucide-react";
+import { CheckIcon, IdCardIcon, TrophyIcon } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/user";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -11,11 +12,17 @@ type StudentCardProps = {
   student: User;
   selected: boolean;
   onToggle: (id: string) => void;
+  onOpenProfile: (id: string) => void;
 };
 
-export function StudentCard({ student, selected, onToggle }: StudentCardProps) {
+export function StudentCard({
+  student,
+  selected,
+  onToggle,
+  onOpenProfile,
+}: StudentCardProps) {
   return (
-    <li>
+    <li className="relative">
       <button
         type="button"
         aria-pressed={selected}
@@ -50,6 +57,18 @@ export function StudentCard({ student, selected, onToggle }: StudentCardProps) {
           </Badge>
         </div>
       </button>
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label={`Ver ficha de ${student.name}`}
+        title="Ver ficha"
+        className="text-muted-foreground hover:text-foreground absolute top-2 left-2 size-7 rounded-full"
+        onClick={() => onOpenProfile(student._id)}
+      >
+        <IdCardIcon className="size-4" />
+      </Button>
     </li>
   );
 }
