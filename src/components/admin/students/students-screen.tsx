@@ -130,7 +130,7 @@ export function StudentsScreen() {
         </Button>
       </div>
 
-      <div className="border-border bg-card flex flex-col gap-3 rounded-2xl border p-3 lg:flex-row lg:items-center">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
           <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
