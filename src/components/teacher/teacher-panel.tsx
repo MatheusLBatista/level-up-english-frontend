@@ -178,7 +178,10 @@ export function TeacherPanel() {
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <SelectAllCard
-            allSelected={allVisibleSelected}
+            selectedCount={
+              students.filter((student) => selectedIds.has(student._id)).length
+            }
+            total={students.length}
             onToggle={toggleAllVisible}
           />
           {students.map((student) => (
