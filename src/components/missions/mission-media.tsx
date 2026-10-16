@@ -38,9 +38,7 @@ function MissionContent({ content }: { content: string }) {
     pairs.length > 1 && pairs.every((pair) => pair.length === 2);
 
   if (!isGlossary) {
-    return (
-      <p className="text-base leading-8 whitespace-pre-line">{content}</p>
-    );
+    return <p className="text-base leading-8 whitespace-pre-line">{content}</p>;
   }
 
   return (

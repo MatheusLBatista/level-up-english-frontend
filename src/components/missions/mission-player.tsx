@@ -516,7 +516,7 @@ function QuestionTrack({
               onClick={() => onJump(index)}
               aria-current={index === current ? "step" : undefined}
               aria-label={`Questão ${index + 1}${answer ? ", respondida" : ""}`}
-              className="group flex h-6 w-full items-center"
+              className="group flex h-6 w-full items-center pointer-coarse:h-11"
             >
               <span
                 className={cn(

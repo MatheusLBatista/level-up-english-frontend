@@ -44,10 +44,10 @@ export function MissionAction({
 
   if (progress?.done && !isRetry && !hasDraft) {
     return (
-      <Button variant="secondary" className="text-brand-done w-full" disabled>
-        <CheckCircle2Icon />
+      <p className="bg-brand-done/10 text-brand-done flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium">
+        <CheckCircle2Icon className="size-4" />
         Concluído
-      </Button>
+      </p>
     );
   }
 
