@@ -99,8 +99,8 @@ export function TeacherPanel() {
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="bg-brand-gradient grid size-12 place-items-center rounded-2xl">
-            <UsersRoundIcon className="size-6 text-white" />
+          <span className="bg-secondary text-secondary-foreground grid size-12 place-items-center rounded-2xl">
+            <UsersRoundIcon className="size-6" />
           </span>
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight">
@@ -113,7 +113,6 @@ export function TeacherPanel() {
         </div>
 
         <Button
-          className="bg-brand-gradient"
           disabled={classes.length === 0}
           onClick={() => setOpenDialog("student")}
         >
@@ -122,7 +121,7 @@ export function TeacherPanel() {
         </Button>
       </div>
 
-      <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row">
+      <div className="border-border bg-card flex flex-col gap-3 rounded-2xl border p-3 sm:flex-row">
         <div className="relative flex-1">
           <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
@@ -171,7 +170,7 @@ export function TeacherPanel() {
           ))}
         </ul>
       ) : students.length === 0 ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <UsersRoundIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {!classId

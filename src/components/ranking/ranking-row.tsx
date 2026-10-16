@@ -50,7 +50,7 @@ export function RankingRow({
           position === 1 && "ring-brand-level/60 ring-2",
         )}
       >
-        <AvatarFallback className="bg-brand-gradient text-xs font-semibold text-white">
+        <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
           {getInitials(entry.user.name)}
         </AvatarFallback>
       </Avatar>

@@ -19,7 +19,7 @@ export function StatCard({
   children,
 }: StatCardProps) {
   return (
-    <Card className="border-border/40 bg-card/60 backdrop-blur-sm">
+    <Card className="border-border bg-card">
       <CardContent className="flex flex-col gap-3">
         <Icon className={cn("size-6", accentClassName)} />
 

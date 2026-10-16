@@ -19,7 +19,7 @@ export function ProfileClass({ user }: { user: User }) {
 
   if (!user.class) {
     return (
-      <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+      <Card className="border-border bg-card h-full">
         <CardHeader>
           <CardTitle className="text-base">Turma</CardTitle>
         </CardHeader>
@@ -33,7 +33,7 @@ export function ProfileClass({ user }: { user: User }) {
   }
 
   return (
-    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+    <Card className="border-border bg-card h-full">
       <CardHeader>
         <CardTitle className="text-base">Turma</CardTitle>
       </CardHeader>

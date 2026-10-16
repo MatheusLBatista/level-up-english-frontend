@@ -30,7 +30,7 @@ export function XpHistory() {
         )}
       </header>
 
-      <Card className="border-border/40 bg-card/60 backdrop-blur-sm">
+      <Card className="border-border bg-card">
         <CardContent className="flex flex-col gap-4">
           {historyQuery.isError ? (
             <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-3">
@@ -51,7 +51,7 @@ export function XpHistory() {
               ))}
             </div>
           ) : current.docs.length === 0 ? (
-            <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center text-sm">
+            <div className="text-muted-foreground border-border flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center text-sm">
               Seu XP ainda não mudou. Conclua missões para começar a pontuar.
               <Button asChild size="sm" variant="outline">
                 <Link href="/missoes">Ver missões</Link>

@@ -16,7 +16,7 @@ export function AppHeader() {
   const { user } = useAuth();
 
   return (
-    <header className="border-border/40 bg-background/20 sticky top-0 z-10 flex h-16 items-center gap-3 border-b px-4 backdrop-blur-md sm:px-6">
+    <header className="border-border bg-background sticky top-0 z-10 flex h-16 items-center gap-3 border-b px-4 sm:px-6">
       <SidebarTrigger className="-ml-1" />
 
       <div className="ml-auto flex items-center gap-3">
@@ -28,7 +28,7 @@ export function AppHeader() {
         </div>
 
         <Avatar className="ring-primary/40 size-9 ring-2">
-          <AvatarFallback className="bg-brand-gradient text-xs font-semibold text-white">
+          <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
             {user ? getInitials(user.name) : ""}
           </AvatarFallback>
         </Avatar>

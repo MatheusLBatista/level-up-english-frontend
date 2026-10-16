@@ -39,7 +39,7 @@ export function MissionMedia({ mission }: { mission: Mission }) {
           title={mission.title}
           allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
           allowFullScreen
-          className="border-border/40 aspect-video w-full rounded-xl border bg-black"
+          className="border-border aspect-video w-full rounded-xl border bg-black"
         />
       )}
 

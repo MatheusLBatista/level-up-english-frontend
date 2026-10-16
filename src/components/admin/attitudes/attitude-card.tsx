@@ -15,7 +15,7 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
   return (
     <li
       className={cn(
-        "border-border/40 bg-card/60 flex items-center gap-4 rounded-2xl border p-4 backdrop-blur-sm",
+        "border-border bg-card flex items-center gap-4 rounded-2xl border p-4",
         !attitude.active && "opacity-70",
       )}
     >

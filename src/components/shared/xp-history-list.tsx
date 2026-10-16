@@ -18,7 +18,7 @@ export function XpHistoryList({ items, dimmed = false }: XpHistoryListProps) {
   return (
     <ol
       className={cn(
-        "border-border/60 ml-1.5 border-l transition-opacity",
+        "border-border ml-1.5 border-l transition-opacity",
         dimmed && "opacity-60",
       )}
     >

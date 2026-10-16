@@ -84,7 +84,7 @@ export function AttitudesScreen() {
             value={status}
             onChange={(next) => void setFilters({ status: next, pagina: 1 })}
           />
-          <Button className="bg-brand-gradient" onClick={() => openForm(null)}>
+          <Button onClick={() => openForm(null)}>
             <PlusIcon />
             Nova atitude
           </Button>
@@ -127,7 +127,7 @@ export function AttitudesScreen() {
           ))}
         </div>
       ) : attitudes.length === 0 ? (
-        <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
+        <div className="text-muted-foreground border-border flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
           <SearchXIcon className="size-6" />
           {status === "ativas"
             ? "Nenhuma atitude ativa ainda."

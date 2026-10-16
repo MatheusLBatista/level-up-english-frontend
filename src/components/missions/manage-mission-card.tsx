@@ -30,7 +30,7 @@ export function ManageMissionCard({
     : `Reativar ${mission.title}`;
 
   const footer = (
-    <div className="border-border/40 flex items-center gap-2 border-t pt-3">
+    <div className="border-border flex items-center gap-2 border-t pt-3">
       <div className="text-muted-foreground flex min-w-0 flex-1 flex-wrap items-center gap-2 text-xs">
         {mission.type === "quiz" && (
           <span>

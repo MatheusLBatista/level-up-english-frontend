@@ -22,10 +22,7 @@ export function MissionQuiz({
   return (
     <ol className="flex flex-col gap-4">
       {questions.map((question, index) => (
-        <li
-          key={index}
-          className="border-border/40 bg-card/40 rounded-xl border p-4"
-        >
+        <li key={index} className="border-border bg-card rounded-xl border p-4">
           <p className="font-medium">
             <span className="text-muted-foreground mr-2 tabular-nums">
               {index + 1}.

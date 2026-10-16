@@ -93,7 +93,7 @@ export function RankingScreen() {
           </Button>
         </div>
       ) : noClasses ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <UsersRoundIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {user?.role === "teacher"
@@ -120,7 +120,7 @@ export function RankingScreen() {
           </Button>
         </div>
       ) : entries.length === 0 ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <UsersRoundIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {escopo === "class"
@@ -133,7 +133,7 @@ export function RankingScreen() {
           </p>
         </div>
       ) : (
-        <ol className="border-border/40 bg-card/60 flex flex-col gap-1 rounded-2xl border p-2 backdrop-blur-sm">
+        <ol className="border-border bg-card flex flex-col gap-1 rounded-2xl border p-2">
           {entries.map((entry, index) => (
             <RankingRow
               key={entry.user._id}

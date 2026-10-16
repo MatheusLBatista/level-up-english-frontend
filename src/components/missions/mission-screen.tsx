@@ -83,7 +83,7 @@ export function MissionsScreen() {
           </Button>
         </div>
       ) : missions.length === 0 ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <SearchXIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {tipo

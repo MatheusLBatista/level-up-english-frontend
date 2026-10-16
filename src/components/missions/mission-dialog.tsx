@@ -25,7 +25,6 @@ import {
 import { useSubmitMissionProgress } from "@/hooks/use-submit-mission-progression";
 import { canRetryMission, getMissionStatus } from "@/lib/missions";
 import type { Mission, MissionProgressEntry, QuizAnswer } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 type MissionDialogProps = {
   mission: Mission;
@@ -68,10 +67,7 @@ export function MissionDialog({
     </Button>
   ) : (
     <DialogTrigger asChild>
-      <Button
-        variant={isRetry ? "outline" : "default"}
-        className={cn("w-full", !isRetry && "bg-brand-gradient")}
-      >
+      <Button variant={isRetry ? "outline" : "default"} className="w-full">
         {isRetry ? <RotateCcwIcon /> : <PlayIcon />}
         {actionLabel}
       </Button>
@@ -161,7 +157,7 @@ export function MissionDialog({
             {!isQuiz && <MissionMedia mission={mission} />}
 
             {withoutQuestions ? (
-              <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-8 text-center text-sm">
+              <p className="text-muted-foreground border-border rounded-xl border border-dashed p-8 text-center text-sm">
                 Esta missão ainda não tem questões cadastradas. Fale com seu
                 professor.
               </p>
@@ -223,7 +219,7 @@ export function MissionDialog({
           </DialogClose>
 
           {canRetryNow && (
-            <Button className="bg-brand-gradient" onClick={resetAttempt}>
+            <Button onClick={resetAttempt}>
               <RotateCcwIcon />
               Tentar de novo
             </Button>
@@ -231,7 +227,6 @@ export function MissionDialog({
 
           {!result && (
             <Button
-              className="bg-brand-gradient"
               disabled={
                 mutation.isPending ||
                 withoutQuestions ||

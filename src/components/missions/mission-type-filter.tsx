@@ -33,7 +33,7 @@ export function MissionTypeFilter({ value, onChange }: MissionTypeFilterProps) {
     <div
       role="group"
       aria-label="Filtrar missões por tipo"
-      className="border-border/40 bg-card/60 inline-flex flex-wrap gap-1 rounded-2xl border p-1 backdrop-blur-sm"
+      className="border-border bg-card inline-flex flex-wrap gap-1 rounded-2xl border p-1"
     >
       {options.map(({ value: option, label, icon: Icon }) => {
         const isActive = option === value;

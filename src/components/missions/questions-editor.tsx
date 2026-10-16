@@ -68,7 +68,7 @@ export function QuestionsEditor({
           return (
             <li
               key={item.id}
-              className="border-border/40 bg-card/40 flex flex-col gap-3 rounded-xl border p-3"
+              className="border-border bg-card flex flex-col gap-3 rounded-xl border p-3"
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">

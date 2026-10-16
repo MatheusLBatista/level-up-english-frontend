@@ -176,7 +176,7 @@ export function AdjustXpDialog({
               <div
                 role="group"
                 aria-label="Tipo de ajuste"
-                className="border-border/40 bg-card/60 grid grid-cols-2 gap-1 rounded-xl border p-1"
+                className="border-border bg-card grid grid-cols-2 gap-1 rounded-xl border p-1"
               >
                 {modes.map(({ value, label, icon: Icon }) => {
                   const isActive = mode === value;
@@ -194,8 +194,8 @@ export function AdjustXpDialog({
                         "rounded-lg text-xs font-semibold tracking-wide uppercase",
                         isActive &&
                           (value === "add"
-                            ? "bg-brand-done hover:bg-brand-done text-white hover:text-white"
-                            : "bg-destructive hover:bg-destructive text-white hover:text-white"),
+                            ? "bg-brand-done hover:bg-brand-done text-primary-foreground hover:text-primary-foreground"
+                            : "bg-destructive hover:bg-destructive text-primary-foreground hover:text-primary-foreground"),
                       )}
                     >
                       <Icon />
@@ -273,7 +273,6 @@ export function AdjustXpDialog({
               type="submit"
               form="adjust-xp-form"
               variant={mode === "remove" ? "destructive" : "default"}
-              className={cn(mode === "add" && "bg-brand-gradient")}
               disabled={mutation.isPending || students.length === 0}
             >
               {mutation.isPending && <Loader2Icon className="animate-spin" />}

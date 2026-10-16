@@ -10,15 +10,15 @@ export function WelcomeBanner() {
   const firstName = user?.name.split(" ").at(0) ?? "";
 
   return (
-    <section className="bg-banner-gradient border-border/30 relative overflow-hidden rounded-3xl border p-6 sm:p-10">
-      <h1 className="from-primary to-brand-mission bg-linear-to-r bg-clip-text text-4xl font-extrabold tracking-tight text-transparent sm:text-5xl">
+    <section className="bg-notebook-page border-border rounded-lg border py-8 pr-6 pl-14 sm:py-10 sm:pr-10 sm:pl-16">
+      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
         Welcome {firstName}!
       </h1>
-      <p className="mt-2 text-base font-medium sm:text-lg">
+      <p className="text-muted-foreground mt-2 text-base sm:text-lg">
         Continue sua jornada de aprendizado hoje
       </p>
 
-      <Button asChild size="lg" className="mt-6 rounded-full">
+      <Button asChild size="lg" className="mt-6">
         <Link href="/missoes">
           <PlayIcon />
           Ver Missões

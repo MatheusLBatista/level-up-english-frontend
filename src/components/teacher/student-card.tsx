@@ -28,7 +28,7 @@ export function StudentCard({
         aria-pressed={selected}
         onClick={() => onToggle(student._id)}
         className={cn(
-          "border-border/40 bg-card/60 hover:bg-card/80 focus-visible:ring-ring/50 relative flex h-full w-full flex-col items-center gap-3 rounded-2xl border p-4 text-center backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]",
+          "border-border bg-card hover:bg-accent focus-visible:ring-ring/50 relative flex h-full w-full flex-col items-center gap-3 rounded-2xl border p-4 text-center transition-colors outline-none focus-visible:ring-[3px]",
           selected &&
             "border-primary bg-primary/10 hover:bg-primary/15 ring-primary/40 ring-2",
         )}
@@ -40,7 +40,7 @@ export function StudentCard({
         )}
 
         <Avatar className="size-14">
-          <AvatarFallback className="bg-brand-gradient text-sm font-semibold text-white">
+          <AvatarFallback className="bg-secondary text-secondary-foreground text-sm font-semibold">
             {getInitials(student.name)}
           </AvatarFallback>
         </Avatar>

@@ -21,17 +21,17 @@ const missionStyles: Record<
   vocabulary: {
     icon: TargetIcon,
     label: "Vocabulário",
-    tile: "from-brand-mission to-brand-reward",
+    tile: "bg-brand-mission/15 text-brand-mission",
   },
   audio: {
     icon: Volume2Icon,
     label: "Áudio",
-    tile: "from-brand-reward to-brand-level",
+    tile: "bg-brand-reward/15 text-brand-reward",
   },
   quiz: {
     icon: ListChecksIcon,
     label: "Quiz",
-    tile: "from-primary to-brand-mission",
+    tile: "bg-brand-level/15 text-brand-level",
   },
 };
 
@@ -48,7 +48,7 @@ export function MissionCard({ mission, progress, action }: MissionCardProps) {
   return (
     <Card
       className={cn(
-        "border-border/40 bg-card/60 h-full gap-4 backdrop-blur-sm transition-colors",
+        "border-border bg-card h-full gap-4 transition-colors",
         status === "done" ? "border-brand-done/30" : "hover:border-primary/40",
       )}
     >
@@ -56,11 +56,11 @@ export function MissionCard({ mission, progress, action }: MissionCardProps) {
         <div className="flex items-start justify-between gap-3">
           <span
             className={cn(
-              "grid size-11 shrink-0 place-items-center rounded-2xl bg-linear-to-br",
+              "grid size-11 shrink-0 place-items-center rounded-2xl",
               tile,
             )}
           >
-            <Icon className="size-5 text-white" />
+            <Icon className="size-5" />
           </span>
 
           <Badge
@@ -81,13 +81,13 @@ export function MissionCard({ mission, progress, action }: MissionCardProps) {
         </div>
 
         <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
-          <span className="border-border/50 text-brand-xp inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-semibold tabular-nums">
+          <span className="border-border text-brand-xp inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-semibold tabular-nums">
             <ZapIcon className="size-4" />
             {mission.xp_reward} XP
           </span>
 
           {status === "done" && (
-            <span className="border-border/50 text-brand-level inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-semibold tabular-nums">
+            <span className="border-border text-brand-level inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-sm font-semibold tabular-nums">
               <TrophyIcon className="size-4" />
               {progress?.score}
             </span>

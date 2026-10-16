@@ -151,7 +151,7 @@ export function MissionForm({
             <div
               role="group"
               aria-labelledby="mission-type-label"
-              className="border-border/40 bg-card/60 grid grid-cols-3 gap-1 rounded-xl border p-1"
+              className="border-border bg-card grid grid-cols-3 gap-1 rounded-xl border p-1"
             >
               {typeOptions.map(({ value, label, activeClassName }) => {
                 const isActive = type === value;
@@ -346,12 +346,7 @@ export function MissionForm({
           </Button>
         </DialogClose>
 
-        <Button
-          type="submit"
-          form="mission-form"
-          className="bg-brand-gradient"
-          disabled={mutation.isPending}
-        >
+        <Button type="submit" form="mission-form" disabled={mutation.isPending}>
           {mutation.isPending && <Loader2Icon className="animate-spin" />}
           {mutation.isPending
             ? "Salvando…"

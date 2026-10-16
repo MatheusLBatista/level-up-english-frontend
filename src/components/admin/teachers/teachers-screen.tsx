@@ -103,16 +103,13 @@ export function TeachersScreen() {
           </div>
         </div>
 
-        <Button
-          className="bg-brand-gradient"
-          onClick={() => setCreateOpen(true)}
-        >
+        <Button onClick={() => setCreateOpen(true)}>
           <PlusIcon />
           Novo professor
         </Button>
       </div>
 
-      <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row sm:items-center">
+      <div className="border-border bg-card flex flex-col gap-3 rounded-2xl border p-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
@@ -165,7 +162,7 @@ export function TeachersScreen() {
           </Button>
         </div>
       ) : !teachers ? (
-        <div className="border-border/40 bg-card/60 divide-border/40 flex flex-col divide-y rounded-2xl border">
+        <div className="border-border bg-card divide-border flex flex-col divide-y rounded-2xl border">
           {Array.from({ length: 3 }, (_, index) => (
             <div key={index} className="px-4 py-3">
               <Skeleton className="h-10 rounded-lg" />
@@ -173,7 +170,7 @@ export function TeachersScreen() {
           ))}
         </div>
       ) : teachers.length === 0 ? (
-        <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
+        <div className="text-muted-foreground border-border flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
           <SearchXIcon className="size-6" />
           {busca.trim()
             ? `Nenhum professor encontrado para "${busca.trim()}".`
@@ -283,7 +280,7 @@ function TeacherList({
 
   return (
     <>
-      <ul className="border-border/40 bg-card/60 divide-border/40 divide-y rounded-2xl border backdrop-blur-sm">
+      <ul className="border-border bg-card divide-border divide-y rounded-2xl border">
         {current.docs.map((teacher) => (
           <TeacherRow
             key={teacher._id}

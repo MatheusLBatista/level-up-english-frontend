@@ -113,7 +113,7 @@ export function ApplyAttitudesDialog({
         className="flex max-h-[85vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
-        <DialogHeader className="border-border/40 border-b px-6 pt-6 pr-12 pb-5">
+        <DialogHeader className="border-border border-b px-6 pt-6 pr-12 pb-5">
           <DialogTitle>Aplicar atitudes</DialogTitle>
           <DialogDescription>
             Selecione uma ou mais atitudes para {describeStudents(students)}.
@@ -171,7 +171,7 @@ export function ApplyAttitudesDialog({
               </Button>
             </div>
           ) : attitudes.length === 0 ? (
-            <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-8 text-center text-sm">
+            <p className="text-muted-foreground border-border rounded-xl border border-dashed p-8 text-center text-sm">
               Nenhuma atitude ativa cadastrada.
             </p>
           ) : (
@@ -194,7 +194,7 @@ export function ApplyAttitudesDialog({
                         disabled={mutation.isPending}
                         onClick={() => toggleAttitude(attitude._id)}
                         className={cn(
-                          "border-border/40 bg-card/60 hover:bg-card/80 focus-visible:ring-ring/50 flex h-11 w-full items-center gap-3 rounded-xl border px-4 text-left transition-colors outline-none focus-visible:ring-[3px] disabled:opacity-60",
+                          "border-border bg-card hover:bg-accent focus-visible:ring-ring/50 flex h-11 w-full items-center gap-3 rounded-xl border px-4 text-left transition-colors outline-none focus-visible:ring-[3px] disabled:opacity-60",
                           selected &&
                             "border-primary bg-primary/10 hover:bg-primary/15",
                         )}
@@ -306,7 +306,6 @@ export function ApplyAttitudesDialog({
 
           {!result && (
             <Button
-              className="bg-brand-gradient"
               disabled={
                 selectedAttitudes.length === 0 ||
                 students.length === 0 ||

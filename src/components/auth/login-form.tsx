@@ -72,7 +72,7 @@ export function LoginForm() {
             className={
               signOutReason === "disabled"
                 ? "border-destructive/40 bg-destructive/10 mb-4 rounded-xl border p-3 text-sm"
-                : "border-border/40 bg-muted/40 mb-4 rounded-xl border p-3 text-sm"
+                : "border-border bg-muted/40 mb-4 rounded-xl border p-3 text-sm"
             }
           >
             {signOutNotices[signOutReason]}

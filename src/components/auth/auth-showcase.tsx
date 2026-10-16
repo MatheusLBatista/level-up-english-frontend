@@ -1,9 +1,4 @@
-import {
-  CheckIcon,
-  MessageCircleIcon,
-  SparklesIcon,
-  TrophyIcon,
-} from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const options = [
@@ -12,107 +7,58 @@ const options = [
   { key: "C", text: "gone", correct: false },
 ];
 
-function Bubble({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "absolute z-10 flex items-center gap-2 rounded-2xl bg-white px-4 py-2 text-sm font-semibold text-violet-900 shadow-xl",
-        className,
-      )}
-    >
-      {children}
-    </div>
-  );
-}
-
 export function AuthShowcase() {
   return (
-    <div aria-hidden className="relative w-full max-w-md px-10 py-16">
-      <Bubble className="top-2 left-0 -rotate-6 rounded-bl-sm">
-        <MessageCircleIcon className="size-4 text-violet-500" />
-        Hello!
-      </Bubble>
-      <Bubble className="top-6 right-32 hidden rotate-3 rounded-br-sm lg:flex">
-        How are you?
-      </Bubble>
-      <Bubble className="-bottom-1 left-2 rotate-2 rounded-tl-sm">
-        Let&apos;s level up!
-      </Bubble>
+    <div
+      aria-hidden
+      className="bg-notebook-page border-border relative flex w-full max-w-md flex-col gap-5 rounded-lg border py-8 pr-6 pl-14 shadow-[0_24px_48px_-24px_oklch(0.1_0.04_290/0.8)]"
+    >
+      <div className="text-muted-foreground flex items-center justify-between text-xs">
+        <span className="text-brand-mission font-semibold">Missão · Quiz</span>
+        <span className="tabular-nums">2 de 5</span>
+      </div>
 
-      <div className="bg-card/95 text-card-foreground relative flex flex-col gap-4 rounded-2xl p-5 shadow-2xl ring-1 ring-white/10">
-        <div className="flex items-center justify-between">
-          <span className="bg-brand-mission/30 rounded-full px-2.5 py-1 text-xs font-semibold text-white">
-            Missão · Quiz
+      <div>
+        <p className="text-muted-foreground text-sm">Simple Past</p>
+        <p className="mt-1 text-xl font-semibold">
+          Yesterday I ____ to school.
+        </p>
+      </div>
+
+      <ul className="flex flex-col gap-2">
+        {options.map(({ key, text, correct }) => (
+          <li
+            key={key}
+            className={cn(
+              "relative flex items-center gap-3 rounded-md border px-3 py-2 text-sm",
+              correct
+                ? "border-brand-done/60 bg-brand-done/10 font-semibold"
+                : "border-border",
+            )}
+          >
+            {correct && (
+              <CheckIcon
+                strokeWidth={3}
+                className="text-brand-done absolute top-1/2 -left-11 size-5 -translate-y-1/2"
+              />
+            )}
+            <span className="text-muted-foreground w-4 text-xs font-semibold">
+              {key}
+            </span>
+            {text}
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-brand-level font-semibold">Nível 4</span>
+          <span className="text-muted-foreground tabular-nums">
+            320 / 400 XP
           </span>
-          <span className="text-xs text-white/85 tabular-nums">2 de 5</span>
         </div>
-
-        <div>
-          <p className="text-xs font-medium tracking-wider text-white/80 uppercase">
-            Simple Past
-          </p>
-          <p className="mt-1 text-lg font-semibold">
-            Yesterday I ____ to school.
-          </p>
-        </div>
-
-        <ul className="flex flex-col gap-2">
-          {options.map(({ key, text, correct }) => (
-            <li
-              key={key}
-              className={cn(
-                "flex items-center gap-3 rounded-xl border px-3 py-2 text-sm",
-                correct
-                  ? "border-brand-done/60 bg-brand-done/15 font-semibold"
-                  : "border-border/40 bg-background/40",
-              )}
-            >
-              <span
-                className={cn(
-                  "grid size-6 place-items-center rounded-full text-xs font-semibold",
-                  correct
-                    ? "bg-brand-done text-black"
-                    : "bg-muted text-muted-foreground",
-                )}
-              >
-                {correct ? <CheckIcon className="size-3.5" /> : key}
-              </span>
-              {text}
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-brand-level font-semibold">Nível 4</span>
-            <span className="text-white/80 tabular-nums">320 / 400 XP</span>
-          </div>
-          <div className="bg-muted h-2 overflow-hidden rounded-full">
-            <div className="bg-brand-gradient h-full w-4/5 rounded-full" />
-          </div>
-        </div>
-
-        <span className="bg-brand-xp absolute -top-4 -right-4 flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-bold text-black shadow-lg">
-          <SparklesIcon className="size-4" />
-          +50 XP
-        </span>
-
-        <div className="bg-card absolute -right-8 -bottom-7 flex items-center gap-2 rounded-xl px-3 py-2 shadow-xl ring-1 ring-white/10">
-          <span className="bg-brand-level/15 grid size-8 place-items-center rounded-lg">
-            <TrophyIcon className="text-brand-level size-4" />
-          </span>
-          <div className="leading-tight">
-            <p className="text-[10px] tracking-wider text-white/80 uppercase">
-              Conquista
-            </p>
-            <p className="text-xs font-semibold">Nota máxima</p>
-          </div>
+        <div className="bg-muted h-2 overflow-hidden rounded-full">
+          <div className="bg-brand-xp h-full w-4/5 rounded-full" />
         </div>
       </div>
     </div>

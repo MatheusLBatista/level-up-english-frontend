@@ -67,10 +67,10 @@ function ProfileContent({
 
   return (
     <>
-      <SheetHeader className="border-border/40 border-b pb-5">
+      <SheetHeader className="border-border border-b pb-5">
         <div className="flex items-center gap-3">
           <Avatar className="size-12">
-            <AvatarFallback className="bg-brand-gradient font-semibold text-white">
+            <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
               {getInitials(student.name)}
             </AvatarFallback>
           </Avatar>
@@ -193,7 +193,7 @@ function XpHistorySection({ studentId }: { studentId: string }) {
           ))}
         </div>
       ) : current.docs.length === 0 ? (
-        <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-4 text-center text-xs">
+        <p className="text-muted-foreground border-border rounded-xl border border-dashed p-4 text-center text-xs">
           Nenhuma movimentação de XP para este aluno ainda.
         </p>
       ) : (

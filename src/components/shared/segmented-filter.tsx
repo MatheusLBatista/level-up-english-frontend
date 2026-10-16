@@ -20,7 +20,7 @@ export function SegmentedFilter<T extends string>({
     <div
       role="group"
       aria-label={label}
-      className="border-border/40 bg-card/60 inline-flex shrink-0 gap-1 rounded-xl border p-1"
+      className="border-border bg-card inline-flex shrink-0 gap-1 rounded-xl border p-1"
     >
       {options.map((option) => {
         const isActive = option.value === value;

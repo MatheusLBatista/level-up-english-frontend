@@ -33,7 +33,7 @@ export function ProfileBadges({ user }: { user: User }) {
   const unlocked = achievements.filter((item) => item.unlocked).length;
 
   return (
-    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+    <Card className="border-border bg-card h-full">
       <CardHeader>
         <CardTitle className="flex items-baseline justify-between gap-2 text-base">
           Conquistas
@@ -72,7 +72,7 @@ function AchievementItem({ achievement }: { achievement: Achievement }) {
         "flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center",
         achievement.unlocked
           ? "border-brand-level/40 bg-brand-level/10"
-          : "border-border/40 bg-card/40",
+          : "border-border bg-card",
       )}
     >
       <span

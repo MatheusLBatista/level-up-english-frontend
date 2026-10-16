@@ -9,7 +9,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <AuthGuard>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="bg-app-gradient">
+        <SidebarInset className="bg-notebook">
           <AppHeader />
           {children}
         </SidebarInset>
