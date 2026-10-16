@@ -65,9 +65,9 @@ export function NewPasswordForm({ code, mode }: NewPasswordFormProps) {
       mutation.error.errors.some((item) => item.path === "code"));
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm gap-6 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-xl">{text.title}</CardTitle>
+        <CardTitle className="text-2xl font-semibold">{text.title}</CardTitle>
         <CardDescription>{text.description}</CardDescription>
       </CardHeader>
 

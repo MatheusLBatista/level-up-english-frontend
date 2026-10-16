@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthShell } from "@/components/auth/auth-shell";
 import { GuestGuard } from "@/components/auth/guest-guard";
 import { LoginForm } from "@/components/auth/login-form";
 
@@ -9,9 +10,9 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <GuestGuard>
-      <main className="flex flex-1 items-center justify-center p-6">
+      <AuthShell>
         <LoginForm />
-      </main>
+      </AuthShell>
     </GuestGuard>
   );
 }

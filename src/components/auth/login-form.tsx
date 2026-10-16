@@ -55,9 +55,9 @@ export function LoginForm() {
     : null;
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm gap-6 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-xl">Entrar</CardTitle>
+        <CardTitle className="text-2xl font-semibold">Entrar</CardTitle>
         <CardDescription>Acesse sua conta</CardDescription>
       </CardHeader>
 

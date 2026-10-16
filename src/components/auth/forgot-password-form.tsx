@@ -37,9 +37,11 @@ export function ForgotPasswordForm() {
   const { errors } = form.formState;
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm gap-6 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-xl">Esqueci minha senha</CardTitle>
+        <CardTitle className="text-2xl font-semibold">
+          Esqueci minha senha
+        </CardTitle>
         <CardDescription>
           Informe seu e-mail e enviaremos um link para criar uma senha nova.
         </CardDescription>
