@@ -588,7 +588,7 @@ function QuestionStep({
                     : "border-border text-muted-foreground",
                 )}
               >
-                {selected ? <CheckIcon className="size-4" /> : key}
+                {key}
               </span>
               <span className="font-english text-base">
                 {question.options[key]}

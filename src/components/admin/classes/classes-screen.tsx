@@ -7,7 +7,7 @@ import {
   RotateCcwIcon,
   SearchIcon,
   SearchXIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
@@ -214,7 +214,7 @@ export function ClassesScreen() {
                       {busy ? (
                         <Loader2Icon className="animate-spin" />
                       ) : item.active ? (
-                        <Trash2Icon />
+                        <ArchiveIcon />
                       ) : (
                         <RotateCcwIcon />
                       )}

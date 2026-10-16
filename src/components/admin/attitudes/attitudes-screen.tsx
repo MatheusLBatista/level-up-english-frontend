@@ -6,7 +6,7 @@ import {
   PlusIcon,
   RotateCcwIcon,
   SearchXIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState, type ReactNode } from "react";
@@ -176,7 +176,7 @@ export function AttitudesScreen() {
                   {busy ? (
                     <Loader2Icon className="animate-spin" />
                   ) : attitude.active ? (
-                    <Trash2Icon />
+                    <ArchiveIcon />
                   ) : (
                     <RotateCcwIcon />
                   )}

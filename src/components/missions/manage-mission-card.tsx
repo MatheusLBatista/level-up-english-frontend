@@ -1,7 +1,7 @@
 import {
   PencilIcon,
   RotateCcwIcon,
-  Trash2Icon,
+  ArchiveIcon,
   Loader2Icon,
 } from "lucide-react";
 import { MissionCard } from "@/components/missions/mission-card";
@@ -82,7 +82,7 @@ export function ManageMissionCard({
             {busy ? (
               <Loader2Icon className="animate-spin" />
             ) : mission.active ? (
-              <Trash2Icon />
+              <ArchiveIcon />
             ) : (
               <RotateCcwIcon />
             )}

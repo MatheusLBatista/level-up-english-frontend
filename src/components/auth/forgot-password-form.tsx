@@ -39,7 +39,11 @@ export function ForgotPasswordForm() {
   return (
     <Card className="w-full max-w-md gap-8 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-title font-semibold">
+        <CardTitle
+          role="heading"
+          aria-level={1}
+          className="text-title font-semibold"
+        >
           Esqueci minha senha
         </CardTitle>
         <CardDescription className="text-foreground/85">

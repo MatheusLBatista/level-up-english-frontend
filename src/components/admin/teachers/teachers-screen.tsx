@@ -7,7 +7,7 @@ import {
   RotateCcwIcon,
   SearchIcon,
   SearchXIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from "lucide-react";
 import {
   parseAsInteger,
@@ -220,7 +220,7 @@ export function TeachersScreen() {
                   {busy ? (
                     <Loader2Icon className="animate-spin" />
                   ) : teacher.active ? (
-                    <Trash2Icon />
+                    <ArchiveIcon />
                   ) : (
                     <RotateCcwIcon />
                   )}
