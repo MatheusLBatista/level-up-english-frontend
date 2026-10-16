@@ -55,7 +55,7 @@ function MissionsGrid() {
         <p className="text-sm font-medium">
           {missions.length === 0
             ? "Sua turma ainda não tem missões publicadas."
-            : "Você concluiu todas as missões da turma. Mandou bem!"}
+            : "Você concluiu todas as missões com nota máxima. Mandou bem!"}
         </p>
       </div>
     );

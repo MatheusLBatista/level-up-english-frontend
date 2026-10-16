@@ -5,7 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { hasMissionDraft } from "@/lib/mission-draft";
-import { canRetryMission, getMissionStatus } from "@/lib/missions";
+import {
+  canRetryMission,
+  getMissionStatus,
+  missionXpLeft,
+} from "@/lib/missions";
 import type { Mission, MissionProgressEntry } from "@/lib/types";
 
 export function useMissionDraftFlag(missionId: string) {
@@ -24,7 +28,7 @@ export function missionActionLabel(
   }
 
   if (canRetryMission(mission, progress)) {
-    return "Tentar de novo";
+    return `Tentar de novo · até +${missionXpLeft(mission, progress)} XP`;
   }
 
   return getMissionStatus(progress) === "in-progress"

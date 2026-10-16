@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissions } from "@/hooks/use-mission";
+import { indexProgress, isMissionPending } from "@/lib/missions";
 
 export function DashboardStats() {
   const userQuery = useCurrentUser();
@@ -49,8 +50,9 @@ export function DashboardStats() {
       .filter((entry) => entry.done)
       .map((e) => e.mission_id),
   );
-  const activeMissions = missionsQuery.data?.docs.filter(
-    (mission) => !doneIds.has(mission._id),
+  const progress = indexProgress(user);
+  const activeMissions = missionsQuery.data?.docs.filter((mission) =>
+    isMissionPending(mission, progress.get(mission._id)),
   ).length;
 
   return (
@@ -77,7 +79,7 @@ export function DashboardStats() {
 
       <StatCard
         icon={Gamepad2Icon}
-        label="Missões ativas"
+        label="Para fazer"
         value={activeMissions ?? "—"}
         accentClassName="text-brand-mission"
       />
