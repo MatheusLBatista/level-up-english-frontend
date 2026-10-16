@@ -44,6 +44,14 @@ JWT no header `Authorization: Bearer <accessToken>`.
 O backend só aceita tokens de quem tem refresh token salvo: depois do logout (ou
 de `POST /auth/revoke/{userId}`, feito pelo admin), nenhum token antigo vale.
 
+Login, esqueci a senha e nova senha têm limite de tentativas e respondem **429**
+(com `Retry-After`) ao estourar. Login: 10 falhas em 15 minutos por IP + e-mail
+(um aluno errando não bloqueia o laboratório inteiro) e 100 por IP.
+`forgot-password`: 5 pedidos por hora por IP + e-mail. `reset-password`, que
+também é o primeiro acesso: 10 falhas em 15 minutos por IP. `refresh` e
+`logout` não têm limite. A mensagem do 429 vem no envelope padrão, e os
+formulários a mostram como qualquer outro erro.
+
 ## Papéis e permissões
 
 `student`, `teacher` e `admin`. Cada rota declara quais papéis podem chamá-la;
@@ -134,6 +142,10 @@ deixa a turma sem professor.
 | PATCH  | `/missions/{id}`          | A, P     |
 | DELETE | `/missions/{id}`          | A, P     |
 | POST   | `/missions/{id}/progress` | Al       |
+
+O título é único por turma, sem diferenciar maiúsculas: turmas diferentes podem
+ter missões com o mesmo título. Repetido na mesma turma, a API responde 400 com
+`path: "title"`, e o formulário mostra o erro no campo.
 
 O quiz exige no mínimo 5 perguntas; vocabulário e áudio, de 1 a 3 perguntas de
 checagem. Missões antigas de vocabulário e áudio, sem perguntas, continuam
