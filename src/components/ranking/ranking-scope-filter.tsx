@@ -10,8 +10,8 @@ const options: {
   label: string;
   icon: typeof GlobeIcon;
 }[] = [
-  { value: "global", label: "Geral", icon: GlobeIcon },
   { value: "class", label: "Turma", icon: UsersIcon },
+  { value: "global", label: "Geral", icon: GlobeIcon },
 ];
 
 type RankingScopeFilterProps = {

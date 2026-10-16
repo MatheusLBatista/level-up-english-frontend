@@ -72,6 +72,11 @@ export function MissionCard({ mission, progress, action }: MissionCardProps) {
           <h3 className="font-english text-heading leading-tight font-semibold">
             {mission.title}
           </h3>
+          {mission.createdBy && (
+            <p className="text-stamp text-label mt-1 font-semibold">
+              Missão de {mission.createdBy.name}
+            </p>
+          )}
           {mission.description && (
             <p className="text-muted-foreground mt-1 text-sm">
               {mission.description}

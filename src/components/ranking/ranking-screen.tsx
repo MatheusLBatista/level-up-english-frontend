@@ -21,9 +21,11 @@ const updatedAtFormatter = new Intl.DateTimeFormat("pt-BR", {
 
 export function RankingScreen() {
   const { user } = useAuth();
+  const defaultScope: RankingScope =
+    user?.role === "student" && !user.class ? "global" : "class";
   const [escopo, setEscopo] = useQueryState(
     "escopo",
-    parseAsStringLiteral(scopes).withDefault("global"),
+    parseAsStringLiteral(scopes).withDefault(defaultScope),
   );
 
   // Aluno vê a própria turma; professor e admin escolhem qual turma ver.
@@ -55,7 +57,7 @@ export function RankingScreen() {
       <div>
         <div className="flex items-center gap-3">
           <h1 className="font-heading text-title font-semibold">
-            {escopo === "global" ? "Ranking Global" : "Ranking da Turma"}
+            {escopo === "global" ? "Ranking Geral" : "Ranking da Turma"}
           </h1>
         </div>
 

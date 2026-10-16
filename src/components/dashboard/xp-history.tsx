@@ -19,7 +19,7 @@ export function XpHistory() {
   const current = historyQuery.data;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section id="historico" className="flex scroll-mt-20 flex-col gap-4">
       <header className="flex items-baseline justify-between gap-3">
         <h2 className="font-heading text-heading font-semibold">
           Histórico de XP
