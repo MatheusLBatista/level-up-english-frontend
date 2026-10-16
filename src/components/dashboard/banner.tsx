@@ -11,7 +11,7 @@ export function WelcomeBanner() {
 
   return (
     <section className="bg-notebook-page border-border rounded-lg border py-8 pr-6 pl-14 sm:py-10 sm:pr-10 sm:pl-16">
-      <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+      <h1 className="font-heading text-display font-semibold">
         Welcome {firstName}!
       </h1>
       <p className="text-muted-foreground mt-2 text-base sm:text-lg">

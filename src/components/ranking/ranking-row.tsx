@@ -60,22 +60,19 @@ export function RankingRow({
           <p className="truncate font-semibold">{entry.user.name}</p>
 
           {position === 1 && (
-            <Badge className="bg-brand-level/20 text-brand-level text-[10px] tracking-wider uppercase">
+            <Badge className="bg-brand-level/20 text-brand-level text-label">
               MVP
             </Badge>
           )}
 
           {isCurrentUser && (
-            <Badge
-              variant="outline"
-              className="text-[10px] tracking-wider uppercase"
-            >
+            <Badge variant="outline" className="text-label">
               Você
             </Badge>
           )}
         </div>
 
-        <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+        <p className="text-muted-foreground text-xs font-medium">
           Nível {entry.level}
         </p>
       </div>
@@ -84,7 +81,7 @@ export function RankingRow({
         <p className="text-brand-xp text-xl font-bold tabular-nums">
           {xpFormatter.format(entry.xp)}
         </p>
-        <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
+        <p className="text-muted-foreground text-label font-medium">
           Pontos XP
         </p>
       </div>

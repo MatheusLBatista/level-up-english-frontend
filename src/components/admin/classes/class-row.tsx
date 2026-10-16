@@ -28,7 +28,7 @@ export function ClassRow({ item, actions }: ClassRowProps) {
           {!item.active && (
             <Badge
               variant="outline"
-              className="border-destructive/40 text-destructive text-[10px] tracking-wider uppercase"
+              className="border-destructive/40 text-destructive text-label"
             >
               Inativa
             </Badge>

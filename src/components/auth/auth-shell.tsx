@@ -12,7 +12,7 @@ function BrandLogo({ className }: { className?: string }) {
         <span className="text-lg leading-tight font-semibold">
           LevelUp English
         </span>
-        <span className="text-muted-foreground text-[10px] font-medium tracking-[0.18em] uppercase">
+        <span className="text-muted-foreground text-label font-medium">
           English Learning
         </span>
       </span>
@@ -27,7 +27,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <BrandLogo className="absolute top-8 left-8 lg:left-12" />
         <AuthShowcase />
         <div className="max-w-sm text-center">
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className="font-heading text-heading font-semibold">
             Pratique seu inglês jogando.
           </h2>
           <p className="text-muted-foreground mt-2 text-sm">

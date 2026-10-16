@@ -9,7 +9,6 @@ import {
   SearchIcon,
   SearchXIcon,
   Trash2Icon,
-  UsersRoundIcon,
 } from "lucide-react";
 import {
   parseAsInteger,
@@ -115,10 +114,9 @@ export function StudentsScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <UsersRoundIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Alunos</h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            <h1 className="font-heading text-title font-semibold">Alunos</h1>
+            <p className="text-muted-foreground text-body">
               {page
                 ? `${page.totalDocs} ${page.totalDocs === 1 ? "aluno" : "alunos"}`
                 : "Gestão de alunos"}

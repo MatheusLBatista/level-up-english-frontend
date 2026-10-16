@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  GraduationCapIcon,
   Loader2Icon,
   PencilIcon,
   PlusIcon,
@@ -92,14 +91,11 @@ export function TeachersScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <GraduationCapIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="font-heading text-title font-semibold">
               Professores
             </h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-              Gestão da equipe
-            </p>
+            <p className="text-muted-foreground text-body">Gestão da equipe</p>
           </div>
         </div>
 

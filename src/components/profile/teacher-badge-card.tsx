@@ -27,16 +27,16 @@ export function TeacherBadgeCard({ user, classes }: TeacherBadgeCardProps) {
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
-          <span className="text-muted-foreground font-mono text-[10px] tracking-widest">
+          <span className="text-muted-foreground text-label font-mono tracking-widest">
             ID {badgeId}
           </span>
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.2em] uppercase">
+          <p className="text-muted-foreground text-label font-semibold">
             {roleLabels[user.role]} · LevelUp English
           </p>
-          <h2 className="mt-1 truncate text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="font-heading text-title mt-1 truncate font-semibold">
             {user.name}
           </h2>
           <p className="text-muted-foreground truncate text-sm">{user.email}</p>

@@ -67,9 +67,7 @@ export function NewPasswordForm({ code, mode }: NewPasswordFormProps) {
   return (
     <Card className="w-full max-w-md gap-8 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold tracking-tight">
-          {text.title}
-        </CardTitle>
+        <CardTitle className="text-title font-semibold">{text.title}</CardTitle>
         <CardDescription className="text-foreground/85">
           {text.description}
         </CardDescription>

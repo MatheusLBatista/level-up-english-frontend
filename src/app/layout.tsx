@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Besley, Geist, Geist_Mono } from "next/font/google";
 
 import { AppProviders } from "@/providers/app-providers";
 
@@ -7,6 +7,11 @@ import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const besley = Besley({
+  variable: "--font-besley",
   subsets: ["latin"],
 });
 
@@ -28,7 +33,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${besley.variable} dark h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <AppProviders>{children}</AppProviders>

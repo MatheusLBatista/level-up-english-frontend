@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  BookOpenIcon,
   Loader2Icon,
   PencilIcon,
   PlusIcon,
@@ -84,10 +83,9 @@ export function ClassesScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <BookOpenIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Turmas</h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            <h1 className="font-heading text-title font-semibold">Turmas</h1>
+            <p className="text-muted-foreground text-body">
               Gestão de turmas e professores
             </p>
           </div>

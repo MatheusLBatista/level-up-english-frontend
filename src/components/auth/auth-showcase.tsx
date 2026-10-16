@@ -20,7 +20,7 @@ export function AuthShowcase() {
 
       <div>
         <p className="text-muted-foreground text-sm">Simple Past</p>
-        <p className="mt-1 text-xl font-semibold">
+        <p className="font-english text-heading mt-1 font-semibold">
           Yesterday I ____ to school.
         </p>
       </div>
@@ -30,7 +30,7 @@ export function AuthShowcase() {
           <li
             key={key}
             className={cn(
-              "relative flex items-center gap-3 rounded-md border px-3 py-2 text-sm",
+              "font-english relative flex items-center gap-3 rounded-md border px-3 py-2 text-base",
               correct
                 ? "border-brand-done/60 bg-brand-done/10 font-semibold"
                 : "border-border",

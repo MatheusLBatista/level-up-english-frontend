@@ -21,7 +21,9 @@ export function XpHistory() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-baseline justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">Histórico de XP</h2>
+        <h2 className="font-heading text-heading font-semibold">
+          Histórico de XP
+        </h2>
         {current && current.totalDocs > 0 && (
           <span className="text-muted-foreground text-sm tabular-nums">
             {current.totalDocs}{" "}

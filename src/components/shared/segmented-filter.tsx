@@ -34,7 +34,7 @@ export function SegmentedFilter<T extends string>({
             aria-pressed={isActive}
             onClick={() => onChange(option.value)}
             className={cn(
-              "rounded-lg text-xs font-semibold tracking-wide uppercase",
+              "rounded-lg text-xs font-semibold",
               isActive &&
                 "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
             )}

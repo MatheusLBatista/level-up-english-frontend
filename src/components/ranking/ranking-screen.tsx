@@ -1,6 +1,6 @@
 "use client";
 
-import { TrophyIcon, UsersRoundIcon } from "lucide-react";
+import { UsersRoundIcon } from "lucide-react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { RankingRow } from "@/components/ranking/ranking-row";
 import { RankingScopeFilter } from "@/components/ranking/ranking-scope-filter";
@@ -54,8 +54,7 @@ export function RankingScreen() {
     <div className="flex flex-col gap-6">
       <div>
         <div className="flex items-center gap-3">
-          <TrophyIcon className="text-brand-level size-8" />
-          <h1 className="text-3xl font-extrabold tracking-tight">
+          <h1 className="font-heading text-title font-semibold">
             {escopo === "global" ? "Ranking Global" : "Ranking da Turma"}
           </h1>
         </div>
@@ -66,7 +65,9 @@ export function RankingScreen() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">Lista Completa</h2>
+        <h2 className="font-heading text-heading font-semibold">
+          Lista Completa
+        </h2>
         <div className="flex flex-wrap items-center gap-2">
           {pickingClass && (
             <ClassSelect

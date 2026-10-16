@@ -78,7 +78,7 @@ export function RecommendedMissions() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">
+        <h2 className="font-heading text-heading font-semibold">
           Missões Recomendadas
         </h2>
 

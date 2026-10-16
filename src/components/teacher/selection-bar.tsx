@@ -47,7 +47,7 @@ export function SelectionBar({
         <Button
           onClick={onApplyAttitude}
           disabled={!hasSelection || !onApplyAttitude}
-          className="text-xs font-semibold tracking-wide uppercase"
+          className="text-xs font-semibold"
         >
           <ClipboardCheckIcon />
           Aplicar atitude
@@ -56,7 +56,7 @@ export function SelectionBar({
           onClick={onAdjustXp}
           disabled={!hasSelection || !onAdjustXp}
           variant="secondary"
-          className="text-xs font-semibold tracking-wide uppercase"
+          className="text-xs font-semibold"
         >
           <ArrowUpDownIcon />
           Ajustar saldo

@@ -48,7 +48,7 @@ export function ProfileBadges({ user }: { user: User }) {
           <p className="text-brand-done text-2xl font-bold tabular-nums">
             {completed}
           </p>
-          <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+          <p className="text-muted-foreground text-xs font-medium">
             Missões concluídas
           </p>
         </div>
@@ -92,12 +92,12 @@ function AchievementItem({ achievement }: { achievement: Achievement }) {
           {achievement.unlocked ? " (desbloqueada)" : " (bloqueada)"}
         </span>
       </p>
-      <p className="text-muted-foreground text-[11px] leading-tight">
+      <p className="text-muted-foreground text-label leading-tight">
         {achievement.description}
       </p>
 
       {!achievement.unlocked && (
-        <p className="text-muted-foreground text-[11px] font-medium tabular-nums">
+        <p className="text-muted-foreground text-label font-medium tabular-nums">
           {achievement.current}/{achievement.target}
         </p>
       )}

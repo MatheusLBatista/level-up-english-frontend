@@ -166,7 +166,7 @@ export function MissionForm({
                     disabled={isEditing || mutation.isPending}
                     onClick={() => changeType(value)}
                     className={cn(
-                      "rounded-lg text-xs font-semibold tracking-wide uppercase",
+                      "rounded-lg text-xs font-semibold",
                       isActive &&
                         cn(
                           "text-primary-foreground hover:text-primary-foreground disabled:opacity-100",

@@ -71,7 +71,7 @@ export function QuestionsEditor({
               className="border-border bg-card flex flex-col gap-3 rounded-xl border p-3"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                <span className="text-muted-foreground text-xs font-semibold">
                   Pergunta {number}
                 </span>
                 <Button
@@ -140,7 +140,7 @@ export function QuestionsEditor({
                             />
                             <span
                               className={cn(
-                                "w-4 text-xs font-semibold uppercase",
+                                "w-4 text-xs",
                                 isCorrect
                                   ? "text-brand-done"
                                   : "text-muted-foreground",

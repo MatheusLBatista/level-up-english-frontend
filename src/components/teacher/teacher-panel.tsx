@@ -99,16 +99,11 @@ export function TeacherPanel() {
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="bg-secondary text-secondary-foreground grid size-12 place-items-center rounded-2xl">
-            <UsersRoundIcon className="size-6" />
-          </span>
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="font-heading text-title font-semibold">
               Painel de Controle
             </h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-              Gerenciar alunos
-            </p>
+            <p className="text-muted-foreground text-body">Gerenciar alunos</p>
           </div>
         </div>
 

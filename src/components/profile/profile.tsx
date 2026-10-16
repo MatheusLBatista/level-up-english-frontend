@@ -27,7 +27,7 @@ export function ProfileIdentity({ user }: { user: User }) {
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="truncate text-2xl font-bold tracking-tight">
+              <h2 className="font-heading text-heading truncate font-semibold">
                 {user.name}
               </h2>
               <Badge variant="outline">{roleLabels[user.role]}</Badge>

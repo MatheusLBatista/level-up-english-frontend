@@ -191,7 +191,7 @@ export function AdjustXpDialog({
                       disabled={mutation.isPending}
                       onClick={() => setMode(value)}
                       className={cn(
-                        "rounded-lg text-xs font-semibold tracking-wide uppercase",
+                        "rounded-lg text-xs font-semibold",
                         isActive &&
                           (value === "add"
                             ? "bg-brand-done hover:bg-brand-done text-primary-foreground hover:text-primary-foreground"

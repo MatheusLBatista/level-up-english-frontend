@@ -1,6 +1,6 @@
 "use client";
 
-import { Gamepad2Icon, SearchXIcon } from "lucide-react";
+import { SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { MissionDialog } from "@/components/missions/mission-dialog";
 import { MissionTypeFilter } from "@/components/missions/mission-type-filter";
@@ -45,9 +45,8 @@ export function MissionsScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Gamepad2Icon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="font-heading text-title font-semibold">
               Missões Disponíveis
             </h1>
             <p className="text-muted-foreground text-sm">

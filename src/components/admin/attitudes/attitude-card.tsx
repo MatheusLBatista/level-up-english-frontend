@@ -35,7 +35,7 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
           {!attitude.active && (
             <Badge
               variant="outline"
-              className="border-destructive/40 text-destructive text-[10px] tracking-wider uppercase"
+              className="border-destructive/40 text-destructive text-label"
             >
               Desativada
             </Badge>

@@ -23,7 +23,7 @@ export function MissionQuiz({
     <ol className="flex flex-col gap-4">
       {questions.map((question, index) => (
         <li key={index} className="border-border bg-card rounded-xl border p-4">
-          <p className="font-medium">
+          <p className="font-english text-base font-medium">
             <span className="text-muted-foreground mr-2 tabular-nums">
               {index + 1}.
             </span>
@@ -39,7 +39,10 @@ export function MissionQuiz({
             {OPTION_KEYS.map((key) => (
               <div key={key} className="flex items-center gap-3">
                 <RadioGroupItem value={key} id={`q${index}-${key}`} />
-                <Label htmlFor={`q${index}-${key}`} className="font-normal">
+                <Label
+                  htmlFor={`q${index}-${key}`}
+                  className="font-english text-base font-normal"
+                >
                   {question.options[key]}
                 </Label>
               </div>

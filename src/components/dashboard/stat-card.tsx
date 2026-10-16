@@ -27,9 +27,7 @@ export function StatCard({
           <p className="text-3xl font-bold tracking-tight tabular-nums">
             {value}
           </p>
-          <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-            {label}
-          </p>
+          <p className="text-muted-foreground text-xs font-medium">{label}</p>
         </div>
 
         {children}

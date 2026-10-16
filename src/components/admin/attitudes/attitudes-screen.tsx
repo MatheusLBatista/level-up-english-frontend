@@ -6,7 +6,6 @@ import {
   PlusIcon,
   RotateCcwIcon,
   SearchXIcon,
-  ShieldCheckIcon,
   Trash2Icon,
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
@@ -66,12 +65,11 @@ export function AttitudesScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <ShieldCheckIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="font-heading text-title font-semibold">
               Atitudes de aula
             </h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            <p className="text-muted-foreground text-body">
               Gamificação em tempo real
             </p>
           </div>

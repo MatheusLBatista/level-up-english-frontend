@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Gamepad2Icon, PlusIcon, SearchXIcon } from "lucide-react";
+import { PlusIcon, SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { ManageMissionCard } from "@/components/missions/manage-mission-card";
 import { PaginationControls } from "@/components/shared/pagination-controls";
@@ -81,10 +81,9 @@ export function TeacherMissionsScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Gamepad2Icon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Missões</h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            <h1 className="font-heading text-title font-semibold">Missões</h1>
+            <p className="text-muted-foreground text-body">
               Gerenciar conteúdos
             </p>
           </div>

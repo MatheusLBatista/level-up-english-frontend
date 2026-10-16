@@ -115,7 +115,9 @@ export function MissionDialog({
 
       <DialogContent className="max-h-[85vh] gap-6 overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{mission.title}</DialogTitle>
+          <DialogTitle className="font-english text-heading">
+            {mission.title}
+          </DialogTitle>
           <DialogDescription>
             {mission.description ?? "Conclua a missão para ganhar XP."}
           </DialogDescription>

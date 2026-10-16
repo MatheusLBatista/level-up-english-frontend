@@ -47,7 +47,7 @@ export function MissionTypeFilter({ value, onChange }: MissionTypeFilterProps) {
             aria-pressed={isActive}
             onClick={() => onChange(option)}
             className={cn(
-              "rounded-xl text-xs font-semibold tracking-wide uppercase",
+              "rounded-xl text-xs font-semibold",
               isActive &&
                 "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
             )}

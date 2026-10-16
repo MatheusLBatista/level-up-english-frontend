@@ -63,16 +63,15 @@ export function MissionCard({ mission, progress, action }: MissionCardProps) {
             <Icon className="size-5" />
           </span>
 
-          <Badge
-            variant="outline"
-            className="text-muted-foreground text-[10px] tracking-wider uppercase"
-          >
+          <Badge variant="outline" className="text-muted-foreground text-label">
             {label}
           </Badge>
         </div>
 
         <div>
-          <h3 className="leading-tight font-semibold">{mission.title}</h3>
+          <h3 className="font-english text-heading leading-tight font-semibold">
+            {mission.title}
+          </h3>
           {mission.description && (
             <p className="text-muted-foreground mt-1 text-sm">
               {mission.description}
