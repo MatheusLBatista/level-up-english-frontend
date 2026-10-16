@@ -28,7 +28,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <AuthShowcase />
         <div className="max-w-sm text-center">
           <h2 className="text-2xl font-bold tracking-tight">
-            Aprenda inglês jogando.
+            Pratique seu inglês jogando.
           </h2>
           <p className="mt-2 text-sm text-white/90">
             Missões, XP e conquistas para você evoluir no idioma junto com a sua
