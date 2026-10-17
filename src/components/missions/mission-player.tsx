@@ -619,9 +619,10 @@ function QuestionStep({
       </div>
 
       <p id={`${name}-hint`} className="text-muted-foreground text-label">
-        Questão {index + 1} de {total}.
+        <span className="sr-only">
+          Questão {index + 1} de {total}.{" "}
+        </span>
         <span className="pointer-coarse:hidden">
-          {" "}
           Atalho: teclas 1 a 4 ou A a D.
         </span>
       </p>

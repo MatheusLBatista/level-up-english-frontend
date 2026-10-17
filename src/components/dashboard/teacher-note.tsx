@@ -71,7 +71,7 @@ export function TeacherNote() {
             {latest.date && " · "}
             <Link
               href="#historico"
-              className="text-foreground underline underline-offset-4"
+              className="text-foreground inline-flex items-center underline underline-offset-4 pointer-coarse:min-h-11"
             >
               Ver histórico
             </Link>
