@@ -34,7 +34,11 @@ import {
   readMissionDraft,
   saveMissionDraft,
 } from "@/lib/mission-draft";
-import { canRetryMission, missionTypeLabels } from "@/lib/missions";
+import {
+  canRetryMission,
+  missionTypeLabels,
+  missionXpLeft,
+} from "@/lib/missions";
 import type {
   LevelProgress,
   Mission,
@@ -142,6 +146,7 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
   const hasQuestions = questions.length > 0;
   const hasMaterial = Boolean(mission.content || mission.content_url);
   const isQuiz = mission.type === "quiz";
+  const isRetry = canRetryMission(mission, progress);
   const finishedForGood =
     progress?.done === true && !canRetryMission(mission, progress);
 
@@ -291,6 +296,18 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
             current={current}
             onJump={setCurrent}
           />
+        )}
+        {isRetry && progress && step !== "result" && (
+          <p className="border-brand-level/40 bg-brand-level/10 text-body rounded-lg border px-4 py-3">
+            Sua melhor nota aqui é{" "}
+            <span className="font-semibold">{progress.score}%</span> (
+            {progress.xp_earned} de {mission.xp_reward} XP). Nesta tentativa, só
+            os acertos acima disso viram XP: até{" "}
+            <span className="text-brand-xp font-semibold">
+              +{missionXpLeft(mission, progress)} XP
+            </span>
+            .
+          </p>
         )}
       </header>
 
@@ -602,7 +619,11 @@ function QuestionStep({
       </div>
 
       <p id={`${name}-hint`} className="text-muted-foreground text-label">
-        Questão {index + 1} de {total}. Atalho: teclas 1 a 4 ou A a D.
+        Questão {index + 1} de {total}.
+        <span className="pointer-coarse:hidden">
+          {" "}
+          Atalho: teclas 1 a 4 ou A a D.
+        </span>
       </p>
     </fieldset>
   );

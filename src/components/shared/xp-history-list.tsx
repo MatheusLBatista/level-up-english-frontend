@@ -79,7 +79,7 @@ function HistoryItem({ item }: { item: XpHistoryItem }) {
       <p className="text-muted-foreground text-xs">
         {kindLabels[item.kind]}
         {description && ` · ${description}`}
-        {item.xp === 0 && " · saldo já estava em 0"}
+        {item.xp === 0 && " · o XP já estava em 0"}
         {item.date && (
           <>
             {" · "}

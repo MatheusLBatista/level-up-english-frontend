@@ -88,7 +88,7 @@ export function WelcomeBanner() {
     <section className="bg-notebook-page border-border flex flex-col gap-6 rounded-lg border py-8 pr-6 pl-14 sm:flex-row sm:items-end sm:justify-between sm:py-10 sm:pr-10 sm:pl-16">
       <div>
         <h1 className="font-heading text-display font-semibold">
-          Welcome {firstName}!
+          Oi, {firstName}!
         </h1>
         <NextMissionLine />
       </div>

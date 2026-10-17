@@ -81,12 +81,12 @@ export function RecommendedMissions() {
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
         <h2 className="font-heading text-heading font-semibold">
-          Missões Recomendadas
+          Missões recomendadas
         </h2>
 
         <Button asChild variant="link" className="text-primary">
           <Link href="/missoes">
-            Ver Todas
+            Ver todas
             <ChevronRightIcon />
           </Link>
         </Button>

@@ -59,7 +59,7 @@ export function SelectionBar({
           className="text-xs font-semibold"
         >
           <ArrowUpDownIcon />
-          Ajustar saldo
+          Ajustar XP
         </Button>
       </div>
     </div>

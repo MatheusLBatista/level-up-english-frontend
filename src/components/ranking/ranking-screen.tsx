@@ -57,7 +57,7 @@ export function RankingScreen() {
       <div>
         <div className="flex items-center gap-3">
           <h1 className="font-heading text-title font-semibold">
-            {escopo === "global" ? "Ranking Geral" : "Ranking da Turma"}
+            {escopo === "global" ? "Ranking geral" : "Ranking da turma"}
           </h1>
         </div>
 
@@ -68,7 +68,7 @@ export function RankingScreen() {
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h2 className="font-heading text-heading font-semibold">
-          Lista Completa
+          Classificação
         </h2>
         <div className="flex flex-wrap items-center gap-2">
           {pickingClass && (

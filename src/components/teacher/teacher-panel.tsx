@@ -101,9 +101,11 @@ export function TeacherPanel() {
         <div className="flex items-center gap-3">
           <div>
             <h1 className="font-heading text-title font-semibold">
-              Painel de Controle
+              Painel da turma
             </h1>
-            <p className="text-muted-foreground text-body">Gerenciar alunos</p>
+            <p className="text-muted-foreground text-body">
+              Marque alunos para aplicar atitudes ou ajustar XP.
+            </p>
           </div>
         </div>
 

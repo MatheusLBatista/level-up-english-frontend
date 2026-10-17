@@ -70,7 +70,7 @@ export function AttitudesScreen() {
               Atitudes de aula
             </h1>
             <p className="text-muted-foreground text-body">
-              Gamificação em tempo real
+              Prêmios e punições que os professores aplicam no painel
             </p>
           </div>
         </div>

@@ -61,7 +61,7 @@ export function RankingRow({
 
           {position === 1 && (
             <Badge className="bg-brand-level/20 text-brand-level text-label">
-              MVP
+              1º lugar
             </Badge>
           )}
 
@@ -80,9 +80,9 @@ export function RankingRow({
       <div className="shrink-0 text-right">
         <p className="text-brand-xp text-xl font-bold tabular-nums">
           {xpFormatter.format(entry.xp)}
-        </p>
-        <p className="text-muted-foreground text-label font-medium">
-          Pontos XP
+          <span className="text-muted-foreground text-label block font-medium sm:ml-1 sm:inline sm:text-sm">
+            XP
+          </span>
         </p>
       </div>
     </li>

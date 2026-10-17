@@ -84,7 +84,7 @@ export function TeacherMissionsScreen() {
           <div>
             <h1 className="font-heading text-title font-semibold">Missões</h1>
             <p className="text-muted-foreground text-body">
-              Gerenciar conteúdos
+              Missões que seus alunos fazem em casa
             </p>
           </div>
         </div>

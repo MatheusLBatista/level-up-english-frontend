@@ -114,7 +114,7 @@ function ActivityItem({ log }: { log: AttitudeLog }) {
         <time dateTime={log.applied_at} title={formatFullDate(log.applied_at)}>
           {formatRelativeTime(log.applied_at)}
         </time>
-        {xp === 0 && isNegative && " · saldo já estava em 0"}
+        {xp === 0 && isNegative && " · o XP já estava em 0"}
       </p>
     </li>
   );
