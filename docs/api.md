@@ -33,13 +33,13 @@ listagens declara um array simples; confira a resposta real.
 
 JWT no header `Authorization: Bearer <accessToken>`.
 
-| Etapa           | Como funciona                                                                                                                                         |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Login           | `POST /auth/login` com `{ email, password }` devolve `{ accessToken, refreshToken, user }`.                                                           |
-| Renovação       | Access token vale 1 dia. Em 401, `POST /auth/refresh` com `{ refreshToken }` devolve um novo par. O refresh vale 7 dias e é trocado a cada renovação. |
-| Logout          | `POST /auth/logout` com `{ refreshToken }` (sem header). Apaga os tokens no banco; sempre responde 200.                                               |
-| Primeiro acesso | Alunos e professores são cadastrados sem senha e recebem um e-mail com link para `/set-password` (vale 24h).                                          |
-| Esqueci a senha | `POST /auth/forgot-password` envia um link para `/reset-password`; a nova senha vai em `POST /auth/reset-password` com `{ code, newPassword }`.       |
+| Etapa           | Como funciona                                                                                                                                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login           | `POST /auth/login` com `{ email, password }` devolve `{ accessToken, refreshToken, user }`.                                                                                                                                |
+| Renovação       | Access token vale 1 dia. Token inválido ou expirado responde 498 (e 401 sem refresh salvo); nos dois, `POST /auth/refresh` com `{ refreshToken }` devolve um novo par. O refresh vale 7 dias e é trocado a cada renovação. |
+| Logout          | `POST /auth/logout` com `{ refreshToken }` (sem header). Apaga os tokens no banco; sempre responde 200.                                                                                                                    |
+| Primeiro acesso | Alunos e professores são cadastrados sem senha e recebem um e-mail com link para `/set-password` (vale 24h).                                                                                                               |
+| Esqueci a senha | `POST /auth/forgot-password` envia um link para `/reset-password`; a nova senha vai em `POST /auth/reset-password` com `{ code, newPassword }`.                                                                            |
 
 O backend só aceita tokens de quem tem refresh token salvo: depois do logout (ou
 de `POST /auth/revoke/{userId}`, feito pelo admin), nenhum token antigo vale.
