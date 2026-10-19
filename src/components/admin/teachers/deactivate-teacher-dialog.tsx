@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2Icon, Trash2Icon } from "lucide-react";
+import { Loader2Icon, ArchiveIcon } from "lucide-react";
 import Link from "next/link";
 import {
   AlertDialog,
@@ -108,7 +108,7 @@ export function DeactivateTeacherDialog({
             {mutation.isPending ? (
               <Loader2Icon className="animate-spin" />
             ) : (
-              <Trash2Icon />
+              <ArchiveIcon />
             )}
             {mutation.isPending ? "Desativando…" : "Desativar"}
           </Button>

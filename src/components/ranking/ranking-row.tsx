@@ -50,7 +50,7 @@ export function RankingRow({
           position === 1 && "ring-brand-level/60 ring-2",
         )}
       >
-        <AvatarFallback className="bg-brand-gradient text-xs font-semibold text-white">
+        <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
           {getInitials(entry.user.name)}
         </AvatarFallback>
       </Avatar>
@@ -60,22 +60,19 @@ export function RankingRow({
           <p className="truncate font-semibold">{entry.user.name}</p>
 
           {position === 1 && (
-            <Badge className="bg-brand-level/20 text-brand-level text-[10px] tracking-wider uppercase">
-              MVP
+            <Badge className="bg-brand-level/20 text-brand-level text-label">
+              1º lugar
             </Badge>
           )}
 
           {isCurrentUser && (
-            <Badge
-              variant="outline"
-              className="text-[10px] tracking-wider uppercase"
-            >
+            <Badge variant="outline" className="text-label">
               Você
             </Badge>
           )}
         </div>
 
-        <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+        <p className="text-muted-foreground text-xs font-medium">
           Nível {entry.level}
         </p>
       </div>
@@ -83,9 +80,9 @@ export function RankingRow({
       <div className="shrink-0 text-right">
         <p className="text-brand-xp text-xl font-bold tabular-nums">
           {xpFormatter.format(entry.xp)}
-        </p>
-        <p className="text-muted-foreground text-[10px] font-medium tracking-wider uppercase">
-          Pontos XP
+          <span className="text-muted-foreground text-label block font-medium sm:ml-1 sm:inline sm:text-sm">
+            XP
+          </span>
         </p>
       </div>
     </li>

@@ -21,7 +21,7 @@ export function SelectionBar({
   const hasSelection = count > 0;
 
   return (
-    <div className="border-border/40 bg-card/80 sticky bottom-4 z-10 mt-auto flex flex-col gap-2 rounded-2xl border p-2 shadow-lg backdrop-blur-md sm:flex-row sm:items-center">
+    <div className="border-border bg-popover sticky bottom-4 z-10 mt-auto flex flex-col gap-2 rounded-2xl border p-2 shadow-lg sm:flex-row sm:items-center">
       <div className="flex flex-1 items-center gap-2 px-3 py-1">
         <SquareCheckBigIcon className="text-primary size-4 shrink-0" />
         <p className="text-sm font-semibold" aria-live="polite">
@@ -47,7 +47,7 @@ export function SelectionBar({
         <Button
           onClick={onApplyAttitude}
           disabled={!hasSelection || !onApplyAttitude}
-          className="bg-brand-xp hover:bg-brand-xp/90 text-xs font-semibold tracking-wide text-white uppercase"
+          className="text-xs font-semibold"
         >
           <ClipboardCheckIcon />
           Aplicar atitude
@@ -55,10 +55,11 @@ export function SelectionBar({
         <Button
           onClick={onAdjustXp}
           disabled={!hasSelection || !onAdjustXp}
-          className="from-brand-mission to-brand-reward bg-linear-to-r text-xs font-semibold tracking-wide text-white uppercase hover:opacity-90"
+          variant="secondary"
+          className="text-xs font-semibold"
         >
           <ArrowUpDownIcon />
-          Ajustar saldo
+          Ajustar XP
         </Button>
       </div>
     </div>

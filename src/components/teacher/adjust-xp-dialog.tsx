@@ -107,7 +107,7 @@ export function AdjustXpDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[85vh] gap-6 overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Ajustar saldo</DialogTitle>
+          <DialogTitle>Ajustar XP</DialogTitle>
           <DialogDescription>
             Ajuste de XP para{" "}
             {students.length === 1
@@ -124,8 +124,8 @@ export function AdjustXpDialog({
                 <PartyPopperIcon className="text-brand-done size-8" />
                 <p className="text-lg font-semibold">
                   {result.succeeded.length === 1
-                    ? "Saldo ajustado"
-                    : `Saldo de ${result.succeeded.length} alunos ajustado`}
+                    ? "XP ajustado"
+                    : `XP de ${result.succeeded.length} alunos ajustado`}
                 </p>
                 <p className="text-muted-foreground text-sm tabular-nums">
                   {formatXpDelta(result.amount)}
@@ -136,7 +136,7 @@ export function AdjustXpDialog({
 
             {capped.length > 0 && (
               <div className="border-brand-level/40 bg-brand-level/10 rounded-xl border p-4 text-sm">
-                <p className="mb-1 font-semibold">Saldo insuficiente</p>
+                <p className="mb-1 font-semibold">XP insuficiente</p>
                 <ul className="flex flex-col gap-1">
                   {capped.map(({ student, xpApplied }) => (
                     <li key={student._id}>
@@ -176,7 +176,7 @@ export function AdjustXpDialog({
               <div
                 role="group"
                 aria-label="Tipo de ajuste"
-                className="border-border/40 bg-card/60 grid grid-cols-2 gap-1 rounded-xl border p-1"
+                className="border-border bg-card grid grid-cols-2 gap-1 rounded-xl border p-1"
               >
                 {modes.map(({ value, label, icon: Icon }) => {
                   const isActive = mode === value;
@@ -191,11 +191,11 @@ export function AdjustXpDialog({
                       disabled={mutation.isPending}
                       onClick={() => setMode(value)}
                       className={cn(
-                        "rounded-lg text-xs font-semibold tracking-wide uppercase",
+                        "rounded-lg text-xs font-semibold",
                         isActive &&
                           (value === "add"
-                            ? "bg-brand-done hover:bg-brand-done text-white hover:text-white"
-                            : "bg-destructive hover:bg-destructive text-white hover:text-white"),
+                            ? "bg-brand-done hover:bg-brand-done text-primary-foreground hover:text-primary-foreground"
+                            : "bg-destructive hover:bg-destructive text-primary-foreground hover:text-primary-foreground"),
                       )}
                     >
                       <Icon />
@@ -250,7 +250,7 @@ export function AdjustXpDialog({
                   {shortOfXp.length === 1
                     ? `${shortOfXp[0].name} tem só ${shortOfXp[0].xp} XP`
                     : `${shortOfXp.length} alunos têm menos de ${amount} XP`}
-                  {" — o saldo vai parar em 0."}
+                  {" — o XP vai parar em 0."}
                 </p>
               )}
 
@@ -273,7 +273,6 @@ export function AdjustXpDialog({
               type="submit"
               form="adjust-xp-form"
               variant={mode === "remove" ? "destructive" : "default"}
-              className={cn(mode === "add" && "bg-brand-gradient")}
               disabled={mutation.isPending || students.length === 0}
             >
               {mutation.isPending && <Loader2Icon className="animate-spin" />}

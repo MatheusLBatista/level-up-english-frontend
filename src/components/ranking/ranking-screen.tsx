@@ -1,6 +1,6 @@
 "use client";
 
-import { TrophyIcon, UsersRoundIcon } from "lucide-react";
+import { UsersRoundIcon } from "lucide-react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { RankingRow } from "@/components/ranking/ranking-row";
 import { RankingScopeFilter } from "@/components/ranking/ranking-scope-filter";
@@ -21,9 +21,11 @@ const updatedAtFormatter = new Intl.DateTimeFormat("pt-BR", {
 
 export function RankingScreen() {
   const { user } = useAuth();
+  const defaultScope: RankingScope =
+    user?.role === "student" && !user.class ? "global" : "class";
   const [escopo, setEscopo] = useQueryState(
     "escopo",
-    parseAsStringLiteral(scopes).withDefault("global"),
+    parseAsStringLiteral(scopes).withDefault(defaultScope),
   );
 
   // Aluno vê a própria turma; professor e admin escolhem qual turma ver.
@@ -54,9 +56,8 @@ export function RankingScreen() {
     <div className="flex flex-col gap-6">
       <div>
         <div className="flex items-center gap-3">
-          <TrophyIcon className="text-brand-level size-8" />
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            {escopo === "global" ? "Ranking Global" : "Ranking da Turma"}
+          <h1 className="font-heading text-title font-semibold">
+            {escopo === "global" ? "Ranking geral" : "Ranking da turma"}
           </h1>
         </div>
 
@@ -66,7 +67,9 @@ export function RankingScreen() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold tracking-tight">Lista Completa</h2>
+        <h2 className="font-heading text-heading font-semibold">
+          Classificação
+        </h2>
         <div className="flex flex-wrap items-center gap-2">
           {pickingClass && (
             <ClassSelect
@@ -93,7 +96,7 @@ export function RankingScreen() {
           </Button>
         </div>
       ) : noClasses ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <UsersRoundIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {user?.role === "teacher"
@@ -120,7 +123,7 @@ export function RankingScreen() {
           </Button>
         </div>
       ) : entries.length === 0 ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <UsersRoundIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {escopo === "class"
@@ -133,7 +136,7 @@ export function RankingScreen() {
           </p>
         </div>
       ) : (
-        <ol className="border-border/40 bg-card/60 flex flex-col gap-1 rounded-2xl border p-2 backdrop-blur-sm">
+        <ol className="border-border bg-card flex flex-col gap-1 rounded-2xl border p-2">
           {entries.map((entry, index) => (
             <RankingRow
               key={entry.user._id}

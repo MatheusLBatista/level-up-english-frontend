@@ -14,6 +14,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ferramentas locais de IA/design, fora do repositório.
+    ".agent/**",
+    ".claude/**",
+    ".gemini/**",
+    ".impeccable/**",
   ]),
 ]);
 

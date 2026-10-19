@@ -1,9 +1,7 @@
 import { Gamepad2Icon, TriangleAlertIcon, UsersRoundIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import type { ClassSummary } from "@/lib/types";
-import { getInitials } from "@/lib/user";
 import { cn } from "@/lib/utils";
 
 type ClassRowProps = {
@@ -28,7 +26,7 @@ export function ClassRow({ item, actions }: ClassRowProps) {
           {!item.active && (
             <Badge
               variant="outline"
-              className="border-destructive/40 text-destructive text-[10px] tracking-wider uppercase"
+              className="border-destructive/40 text-destructive text-label"
             >
               Inativa
             </Badge>
@@ -37,11 +35,6 @@ export function ClassRow({ item, actions }: ClassRowProps) {
 
         {item.teacher ? (
           <p className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
-            <Avatar className="size-5">
-              <AvatarFallback className="text-[9px] font-semibold">
-                {getInitials(item.teacher.name)}
-              </AvatarFallback>
-            </Avatar>
             <span className="truncate">{item.teacher.name}</span>
           </p>
         ) : (

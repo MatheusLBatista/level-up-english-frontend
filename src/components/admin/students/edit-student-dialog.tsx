@@ -243,7 +243,6 @@ function EditStudentForm({
         <Button
           type="submit"
           form="edit-student-form"
-          className="bg-brand-gradient"
           disabled={mutation.isPending}
         >
           {mutation.isPending && <Loader2Icon className="animate-spin" />}

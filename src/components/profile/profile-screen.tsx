@@ -1,6 +1,5 @@
 "use client";
 
-import { UserRoundIcon } from "lucide-react";
 import { ProfileBadges } from "@/components/profile/profile-badges";
 import { ProfileClass } from "@/components/profile/profile-class";
 import { ProfileIdentity } from "@/components/profile/profile";
@@ -14,14 +13,13 @@ export function ProfileScreen() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <UserRoundIcon className="text-primary size-8" />
-        <h1 className="text-3xl font-extrabold tracking-tight">Meu Perfil</h1>
+        <h1 className="font-heading text-title font-semibold">Meu perfil</h1>
       </div>
 
       {userQuery.isPending ? (
         <div className="flex flex-col gap-4">
           <Skeleton className="h-52 rounded-xl" />
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <Skeleton className="h-48 rounded-xl" />
             <Skeleton className="h-48 rounded-xl" />
           </div>
@@ -42,7 +40,7 @@ export function ProfileScreen() {
         <div className="flex flex-col gap-4">
           <ProfileIdentity user={userQuery.data} />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <ProfileClass user={userQuery.data} />
             <ProfileBadges user={userQuery.data} />
           </div>

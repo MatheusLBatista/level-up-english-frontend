@@ -6,8 +6,7 @@ import {
   PlusIcon,
   RotateCcwIcon,
   SearchXIcon,
-  ShieldCheckIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState, type ReactNode } from "react";
@@ -66,13 +65,12 @@ export function AttitudesScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <ShieldCheckIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="font-heading text-title font-semibold">
               Atitudes de aula
             </h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-              Gamificação em tempo real
+            <p className="text-muted-foreground text-body">
+              Prêmios e punições que os professores aplicam no painel
             </p>
           </div>
         </div>
@@ -84,7 +82,7 @@ export function AttitudesScreen() {
             value={status}
             onChange={(next) => void setFilters({ status: next, pagina: 1 })}
           />
-          <Button className="bg-brand-gradient" onClick={() => openForm(null)}>
+          <Button onClick={() => openForm(null)}>
             <PlusIcon />
             Nova atitude
           </Button>
@@ -121,13 +119,13 @@ export function AttitudesScreen() {
           </Button>
         </div>
       ) : !attitudes ? (
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} className="h-20 rounded-2xl" />
           ))}
         </div>
       ) : attitudes.length === 0 ? (
-        <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
+        <div className="text-muted-foreground border-border flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
           <SearchXIcon className="size-6" />
           {status === "ativas"
             ? "Nenhuma atitude ativa ainda."
@@ -178,7 +176,7 @@ export function AttitudesScreen() {
                   {busy ? (
                     <Loader2Icon className="animate-spin" />
                   ) : attitude.active ? (
-                    <Trash2Icon />
+                    <ArchiveIcon />
                   ) : (
                     <RotateCcwIcon />
                   )}
@@ -220,7 +218,7 @@ function AttitudeList({
 
   return (
     <>
-      <ul className="grid gap-3 md:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {current.docs.map((attitude) => (
           <AttitudeCard
             key={attitude._id}

@@ -12,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissions } from "@/hooks/use-mission";
+import { indexProgress, isMissionPending } from "@/lib/missions";
 
 export function DashboardStats() {
   const userQuery = useCurrentUser();
@@ -19,7 +20,7 @@ export function DashboardStats() {
 
   if (userQuery.isPending) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {Array.from({ length: 4 }, (_, index) => (
           <Skeleton key={index} className="h-36 rounded-xl" />
         ))}
@@ -49,12 +50,13 @@ export function DashboardStats() {
       .filter((entry) => entry.done)
       .map((e) => e.mission_id),
   );
-  const activeMissions = missionsQuery.data?.docs.filter(
-    (mission) => !doneIds.has(mission._id),
+  const progress = indexProgress(user);
+  const activeMissions = missionsQuery.data?.docs.filter((mission) =>
+    isMissionPending(mission, progress.get(mission._id)),
   ).length;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
       <StatCard
         icon={TrophyIcon}
         label="Total XP"
@@ -77,7 +79,7 @@ export function DashboardStats() {
 
       <StatCard
         icon={Gamepad2Icon}
-        label="Missões ativas"
+        label="Para fazer"
         value={activeMissions ?? "—"}
         accentClassName="text-brand-mission"
       />

@@ -57,7 +57,11 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md gap-8 bg-transparent ring-0 [--card-spacing:0]">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold tracking-tight">
+        <CardTitle
+          role="heading"
+          aria-level={1}
+          className="text-title font-semibold"
+        >
           Entrar
         </CardTitle>
         <CardDescription className="text-foreground/85">
@@ -72,7 +76,7 @@ export function LoginForm() {
             className={
               signOutReason === "disabled"
                 ? "border-destructive/40 bg-destructive/10 mb-4 rounded-xl border p-3 text-sm"
-                : "border-border/40 bg-muted/40 mb-4 rounded-xl border p-3 text-sm"
+                : "border-border bg-muted/40 mb-4 rounded-xl border p-3 text-sm"
             }
           >
             {signOutNotices[signOutReason]}
@@ -103,7 +107,7 @@ export function LoginForm() {
                 <FieldLabel htmlFor="password">Senha</FieldLabel>
                 <Link
                   href="/esqueci-senha"
-                  className="text-foreground/85 hover:text-primary text-sm underline-offset-4 hover:underline"
+                  className="text-foreground/85 hover:text-primary inline-flex items-center text-sm underline-offset-4 hover:underline pointer-coarse:min-h-11"
                 >
                   Esqueci minha senha
                 </Link>

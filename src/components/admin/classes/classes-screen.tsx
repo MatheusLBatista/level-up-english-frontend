@@ -1,14 +1,13 @@
 "use client";
 
 import {
-  BookOpenIcon,
   Loader2Icon,
   PencilIcon,
   PlusIcon,
   RotateCcwIcon,
   SearchIcon,
   SearchXIcon,
-  Trash2Icon,
+  ArchiveIcon,
 } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { useState } from "react";
@@ -84,22 +83,21 @@ export function ClassesScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <BookOpenIcon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Turmas</h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            <h1 className="font-heading text-title font-semibold">Turmas</h1>
+            <p className="text-muted-foreground text-body">
               Gestão de turmas e professores
             </p>
           </div>
         </div>
 
-        <Button className="bg-brand-gradient" onClick={openCreate}>
+        <Button onClick={openCreate}>
           <PlusIcon />
           Nova turma
         </Button>
       </div>
 
-      <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
@@ -141,7 +139,7 @@ export function ClassesScreen() {
       )}
 
       {classesQuery.isPending ? (
-        <div className="border-border/40 bg-card/60 divide-border/40 flex flex-col divide-y rounded-2xl border">
+        <div className="border-border bg-card divide-border flex flex-col divide-y rounded-2xl border">
           {Array.from({ length: 4 }, (_, index) => (
             <div key={index} className="px-4 py-3">
               <Skeleton className="h-11 rounded-lg" />
@@ -161,7 +159,7 @@ export function ClassesScreen() {
           </Button>
         </div>
       ) : classes.length === 0 ? (
-        <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
+        <div className="text-muted-foreground border-border flex flex-col items-center gap-2 rounded-2xl border border-dashed p-10 text-center text-sm">
           <SearchXIcon className="size-6" />
           {search.trim()
             ? `Nenhuma turma encontrada para "${search.trim()}".`
@@ -170,7 +168,7 @@ export function ClassesScreen() {
       ) : (
         <ul
           className={cn(
-            "border-border/40 bg-card/60 divide-border/40 divide-y rounded-2xl border backdrop-blur-sm transition-opacity",
+            "border-border bg-card divide-border divide-y rounded-2xl border transition-opacity",
             classesQuery.isPlaceholderData && "opacity-60",
           )}
         >
@@ -216,7 +214,7 @@ export function ClassesScreen() {
                       {busy ? (
                         <Loader2Icon className="animate-spin" />
                       ) : item.active ? (
-                        <Trash2Icon />
+                        <ArchiveIcon />
                       ) : (
                         <RotateCcwIcon />
                       )}

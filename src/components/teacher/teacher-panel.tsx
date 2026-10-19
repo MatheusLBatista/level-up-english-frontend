@@ -99,21 +99,17 @@ export function TeacherPanel() {
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="bg-brand-gradient grid size-12 place-items-center rounded-2xl">
-            <UsersRoundIcon className="size-6 text-white" />
-          </span>
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
-              Painel de Controle
+            <h1 className="font-heading text-title font-semibold">
+              Painel da turma
             </h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-              Gerenciar alunos
+            <p className="text-muted-foreground text-body">
+              Marque alunos para aplicar atitudes ou ajustar XP.
             </p>
           </div>
         </div>
 
         <Button
-          className="bg-brand-gradient"
           disabled={classes.length === 0}
           onClick={() => setOpenDialog("student")}
         >
@@ -122,8 +118,8 @@ export function TeacherPanel() {
         </Button>
       </div>
 
-      <div className="border-border/40 bg-card/60 flex flex-col gap-3 rounded-2xl border p-3 backdrop-blur-sm sm:flex-row">
-        <div className="relative flex-1">
+      <div className="flex gap-2 sm:gap-3">
+        <div className="relative min-w-0 flex-1">
           <SearchIcon className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
             type="search"
@@ -136,6 +132,7 @@ export function TeacherPanel() {
         </div>
 
         <ClassSelect
+          className="w-40 shrink-0 sm:w-56"
           classes={classes}
           value={classId}
           isPending={classesQuery.isPending}
@@ -165,13 +162,16 @@ export function TeacherPanel() {
           </Button>
         </div>
       ) : classesQuery.isPending || (classId && studentsQuery.isPending) ? (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           {Array.from({ length: 5 }, (_, index) => (
-            <Skeleton key={index} className="h-44 rounded-2xl" />
+            <Skeleton
+              key={index}
+              className="h-16 rounded-xl sm:h-44 sm:rounded-2xl"
+            />
           ))}
         </ul>
       ) : students.length === 0 ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <UsersRoundIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {!classId
@@ -182,9 +182,12 @@ export function TeacherPanel() {
           </p>
         </div>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-5">
           <SelectAllCard
-            allSelected={allVisibleSelected}
+            selectedCount={
+              students.filter((student) => selectedIds.has(student._id)).length
+            }
+            total={students.length}
             onToggle={toggleAllVisible}
           />
           {students.map((student) => (

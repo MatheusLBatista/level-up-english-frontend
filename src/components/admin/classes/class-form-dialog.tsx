@@ -259,12 +259,7 @@ function ClassForm({ schoolClass, mutation, onSaved }: ClassFormProps) {
           </Button>
         </DialogClose>
 
-        <Button
-          type="submit"
-          form="class-form"
-          className="bg-brand-gradient"
-          disabled={mutation.isPending}
-        >
+        <Button type="submit" form="class-form" disabled={mutation.isPending}>
           {mutation.isPending && <Loader2Icon className="animate-spin" />}
           {mutation.isPending
             ? "Salvando…"

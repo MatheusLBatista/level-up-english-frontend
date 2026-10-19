@@ -85,7 +85,7 @@ export function CreateTeacherDialog({
                 Cadastrar outro
               </Button>
               <DialogClose asChild>
-                <Button className="bg-brand-gradient">Concluir</Button>
+                <Button>Concluir</Button>
               </DialogClose>
             </DialogFooter>
           </>
@@ -211,12 +211,7 @@ function CreateTeacherForm({ classes, mutation }: CreateTeacherFormProps) {
             Cancelar
           </Button>
         </DialogClose>
-        <Button
-          type="submit"
-          form="teacher-form"
-          className="bg-brand-gradient"
-          disabled={mutation.isPending}
-        >
+        <Button type="submit" form="teacher-form" disabled={mutation.isPending}>
           {mutation.isPending ? (
             <Loader2Icon className="animate-spin" />
           ) : (

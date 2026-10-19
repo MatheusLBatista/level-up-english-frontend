@@ -18,7 +18,7 @@ export function XpHistoryList({ items, dimmed = false }: XpHistoryListProps) {
   return (
     <ol
       className={cn(
-        "border-border/60 ml-1.5 border-l transition-opacity",
+        "border-border ml-1.5 border-l transition-opacity",
         dimmed && "opacity-60",
       )}
     >
@@ -79,7 +79,7 @@ function HistoryItem({ item }: { item: XpHistoryItem }) {
       <p className="text-muted-foreground text-xs">
         {kindLabels[item.kind]}
         {description && ` · ${description}`}
-        {item.xp === 0 && " · saldo já estava em 0"}
+        {item.xp === 0 && " · o XP já estava em 0"}
         {item.date && (
           <>
             {" · "}
