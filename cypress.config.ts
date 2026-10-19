@@ -7,4 +7,8 @@ export default defineConfig({
     viewportHeight: 800,
     defaultCommandTimeout: 10000,
   },
+  // Mesmo valor do NEXT_PUBLIC_API_URL do .env.local.
+  expose: {
+    apiUrl: "http://localhost:5011",
+  },
 });

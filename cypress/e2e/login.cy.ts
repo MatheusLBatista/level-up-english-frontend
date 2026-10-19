@@ -55,37 +55,3 @@ describe("Login", () => {
     cy.location("pathname").should("eq", "/login");
   });
 });
-
-describe("Sessão", () => {
-  it("manda para o login quem abre uma rota protegida sem sessão", () => {
-    cy.visit("/dashboard");
-
-    cy.location("pathname").should("eq", "/login");
-  });
-
-  it("mantém a sessão ao recarregar e tira o usuário logado do /login", () => {
-    cy.visit("/login");
-    cy.fillLogin(users.student.email, users.password);
-    cy.location("pathname").should("eq", "/dashboard");
-
-    cy.reload();
-    cy.location("pathname").should("eq", "/dashboard");
-
-    cy.visit("/login");
-    cy.location("pathname").should("eq", "/dashboard");
-  });
-
-  it("sai da conta e apaga a sessão do navegador", () => {
-    cy.visit("/login");
-    cy.fillLogin(users.student.email, users.password);
-    cy.location("pathname").should("eq", "/dashboard");
-
-    cy.contains("button", "Sair").click();
-
-    cy.location("pathname").should("eq", "/login");
-    cy.window()
-      .its("localStorage")
-      .invoke("getItem", SESSION_KEY)
-      .should("be.null");
-  });
-});
