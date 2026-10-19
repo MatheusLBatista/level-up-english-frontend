@@ -25,7 +25,7 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
     >
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <Avatar className="size-9">
-          <AvatarFallback className="bg-brand-gradient text-xs font-semibold text-white">
+          <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
             {getInitials(student.name)}
           </AvatarFallback>
         </Avatar>
@@ -36,7 +36,7 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
             {!student.active && (
               <Badge
                 variant="outline"
-                className="border-destructive/40 text-destructive text-[10px] tracking-wider uppercase"
+                className="border-destructive/40 text-destructive text-label"
               >
                 Inativo
               </Badge>

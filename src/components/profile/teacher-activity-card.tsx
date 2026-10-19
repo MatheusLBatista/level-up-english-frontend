@@ -19,7 +19,7 @@ export function TeacherActivityCard({
   onRetry,
 }: TeacherActivityCardProps) {
   return (
-    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+    <Card className="border-border bg-card h-full">
       <CardHeader>
         <CardTitle className="flex items-baseline justify-between gap-2 text-base">
           Atividade recente
@@ -52,7 +52,7 @@ export function TeacherActivityCard({
             ))}
           </div>
         ) : page.docs.length === 0 ? (
-          <div className="text-muted-foreground border-border/40 flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center text-sm">
+          <div className="text-muted-foreground border-border flex flex-col items-center gap-3 rounded-xl border border-dashed p-6 text-center text-sm">
             Você ainda não aplicou atitudes. Elas aparecem aqui depois que você
             usar o Painel.
             <Button asChild size="sm" variant="outline">
@@ -60,7 +60,7 @@ export function TeacherActivityCard({
             </Button>
           </div>
         ) : (
-          <ol className="border-border/60 ml-1.5 border-l">
+          <ol className="border-border ml-1.5 border-l">
             {page.docs.map((log) => (
               <ActivityItem key={log._id} log={log} />
             ))}
@@ -114,7 +114,7 @@ function ActivityItem({ log }: { log: AttitudeLog }) {
         <time dateTime={log.applied_at} title={formatFullDate(log.applied_at)}>
           {formatRelativeTime(log.applied_at)}
         </time>
-        {xp === 0 && isNegative && " · saldo já estava em 0"}
+        {xp === 0 && isNegative && " · o XP já estava em 0"}
       </p>
     </li>
   );

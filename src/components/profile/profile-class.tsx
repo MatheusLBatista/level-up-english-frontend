@@ -19,7 +19,7 @@ export function ProfileClass({ user }: { user: User }) {
 
   if (!user.class) {
     return (
-      <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+      <Card className="border-border bg-card h-full">
         <CardHeader>
           <CardTitle className="text-base">Turma</CardTitle>
         </CardHeader>
@@ -33,7 +33,7 @@ export function ProfileClass({ user }: { user: User }) {
   }
 
   return (
-    <Card className="border-border/40 bg-card/60 h-full backdrop-blur-sm">
+    <Card className="border-border bg-card h-full">
       <CardHeader>
         <CardTitle className="text-base">Turma</CardTitle>
       </CardHeader>
@@ -62,7 +62,7 @@ export function ProfileClass({ user }: { user: User }) {
                 <p className="text-2xl font-bold tabular-nums">
                   {classQuery.data.students.length}
                 </p>
-                <p className="text-muted-foreground flex items-center gap-1 text-xs font-medium tracking-wider uppercase">
+                <p className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
                   <UsersRoundIcon className="size-3.5" />
                   Colegas
                 </p>
@@ -72,7 +72,7 @@ export function ProfileClass({ user }: { user: User }) {
                 <p className="text-brand-level text-2xl font-bold tabular-nums">
                   {position > 0 ? `${position}º` : "—"}
                 </p>
-                <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+                <p className="text-muted-foreground text-xs font-medium">
                   Posição na turma
                 </p>
               </div>

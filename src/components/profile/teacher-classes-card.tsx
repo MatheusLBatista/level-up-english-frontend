@@ -26,7 +26,7 @@ export function TeacherClassesCard({
   const overview = classes ? summarizeClasses(classes) : undefined;
 
   return (
-    <Card className="border-border/40 bg-card/60 backdrop-blur-sm md:self-start">
+    <Card className="border-border bg-card md:self-start">
       <CardHeader>
         <CardTitle className="flex items-baseline justify-between gap-2 text-base">
           {title}
@@ -60,11 +60,11 @@ export function TeacherClassesCard({
             <Skeleton className="h-14 rounded-lg" />
           </div>
         ) : classes.length === 0 ? (
-          <p className="text-muted-foreground border-border/40 rounded-xl border border-dashed p-6 text-center text-sm">
+          <p className="text-muted-foreground border-border rounded-xl border border-dashed p-6 text-center text-sm">
             Nenhuma turma por aqui ainda.
           </p>
         ) : (
-          <ul className="divide-border/40 -my-3 divide-y">
+          <ul className="divide-border -my-3 divide-y">
             {classes.map((item) => {
               const studentCount = item.students.length;
               const missionCount = item.missions.length;

@@ -15,7 +15,7 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
   return (
     <li
       className={cn(
-        "border-border/40 bg-card/60 flex items-center gap-4 rounded-2xl border p-4 backdrop-blur-sm",
+        "border-border bg-card flex items-center gap-4 rounded-2xl border p-4",
         !attitude.active && "opacity-70",
       )}
     >
@@ -35,7 +35,7 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
           {!attitude.active && (
             <Badge
               variant="outline"
-              className="border-destructive/40 text-destructive text-[10px] tracking-wider uppercase"
+              className="border-destructive/40 text-destructive text-label"
             >
               Desativada
             </Badge>
@@ -50,7 +50,7 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
           {formatXpDelta(getAttitudeXp(attitude))}
         </p>
         {attitude.description && (
-          <p className="text-muted-foreground truncate text-xs">
+          <p className="text-muted-foreground line-clamp-2 text-xs">
             {attitude.description}
           </p>
         )}

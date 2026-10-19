@@ -151,7 +151,7 @@ export function MissionForm({
             <div
               role="group"
               aria-labelledby="mission-type-label"
-              className="border-border/40 bg-card/60 grid grid-cols-3 gap-1 rounded-xl border p-1"
+              className="border-border bg-card grid grid-cols-3 gap-1 rounded-xl border p-1"
             >
               {typeOptions.map(({ value, label, activeClassName }) => {
                 const isActive = type === value;
@@ -166,7 +166,7 @@ export function MissionForm({
                     disabled={isEditing || mutation.isPending}
                     onClick={() => changeType(value)}
                     className={cn(
-                      "rounded-lg text-xs font-semibold tracking-wide uppercase",
+                      "rounded-lg text-xs font-semibold",
                       isActive &&
                         cn(
                           "text-primary-foreground hover:text-primary-foreground disabled:opacity-100",
@@ -211,7 +211,7 @@ export function MissionForm({
             <FieldError errors={[errors.description]} />
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field data-invalid={Boolean(errors.xp_reward)}>
               <FieldLabel htmlFor="xp_reward">XP de recompensa</FieldLabel>
               <Input
@@ -346,12 +346,7 @@ export function MissionForm({
           </Button>
         </DialogClose>
 
-        <Button
-          type="submit"
-          form="mission-form"
-          className="bg-brand-gradient"
-          disabled={mutation.isPending}
-        >
+        <Button type="submit" form="mission-form" disabled={mutation.isPending}>
           {mutation.isPending && <Loader2Icon className="animate-spin" />}
           {mutation.isPending
             ? "Salvando…"

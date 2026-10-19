@@ -30,6 +30,10 @@ export function listMissions(token: string, filters: MissionFilters = {}) {
   return apiFetch<Paginated<Mission>>(`/missions?${params}`, { token });
 }
 
+export function getMission(id: string, token: string) {
+  return apiFetch<Mission>(`/missions/${id}`, { token });
+}
+
 export type MissionFilters = {
   type?: MissionType | null;
   classId?: string | null;

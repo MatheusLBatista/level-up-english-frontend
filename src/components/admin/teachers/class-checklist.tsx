@@ -30,14 +30,14 @@ export function ClassChecklist({
 
   if (classes.length === 0) {
     return (
-      <p className="text-muted-foreground border-border/40 rounded-lg border border-dashed p-3 text-xs">
+      <p className="text-muted-foreground border-border rounded-lg border border-dashed p-3 text-xs">
         Nenhuma turma ativa ainda. Dá para criar em Turmas e atribuir depois.
       </p>
     );
   }
 
   return (
-    <ul className="border-border/40 divide-border/40 max-h-56 divide-y overflow-y-auto rounded-lg border">
+    <ul className="border-border divide-border max-h-56 divide-y overflow-y-auto rounded-lg border">
       {classes.map((item) => {
         const checkboxId = `class-${item._id}`;
         const isChecked = selected.has(item._id);

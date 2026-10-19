@@ -1,6 +1,5 @@
 "use client";
 
-import { UserRoundIcon } from "lucide-react";
 import { TeacherActivityCard } from "@/components/profile/teacher-activity-card";
 import { TeacherBadgeCard } from "@/components/profile/teacher-badge-card";
 import { TeacherClassesCard } from "@/components/profile/teacher-classes-card";
@@ -22,8 +21,7 @@ export function TeacherProfileScreen() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <UserRoundIcon className="text-primary size-8" />
-        <h1 className="text-3xl font-extrabold tracking-tight">Meu Perfil</h1>
+        <h1 className="font-heading text-title font-semibold">Meu perfil</h1>
       </div>
 
       {userQuery.isPending ? (
@@ -47,7 +45,7 @@ export function TeacherProfileScreen() {
             classes={isAdmin ? undefined : classesQuery.data}
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <TeacherClassesCard
               title={isAdmin ? "Turmas da escola" : "Suas turmas"}
               classes={classesQuery.data}

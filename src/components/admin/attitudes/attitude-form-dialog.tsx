@@ -216,7 +216,6 @@ function AttitudeForm({ attitude, mutation, onSaved }: AttitudeFormProps) {
         <Button
           type="submit"
           form="attitude-form"
-          className="bg-brand-gradient"
           disabled={mutation.isPending}
         >
           {mutation.isPending ? (

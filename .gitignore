@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ferramentas locais de IA/design (impeccable, Claude, Gemini)
+/.agent/
+/.claude/
+/.gemini/
+/.impeccable/

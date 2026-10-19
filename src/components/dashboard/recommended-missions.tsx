@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissions } from "@/hooks/use-mission";
 import { indexProgress, selectRecommended } from "@/lib/missions";
-import { MissionDialog } from "@/components/missions/mission-dialog";
+import { MissionCard } from "@/components/missions/mission-card";
 
 function MissionsGrid() {
   const userQuery = useCurrentUser();
@@ -15,7 +15,7 @@ function MissionsGrid() {
 
   if (userQuery.isPending || missionsQuery.isPending) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 3 }, (_, index) => (
           <Skeleton key={index} className="h-44 rounded-xl" />
         ))}
@@ -50,25 +50,27 @@ function MissionsGrid() {
 
   if (recommended.length === 0) {
     return (
-      <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-10 text-center">
+      <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-10 text-center">
         <PartyPopperIcon className="text-brand-done size-7" />
         <p className="text-sm font-medium">
           {missions.length === 0
             ? "Sua turma ainda não tem missões publicadas."
-            : "Você concluiu todas as missões da turma. Mandou bem!"}
+            : "Você concluiu todas as missões com nota máxima. Mandou bem!"}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
       {recommended.map((mission) => (
-        <MissionDialog
+        <Link
           key={mission._id}
-          mission={mission}
-          progress={progress.get(mission._id)}
-        />
+          href={`/missoes/${mission._id}`}
+          className="focus-visible:ring-ring/60 rounded-xl outline-none focus-visible:ring-3"
+        >
+          <MissionCard mission={mission} progress={progress.get(mission._id)} />
+        </Link>
       ))}
     </div>
   );
@@ -78,13 +80,13 @@ export function RecommendedMissions() {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-tight">
-          Missões Recomendadas
+        <h2 className="font-heading text-heading font-semibold">
+          Missões recomendadas
         </h2>
 
         <Button asChild variant="link" className="text-primary">
           <Link href="/missoes">
-            Ver Todas
+            Ver todas
             <ChevronRightIcon />
           </Link>
         </Button>

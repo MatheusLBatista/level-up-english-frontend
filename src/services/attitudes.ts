@@ -66,6 +66,10 @@ export function applyAttitude(body: ApplyAttitudeBody, token: string) {
   });
 }
 
+export function deleteAttitudeLog(id: string, token: string) {
+  return apiFetch<null>(`/attitude-logs/${id}`, { method: "DELETE", token });
+}
+
 export type AttitudeLogFilters = {
   teacher?: string;
   student?: string;

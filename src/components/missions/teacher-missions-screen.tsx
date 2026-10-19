@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Gamepad2Icon, PlusIcon, SearchXIcon } from "lucide-react";
+import { PlusIcon, SearchXIcon } from "lucide-react";
 import { parseAsInteger, parseAsStringLiteral, useQueryStates } from "nuqs";
 import { ManageMissionCard } from "@/components/missions/manage-mission-card";
 import { PaginationControls } from "@/components/shared/pagination-controls";
@@ -81,20 +81,15 @@ export function TeacherMissionsScreen() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Gamepad2Icon className="text-primary size-8" />
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Missões</h1>
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-              Gerenciar conteúdos
+            <h1 className="font-heading text-title font-semibold">Missões</h1>
+            <p className="text-muted-foreground text-body">
+              Missões que seus alunos fazem em casa
             </p>
           </div>
         </div>
 
-        <Button
-          className="bg-brand-gradient"
-          disabled={classes.length === 0}
-          onClick={openCreate}
-        >
+        <Button disabled={classes.length === 0} onClick={openCreate}>
           <PlusIcon />
           Criar missão
         </Button>
@@ -152,13 +147,13 @@ export function TeacherMissionsScreen() {
           </Button>
         </div>
       ) : classesQuery.isPending || (classId && missionsQuery.isPending) ? (
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {Array.from({ length: 4 }, (_, index) => (
             <Skeleton key={index} className="h-56 rounded-xl" />
           ))}
         </div>
       ) : missions.length === 0 ? (
-        <div className="border-border/40 bg-card/40 flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
           <SearchXIcon className="text-muted-foreground size-7" />
           <p className="text-sm font-medium">
             {!classId

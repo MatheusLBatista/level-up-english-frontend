@@ -258,12 +258,7 @@ function StudentForm({
           </Button>
         </DialogClose>
 
-        <Button
-          type="submit"
-          form="student-form"
-          className="bg-brand-gradient"
-          disabled={mutation.isPending}
-        >
+        <Button type="submit" form="student-form" disabled={mutation.isPending}>
           {mutation.isPending ? (
             <Loader2Icon className="animate-spin" />
           ) : (
@@ -311,7 +306,7 @@ function CreatedStep({ name, email, onCreateAnother }: CreatedStepProps) {
           Criar outro
         </Button>
         <DialogClose asChild>
-          <Button className="bg-brand-gradient">Concluir</Button>
+          <Button>Concluir</Button>
         </DialogClose>
       </DialogFooter>
     </>

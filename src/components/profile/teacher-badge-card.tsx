@@ -19,29 +19,24 @@ export function TeacherBadgeCard({ user, classes }: TeacherBadgeCardProps) {
   const badgeId = user._id.slice(-6).toUpperCase();
 
   return (
-    <Card className="border-border/40 bg-card/60 relative overflow-hidden backdrop-blur-sm">
-      <span
-        aria-hidden
-        className="bg-brand-gradient absolute inset-y-0 left-0 w-1.5"
-      />
-
-      <CardContent className="flex flex-col gap-5 pl-8 sm:flex-row sm:items-center">
+    <Card className="border-border bg-card">
+      <CardContent className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex flex-col items-center gap-2 self-start">
           <Avatar className="size-24 rounded-2xl after:rounded-2xl">
-            <AvatarFallback className="bg-brand-gradient rounded-2xl text-3xl font-bold text-white">
+            <AvatarFallback className="bg-secondary text-secondary-foreground rounded-2xl text-3xl font-bold">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
-          <span className="text-muted-foreground font-mono text-[10px] tracking-widest">
+          <span className="text-muted-foreground text-label font-mono tracking-widest">
             ID {badgeId}
           </span>
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.2em] uppercase">
+          <p className="text-muted-foreground text-label font-semibold">
             {roleLabels[user.role]} · LevelUp English
           </p>
-          <h2 className="mt-1 truncate text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 className="font-heading text-title mt-1 truncate font-semibold">
             {user.name}
           </h2>
           <p className="text-muted-foreground truncate text-sm">{user.email}</p>

@@ -16,18 +16,18 @@ const xpFormatter = new Intl.NumberFormat("pt-BR");
 
 export function ProfileIdentity({ user }: { user: User }) {
   return (
-    <Card className="border-border/40 bg-card/60 backdrop-blur-sm">
+    <Card className="border-border bg-card">
       <CardContent className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center gap-4">
           <Avatar className="ring-primary/40 size-16 ring-2">
-            <AvatarFallback className="bg-brand-gradient text-lg font-semibold text-white">
+            <AvatarFallback className="bg-secondary text-secondary-foreground text-lg font-semibold">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="truncate text-2xl font-bold tracking-tight">
+              <h2 className="font-heading text-heading truncate font-semibold">
                 {user.name}
               </h2>
               <Badge variant="outline">{roleLabels[user.role]}</Badge>
