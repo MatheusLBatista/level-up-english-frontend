@@ -99,6 +99,15 @@ function refreshOnce() {
   return refreshInFlight;
 }
 
+/**
+ * O backend responde 498 para access token inválido ou expirado e 401 quando o
+ * refresh token não está mais no banco (logout ou revogação). Nos dois casos a
+ * sessão foi recusada e vale tentar renovar.
+ */
+function isSessionRejected(status: number) {
+  return status === 401 || status === 498;
+}
+
 export async function apiFetch<T>(
   path: string,
   { body, token, headers, ...init }: ApiFetchOptions = {},
@@ -117,7 +126,7 @@ export async function apiFetch<T>(
 
   let response = await send(token);
 
-  if (response.status === 401 && token) {
+  if (isSessionRejected(response.status) && token) {
     const stored = readSession()?.accessToken;
 
     const accessToken =
@@ -127,7 +136,7 @@ export async function apiFetch<T>(
       response = await send(accessToken);
     }
 
-    if (!accessToken || response.status === 401) {
+    if (!accessToken || isSessionRejected(response.status)) {
       emitUnauthorized();
     }
   }
