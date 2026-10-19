@@ -1,0 +1,7 @@
+{
+  "password": "Senha@123",
+  "student": { "email": "ana.ferreira@levelup.edu.br", "home": "/dashboard" },
+  "teacher": { "email": "carla.mendes@levelup.edu.br", "home": "/painel" },
+  "admin": { "email": "renata.albuquerque@levelup.edu.br", "home": "/turmas" },
+  "disabled": { "email": "nicolas.pinto@levelup.edu.br" }
+}
