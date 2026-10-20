@@ -1,25 +1,11 @@
-import users from "../fixtures/users.json";
-import type { ApiSession } from "../support/session";
-
-type Mission = {
-  _id: string;
-  title: string;
-  description: string;
-  type: "quiz" | "vocabulary" | "audio";
-  xp_reward: number;
-  questions?: { question: string; options: Record<string, string> }[];
-};
-
-type MissionProgress = {
-  mission_id: string;
-  done: boolean;
-  score: number;
-  xp_earned: number;
-};
-
-type User = { _id: string; mission_progress: MissionProgress[] };
-
-type Page<T> = { docs: T[] };
+import users from "../../fixtures/users.json";
+import type {
+  Mission,
+  MissionProgress,
+  Page,
+  User,
+} from "../../support/api-types";
+import type { ApiSession } from "../../support/session";
 
 /** Responde as `count` primeiras questões da missão aberta com a alternativa. */
 function answerQuestions(mission: Mission, count: number, option = "a") {

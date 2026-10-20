@@ -1,5 +1,5 @@
-import { SESSION_KEY, type ApiSession } from "../support/session";
-import users from "../fixtures/users.json";
+import { SESSION_KEY, type ApiSession } from "../../support/session";
+import users from "../../fixtures/users.json";
 
 /**
  * Entra como aluno pela API e abre a página com a sessão no navegador. As
