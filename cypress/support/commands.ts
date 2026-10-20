@@ -1,17 +1,16 @@
-export type ApiSession = {
-  accessToken: string;
-  refreshToken: string;
-  user: { _id: string; name: string; role: string };
-};
+import { SESSION_KEY, type ApiSession } from "./session";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace -- é assim que o Cypress tipa comandos novos
   namespace Cypress {
     interface Chainable {
-      /** Preenche o formulário de login e clica em "Entrar". */
       fillLogin(email: string, password: string): Chainable<void>;
-      /** Faz login direto na API, sem passar pela tela, e devolve a sessão. */
+
       loginByApi(email: string, password: string): Chainable<ApiSession>;
+
+      visitWithSession(path: string, session: ApiSession): Chainable<void>;
+
+      apiGet<T>(path: string, token: string): Chainable<T>;
     }
   }
 }
@@ -28,6 +27,24 @@ Cypress.Commands.add("loginByApi", (email, password) =>
       method: "POST",
       url: `${Cypress.expose("apiUrl")}/auth/login`,
       body: { email, password },
+      log: false,
+    })
+    .its("body.data"),
+);
+
+Cypress.Commands.add("visitWithSession", (path, session) => {
+  cy.visit(path, {
+    onBeforeLoad(win) {
+      win.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    },
+  });
+});
+
+Cypress.Commands.add("apiGet", (path, token) =>
+  cy
+    .request({
+      url: `${Cypress.expose("apiUrl")}${path}`,
+      headers: { Authorization: `Bearer ${token}` },
       log: false,
     })
     .its("body.data"),
