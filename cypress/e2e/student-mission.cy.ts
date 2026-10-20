@@ -4,15 +4,36 @@ import type { ApiSession } from "../support/session";
 type Mission = {
   _id: string;
   title: string;
+  description: string;
   type: "quiz" | "vocabulary" | "audio";
+  xp_reward: number;
   questions?: { question: string; options: Record<string, string> }[];
 };
 
-type MissionProgress = { mission_id: string; done: boolean; score: number };
+type MissionProgress = {
+  mission_id: string;
+  done: boolean;
+  score: number;
+  xp_earned: number;
+};
 
 type User = { _id: string; mission_progress: MissionProgress[] };
 
 type Page<T> = { docs: T[] };
+
+/** Responde as `count` primeiras questões da missão aberta com a alternativa. */
+function answerQuestions(mission: Mission, count: number, option = "a") {
+  const questions = mission.questions!;
+
+  questions.slice(0, count).forEach((question, index) => {
+    cy.contains("legend", question.question).should("be.visible");
+    cy.contains("label", question.options[option]).click();
+
+    if (index < questions.length - 1) {
+      cy.contains("button", "Próxima").click();
+    }
+  });
+}
 
 // O Arthur entrou na turma há pouco no seed:demo e não fez nenhuma missão, então
 // todas aparecem como pendentes. A entrega é simulada para continuar assim.
@@ -39,15 +60,7 @@ describe("Missões do aluno", () => {
   /** Abre o quiz e responde as `count` primeiras questões com a alternativa. */
   function answerQuiz(count: number, option = "a") {
     cy.visitWithSession(`/missoes/${quiz._id}`, session);
-
-    quiz.questions!.slice(0, count).forEach((question, index) => {
-      cy.contains("legend", question.question).should("be.visible");
-      cy.contains("label", question.options[option]).click();
-
-      if (index < quiz.questions!.length - 1) {
-        cy.contains("button", "Próxima").click();
-      }
-    });
+    answerQuestions(quiz, count, option);
   }
 
   it("lista as missões da turma e filtra por tipo", () => {
@@ -113,6 +126,53 @@ describe("Missões do aluno", () => {
     cy.contains("+120 XP").should("be.visible");
     cy.contains("Você acertou 4 de 5 (80%).").should("be.visible");
     cy.contains("Você subiu para o nível 2!").should("be.visible");
+  });
+
+  it("mantém as respostas quando a entrega falha", () => {
+    cy.intercept("POST", `**/missions/${quiz._id}/progress`, {
+      statusCode: 500,
+      body: { message: "Erro interno do servidor.", data: null, errors: [] },
+    }).as("submit");
+
+    answerQuiz(quiz.questions!.length);
+    cy.contains("button", "Entregar").click();
+    cy.wait("@submit");
+
+    cy.contains(
+      '[role="alert"]',
+      "Erro interno do servidor. Suas respostas continuam aqui.",
+    ).should("be.visible");
+    cy.get('input[type="radio"][value="a"]').should("be.checked");
+    cy.get('[aria-label$=", respondida"]').should(
+      "have.length",
+      quiz.questions!.length,
+    );
+    cy.contains("button", "Entregar").should("be.enabled");
+  });
+
+  it("mostra o material antes das perguntas de vocabulário", () => {
+    const vocabulary = missions.find(
+      (mission) => mission.type === "vocabulary",
+    )!;
+
+    cy.visitWithSession(`/missoes/${vocabulary._id}`, session);
+
+    cy.contains("h2", "Estude antes de responder").should("be.visible");
+    cy.contains(vocabulary.description).should("be.visible");
+    cy.contains("legend", vocabulary.questions![0].question).should(
+      "not.exist",
+    );
+
+    cy.contains("button", "Começar as perguntas").click();
+    cy.contains(`Questão 1 de ${vocabulary.questions!.length}`).should(
+      "be.visible",
+    );
+    cy.contains("legend", vocabulary.questions![0].question).should(
+      "be.visible",
+    );
+
+    cy.get('[aria-label="Rever o material"]').click();
+    cy.contains("h2", "Estude antes de responder").should("be.visible");
   });
 
   it("só deixa entregar com todas as questões respondidas", () => {
@@ -184,23 +244,89 @@ describe("Missões do aluno", () => {
   });
 });
 
-// A Ana é a aluna destaque do seed:demo e já tirou 100% em quizzes.
-describe("Missão já concluída", () => {
-  it("mostra a missão como concluída e não deixa refazer", () => {
-    cy.loginByApi(users.student.email, users.password).then((session) => {
-      cy.apiGet<User>(`/users/${session.user._id}`, session.accessToken).then(
-        (user) => {
-          const perfect = user.mission_progress.find(
-            (entry) => entry.done && entry.score === 100,
-          )!;
+// A Ana é a aluna destaque do seed:demo: tirou 100% em uns quizzes e menos em
+// outras missões, que ela ainda pode refazer.
+describe("Missões já feitas", () => {
+  let session: ApiSession;
+  let progress: MissionProgress[];
 
-          cy.visitWithSession(`/missoes/${perfect.mission_id}`, session);
-        },
-      );
-    });
+  beforeEach(() => {
+    cy.loginByApi(users.student.email, users.password)
+      .then((created) => {
+        session = created;
+        return cy.apiGet<User>(
+          `/users/${created.user._id}`,
+          created.accessToken,
+        );
+      })
+      .then((user) => {
+        progress = user.mission_progress;
+      });
+  });
+
+  it("mostra a missão como concluída e não deixa refazer", () => {
+    const perfect = progress.find(
+      (entry) => entry.done && entry.score === 100,
+    )!;
+
+    cy.visitWithSession(`/missoes/${perfect.mission_id}`, session);
 
     cy.contains("Missão concluída").should("be.visible");
     cy.contains("Você já tirou nota máxima aqui").should("be.visible");
     cy.contains("button", "Entregar").should("not.exist");
+  });
+
+  it("deixa refazer abaixo de 100% e só paga o que passar da melhor nota", () => {
+    const best = progress.find((entry) => entry.done && entry.score < 100)!;
+
+    cy.apiGet<Mission>(
+      `/missions/${best.mission_id}`,
+      session.accessToken,
+    ).then((mission) => {
+      cy.intercept("POST", `**/missions/${mission._id}/progress`, {
+        body: {
+          message: "ok",
+          errors: [],
+          data: {
+            mission: mission._id,
+            student: session.user._id,
+            done: true,
+            score: 0,
+            best_score: best.score,
+            correct_answers: 0,
+            total_questions: mission.questions!.length,
+            xp_earned: 0,
+            credited_so_far: best.xp_earned,
+            already_rewarded: true,
+            progression: null,
+          },
+        },
+      }).as("submit");
+
+      cy.visitWithSession(`/missoes/${mission._id}`, session);
+
+      cy.contains(`Sua melhor nota aqui é ${best.score}%`)
+        .should("be.visible")
+        .and("contain", `até +${mission.xp_reward - best.xp_earned} XP`);
+
+      cy.contains("button", "Começar as perguntas").click();
+      answerQuestions(mission, mission.questions!.length);
+      cy.contains("button", "Entregar").click();
+      cy.wait("@submit");
+
+      cy.contains("0 XP").should("be.visible");
+      cy.contains(
+        `Sua melhor nota nesta missão continua ${best.score}%.`,
+      ).should("be.visible");
+      cy.contains(
+        `Nenhum XP novo: sua melhor tentativa já rendeu ${best.xp_earned} de ${mission.xp_reward} XP.`,
+      ).should("be.visible");
+
+      // Tentar de novo começa do zero, pelo material.
+      cy.contains("button", "Tentar de novo").click();
+      cy.contains("h2", "Estude antes de responder").should("be.visible");
+      cy.contains("button", "Começar as perguntas").click();
+      cy.get('input[type="radio"]:checked').should("not.exist");
+    });
   });
 });
