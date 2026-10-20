@@ -3,5 +3,6 @@
   "student": { "email": "ana.ferreira@levelup.edu.br", "home": "/dashboard" },
   "teacher": { "email": "carla.mendes@levelup.edu.br", "home": "/painel" },
   "admin": { "email": "renata.albuquerque@levelup.edu.br", "home": "/turmas" },
+  "newStudent": { "email": "arthur.nascimento@levelup.edu.br" },
   "disabled": { "email": "nicolas.pinto@levelup.edu.br" }
 }

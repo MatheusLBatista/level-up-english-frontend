@@ -1,6 +1,5 @@
 import users from "../fixtures/users.json";
-
-const SESSION_KEY = "levelup-english:session";
+import { SESSION_KEY } from "../support/session";
 
 const roles = [
   { label: "aluno", ...users.student },

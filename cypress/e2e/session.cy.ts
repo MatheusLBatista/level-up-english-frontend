@@ -1,7 +1,5 @@
-import type { ApiSession } from "../support/commands";
+import { SESSION_KEY, type ApiSession } from "../support/session";
 import users from "../fixtures/users.json";
-
-const SESSION_KEY = "levelup-english:session";
 
 /**
  * Entra como aluno pela API e abre a página com a sessão no navegador. As
@@ -9,14 +7,7 @@ const SESSION_KEY = "levelup-english:session";
  */
 function visitAsStudent(path: string, changes: Partial<ApiSession> = {}) {
   cy.loginByApi(users.student.email, users.password).then((session) => {
-    cy.visit(path, {
-      onBeforeLoad(win) {
-        win.localStorage.setItem(
-          SESSION_KEY,
-          JSON.stringify({ ...session, ...changes }),
-        );
-      },
-    });
+    cy.visitWithSession(path, { ...session, ...changes });
   });
 }
 
