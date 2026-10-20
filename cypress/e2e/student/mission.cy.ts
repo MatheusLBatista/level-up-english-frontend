@@ -1,11 +1,11 @@
-import users from "../fixtures/users.json";
+import users from "../../fixtures/users.json";
 import type {
   Mission,
   MissionProgress,
   Page,
   User,
-} from "../support/api-types";
-import type { ApiSession } from "../support/session";
+} from "../../support/api-types";
+import type { ApiSession } from "../../support/session";
 
 /** Responde as `count` primeiras questões da missão aberta com a alternativa. */
 function answerQuestions(mission: Mission, count: number, option = "a") {

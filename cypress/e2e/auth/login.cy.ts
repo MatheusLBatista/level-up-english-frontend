@@ -1,5 +1,5 @@
-import users from "../fixtures/users.json";
-import { SESSION_KEY } from "../support/session";
+import users from "../../fixtures/users.json";
+import { SESSION_KEY } from "../../support/session";
 
 const roles = [
   { label: "aluno", ...users.student },

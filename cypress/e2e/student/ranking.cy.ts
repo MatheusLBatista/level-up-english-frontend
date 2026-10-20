@@ -1,6 +1,6 @@
-import users from "../fixtures/users.json";
-import type { Ranking } from "../support/api-types";
-import type { ApiSession } from "../support/session";
+import users from "../../fixtures/users.json";
+import type { Ranking } from "../../support/api-types";
+import type { ApiSession } from "../../support/session";
 
 /** Confere se as linhas da tela seguem a mesma ordem da API. */
 function expectRows(ranking: Ranking, userId: string) {

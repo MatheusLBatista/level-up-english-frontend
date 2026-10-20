@@ -1,6 +1,6 @@
-import users from "../fixtures/users.json";
-import type { Ranking, User } from "../support/api-types";
-import { SESSION_KEY, type ApiSession } from "../support/session";
+import users from "../../fixtures/users.json";
+import type { Ranking, User } from "../../support/api-types";
+import { SESSION_KEY, type ApiSession } from "../../support/session";
 
 const xpFormatter = new Intl.NumberFormat("pt-BR");
 

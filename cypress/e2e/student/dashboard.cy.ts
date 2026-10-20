@@ -1,12 +1,12 @@
-import users from "../fixtures/users.json";
+import users from "../../fixtures/users.json";
 import {
   isPending,
   type Mission,
   type Page,
   type User,
   type XpHistoryItem,
-} from "../support/api-types";
-import type { ApiSession } from "../support/session";
+} from "../../support/api-types";
+import type { ApiSession } from "../../support/session";
 
 /** Card de estatística pelo rótulo, para conferir o número ao lado. */
 function statCard(label: string) {
