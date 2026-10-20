@@ -91,16 +91,32 @@ depois de trocar o valor, reinicie o `npm run dev`.
 
 ## Scripts
 
-| Script                 | O que faz                                          |
-| ---------------------- | -------------------------------------------------- |
-| `npm run dev`          | Servidor de desenvolvimento.                       |
-| `npm run build`        | Build de produção.                                 |
-| `npm run start`        | Sobe o build de produção.                          |
-| `npm run lint`         | ESLint.                                            |
-| `npm run lint:fix`     | ESLint com correção automática.                    |
-| `npm run typecheck`    | Gera os tipos de rota do Next e roda o TypeScript. |
-| `npm run format`       | Formata com Prettier.                              |
-| `npm run format:check` | Verifica a formatação sem alterar arquivos.        |
+| Script                 | O que faz                                           |
+| ---------------------- | --------------------------------------------------- |
+| `npm run dev`          | Servidor de desenvolvimento.                        |
+| `npm run build`        | Build de produção.                                  |
+| `npm run start`        | Sobe o build de produção.                           |
+| `npm run lint`         | ESLint.                                             |
+| `npm run lint:fix`     | ESLint com correção automática.                     |
+| `npm run typecheck`    | Gera os tipos de rota do Next e roda o TypeScript.  |
+| `npm run format`       | Formata com Prettier.                               |
+| `npm run format:check` | Verifica a formatação sem alterar arquivos.         |
+| `npm run cy:open`      | Abre o Cypress para escolher e assistir aos testes. |
+| `npm run cy:run`       | Roda todos os testes E2E no terminal.               |
+
+## Testes
+
+Testes ponta a ponta com [Cypress](https://www.cypress.io/), em `cypress/e2e/`,
+separados por área (`auth/`, `student/`). Eles rodam contra o backend local com
+os dados de demonstração (`npm run seed:demo` no backend):
+
+```bash
+# backend e frontend rodando (npm run dev em cada um)
+npm run cy:run
+```
+
+Escopo, estratégia, casos de teste, resultados e defeitos encontrados estão no
+[plano de testes](docs/plano-de-testes.md).
 
 ## Estrutura
 
@@ -126,7 +142,11 @@ src/
 ├── providers/           # AppProviders e QueryProvider
 ├── schemas/             # schemas Zod dos formulários
 └── services/            # funções que chamam a API, uma por endpoint
-docs/                    # documentação do projeto
+cypress/
+├── e2e/                 # testes ponta a ponta, uma pasta por área
+├── fixtures/            # usuários de teste (seed:demo)
+└── support/             # comandos e tipos compartilhados
+docs/                    # documentação do projeto (API e plano de testes)
 ```
 
 O alias `@/*` aponta para `src/*` — por exemplo,
