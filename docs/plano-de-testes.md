@@ -5,7 +5,7 @@
 | Sistema         | LevelUp English — interface web (Next.js)     |
 | Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress |
 | Versão          | 1.1 — autenticação, aluno e professor         |
-| Última execução | 21/10/2026 — 70 casos, 70 aprovados           |
+| Última execução | 21/10/2026 — 72 casos, 72 aprovados           |
 
 ## 1. Objetivo
 
@@ -30,6 +30,7 @@ funcionando.
 | Aluno — Perfil       | Dados, turma, conquistas, edição do nome e troca de senha                                                                                      |
 | Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis |
 | Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, edição, desativação e reativação                                                 |
+| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                          |
 | Professor — Perfil   | Crachá, turmas com atalhos e atividade recente                                                                                                 |
 
 ### 2.2 Fora do escopo (nesta versão)
@@ -253,6 +254,13 @@ O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
 | CT-TPR-02 | Suas turmas       | I    | Cada turma com a contagem de alunos e missões da API e atalhos para o painel e as missões daquela turma. |
 | CT-TPR-03 | Atividade recente | I    | Total de atitudes aplicadas e a mais recente, com aluno e atitude, iguais aos da API.                    |
 
+### 7.11 Professor — Ranking — `cypress/e2e/teacher/ranking.cy.ts`
+
+| ID        | Caso             | Modo | Resultado esperado                                                                                                         |
+| --------- | ---------------- | ---- | -------------------------------------------------------------------------------------------------------------------------- |
+| CT-TRK-01 | Ranking da turma | I    | Abre na turma do professor, com o seletor de turma e as posições na mesma ordem da API; nenhuma linha marcada como "Você". |
+| CT-TRK-02 | Ranking geral    | I    | "Geral" muda a URL, esconde o seletor de turma e mostra o ranking geral da API; "Turma" traz o seletor de volta.           |
+
 ## 8. Critérios
 
 | Critério                 | Definição                                                                                                                                  |
@@ -278,9 +286,10 @@ Execução de 21/10/2026, ambiente da seção 4:
 | Painel do professor  | `teacher/panel.cy.ts`          |     15 |        15 |      0 |
 | Missões do professor | `teacher/missions.cy.ts`       |      7 |         7 |      0 |
 | Perfil do professor  | `teacher/profile.cy.ts`        |      3 |         3 |      0 |
-| **Total**            |                                | **70** |    **70** |  **0** |
+| Ranking do professor | `teacher/ranking.cy.ts`        |      2 |         2 |      0 |
+| **Total**            |                                | **72** |    **72** |  **0** |
 
-Tempo total: cerca de 1 minuto e 45 segundos.
+Tempo total: cerca de 1 minuto e 50 segundos.
 
 ## 10. Defeitos encontrados
 
@@ -310,7 +319,7 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 ## 12. Histórico de versões
 
-| Versão | Data       | Mudança                                                  |
-| ------ | ---------- | -------------------------------------------------------- |
-| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                |
-| 1.1    | 21/10/2026 | Telas do professor: painel, missões e perfil (25 casos). |
+| Versão | Data       | Mudança                                                           |
+| ------ | ---------- | ----------------------------------------------------------------- |
+| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                         |
+| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos). |
