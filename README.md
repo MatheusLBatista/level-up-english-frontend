@@ -107,7 +107,7 @@ depois de trocar o valor, reinicie o `npm run dev`.
 ## Testes
 
 Testes ponta a ponta com [Cypress](https://www.cypress.io/), em `cypress/e2e/`,
-separados por área (`auth/`, `student/`). Eles rodam contra o backend local com
+separados por área (`auth/`, `student/`, `teacher/`). Eles rodam contra o backend local com
 os dados de demonstração (`npm run seed:demo` no backend):
 
 ```bash
