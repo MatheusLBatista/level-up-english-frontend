@@ -4,8 +4,8 @@
 | --------------- | --------------------------------------------- |
 | Sistema         | LevelUp English — interface web (Next.js)     |
 | Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress |
-| Versão          | 1.0 — cobre autenticação e as telas do aluno  |
-| Última execução | 19/10/2026 — 45 casos, 45 aprovados           |
+| Versão          | 1.1 — autenticação, aluno e professor         |
+| Última execução | 21/10/2026 — 70 casos, 70 aprovados           |
 
 ## 1. Objetivo
 
@@ -19,19 +19,22 @@ funcionando.
 
 ### 2.1 Dentro do escopo
 
-| Área                 | O que é testado                                                                                                |
-| -------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                        |
-| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                               |
-| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API          |
-| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor |
-| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, rascunho, saída, refazer, erros                            |
-| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL                                    |
-| Aluno — Perfil       | Dados, turma, conquistas, edição do nome e troca de senha                                                      |
+| Área                 | O que é testado                                                                                                                                |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                        |
+| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                               |
+| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                          |
+| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor                                 |
+| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, rascunho, saída, refazer, erros                                                            |
+| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL                                                                    |
+| Aluno — Perfil       | Dados, turma, conquistas, edição do nome e troca de senha                                                                                      |
+| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis |
+| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, edição, desativação e reativação                                                 |
+| Professor — Perfil   | Crachá, turmas com atalhos e atividade recente                                                                                                 |
 
 ### 2.2 Fora do escopo (nesta versão)
 
-- Telas do professor e do admin — planejadas para as próximas versões (seção 11).
+- Telas do admin — planejadas para a próxima versão (seção 11).
 - Testes unitários de funções isoladas e testes de componente.
 - Testes do backend — o repositório da API tem a própria suíte (Jest).
 - Desempenho, carga e segurança.
@@ -52,10 +55,10 @@ classes CSS, para que mudanças visuais não quebrem os testes.
 Os casos se dividem em dois grupos, indicados na coluna **Modo** das tabelas
 da seção 7:
 
-| Modo          | Como funciona                                                                            | Quando é usado                                                                                                                                                                                                                              |
-| ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Integrado** | O frontend conversa com o backend real, rodando localmente com os dados de demonstração. | Fluxos que só leem dados ou que não alteram o banco: login, listagens, ranking, erros reais da API.                                                                                                                                         |
-| **Simulado**  | O Cypress intercepta a requisição (`cy.intercept`) e devolve uma resposta preparada.     | Quando a chamada real mudaria os dados da demonstração (entregar missão, trocar nome ou senha), dependeria de algo externo (e-mail de recuperação) ou exigiria um estado difícil de reproduzir (erro 500, conta desativada no meio do uso). |
+| Modo          | Como funciona                                                                            | Quando é usado                                                                                                                                                                                                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Integrado** | O frontend conversa com o backend real, rodando localmente com os dados de demonstração. | Fluxos que só leem dados ou que não alteram o banco: login, listagens, ranking, erros reais da API.                                                                                                                                                                                                               |
+| **Simulado**  | O Cypress intercepta a requisição (`cy.intercept`) e devolve uma resposta preparada.     | Quando a chamada real mudaria os dados da demonstração (entregar missão, trocar nome ou senha, aplicar atitude, ajustar XP, cadastrar aluno, criar ou editar missão), dependeria de algo externo (e-mail de recuperação) ou exigiria um estado difícil de reproduzir (erro 500, conta desativada no meio do uso). |
 
 Mesmo nos testes simulados, o caso confere **o que o frontend enviou** para a
 API (o corpo da requisição), e não só a tela.
@@ -91,7 +94,7 @@ com a senha `Senha@123`, e estão em `cypress/fixtures/users.json`.
 | ------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
 | Aluno com histórico | `ana.ferreira@levelup.edu.br`       | Aluna destaque: tem XP, histórico, missões com nota máxima e outras abaixo de 100%. |
 | Aluno novo          | `arthur.nascimento@levelup.edu.br`  | Entrou na turma há pouco: nenhuma missão feita e XP zerado.                         |
-| Professor           | `carla.mendes@levelup.edu.br`       | Professora com turmas.                                                              |
+| Professor           | `carla.mendes@levelup.edu.br`       | Professora do 1º Ano A: 8 alunos e as 7 missões da turma, todas criadas por ela.    |
 | Admin               | `renata.albuquerque@levelup.edu.br` | Coordenação da escola.                                                              |
 | Conta desativada    | `nicolas.pinto@levelup.edu.br`      | Aluno que o seed desativa.                                                          |
 
@@ -207,6 +210,49 @@ demonstração.
 | CT-PRF-05 | Senha atual errada          | I    | API responde 400, aparece "Senha atual incorreta." e o usuário **continua logado**.                                 |
 | CT-PRF-06 | Troca de senha              | S    | Envia `{ currentPassword, newPassword }` e mostra "Senha alterada com sucesso."                                     |
 
+### 7.8 Professor — Painel — `cypress/e2e/teacher/panel.cy.ts`
+
+| ID        | Caso                               | Modo | Resultado esperado                                                                                                                                                                 |
+| --------- | ---------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-PNL-01 | Alunos da turma                    | I    | A turma aparece no seletor e a grade mostra os mesmos alunos da API, com nível e XP.                                                                                               |
+| CT-PNL-02 | Pesquisa                           | I    | A pesquisa ignora maiúsculas e acentos; sem resultado, mostra "Nenhum aluno encontrado".                                                                                           |
+| CT-PNL-03 | Seleção                            | I    | Sem seleção, as ações ficam desabilitadas; marca um a um, "Selecionar todos" e "Limpar" atualizam a contagem.                                                                      |
+| CT-PNL-04 | Ficha do aluno                     | I    | "Ver ficha" abre o painel lateral com nome, nível e histórico de XP.                                                                                                               |
+| CT-PNL-05 | Aplicar atitudes e desfazer        | I+S  | Duas atitudes para dois alunos geram quatro envios (um por aluno e atitude), o resumo mostra o XP por aluno, "Desfazer" apaga os quatro registros e, ao fechar, a seleção é limpa. |
+| CT-PNL-06 | Falha parcial                      | I+S  | Se a API recusa um dos alunos, a tela mostra "1 de 2 aplicadas" e o motivo ao lado do nome.                                                                                        |
+| CT-PNL-07 | Ajuste sem quantidade              | I    | Mostra "Informe a quantidade de XP." sem chamar a API.                                                                                                                             |
+| CT-PNL-08 | Adicionar XP                       | I+S  | Envia `{ student, amount, reason }` para cada aluno marcado e confirma "+50 XP por aluno".                                                                                         |
+| CT-PNL-09 | Remover mais XP do que o aluno tem | I+S  | Antes de confirmar, avisa que o XP vai parar em 0; depois, mostra quanto foi removido de fato.                                                                                     |
+| CT-PNL-10 | Validação do novo aluno            | I    | Nome com 1 letra e e-mail inválido são barrados sem chamar a API.                                                                                                                  |
+| CT-PNL-11 | E-mail já cadastrado               | I    | A API responde 400 e o erro aparece no próprio campo de e-mail.                                                                                                                    |
+| CT-PNL-12 | Cadastrar aluno                    | I+S  | Envia nome, e-mail normalizado e a turma do painel; mostra "Aluno criado".                                                                                                         |
+| CT-PNL-13 | Acesso a `/dashboard`              | I    | Tela de aluno: o professor volta para `/painel`.                                                                                                                                   |
+| CT-PNL-14 | Acesso a `/turmas`                 | I    | Tela de admin: o professor volta para `/painel`.                                                                                                                                   |
+| CT-PNL-15 | Acesso a `/atitudes`               | I    | Tela de admin: o professor volta para `/painel`.                                                                                                                                   |
+
+### 7.9 Professor — Missões — `cypress/e2e/teacher/missions.cy.ts`
+
+| ID        | Caso                             | Modo | Resultado esperado                                                                                   |
+| --------- | -------------------------------- | ---- | ---------------------------------------------------------------------------------------------------- |
+| CT-TMS-01 | Listar, paginar e filtrar        | I    | Seis missões por página; "Próxima" e o filtro "Quiz" mudam a URL e a lista bate com a API.           |
+| CT-TMS-02 | Validação do quiz                | I    | Sem título, perguntas e alternativas, os erros aparecem e nada é enviado.                            |
+| CT-TMS-03 | Validação de vocabulário e áudio | I    | Vocabulário exige conteúdo; áudio exige link completo com `https://`.                                |
+| CT-TMS-04 | Criar quiz                       | I+S  | Envia tipo, título, descrição, XP, turma e as cinco perguntas com a alternativa correta de cada uma. |
+| CT-TMS-05 | Editar missão                    | I+S  | O formulário vem preenchido, o tipo fica bloqueado e o título novo é enviado.                        |
+| CT-TMS-06 | Desativar missão                 | I+S  | Pede confirmação; "Cancelar" não envia nada; "Desativar" envia `{ active: false }`.                  |
+| CT-TMS-07 | Reativar missão                  | S    | Uma missão inativa mostra o selo "Inativa" e "Reativar" envia `{ active: true }`.                    |
+
+O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
+`req.continue`), porque o seed não tem missão desativada.
+
+### 7.10 Professor — Perfil — `cypress/e2e/teacher/profile.cy.ts`
+
+| ID        | Caso              | Modo | Resultado esperado                                                                                       |
+| --------- | ----------------- | ---- | -------------------------------------------------------------------------------------------------------- |
+| CT-TPR-01 | Crachá            | I    | Papel, nome, e-mail e as turmas do professor.                                                            |
+| CT-TPR-02 | Suas turmas       | I    | Cada turma com a contagem de alunos e missões da API e atalhos para o painel e as missões daquela turma. |
+| CT-TPR-03 | Atividade recente | I    | Total de atitudes aplicadas e a mais recente, com aluno e atitude, iguais aos da API.                    |
+
 ## 8. Critérios
 
 | Critério                 | Definição                                                                                                                                  |
@@ -218,7 +264,7 @@ demonstração.
 
 ## 9. Resultados da execução
 
-Execução de 19/10/2026, ambiente da seção 4:
+Execução de 21/10/2026, ambiente da seção 4:
 
 | Suíte                | Arquivo                        |  Casos | Aprovados | Falhas |
 | -------------------- | ------------------------------ | -----: | --------: | -----: |
@@ -229,9 +275,12 @@ Execução de 19/10/2026, ambiente da seção 4:
 | Missões              | `student/mission.cy.ts`        |     11 |        11 |      0 |
 | Perfil               | `student/profile.cy.ts`        |      6 |         6 |      0 |
 | Ranking              | `student/ranking.cy.ts`        |      2 |         2 |      0 |
-| **Total**            |                                | **45** |    **45** |  **0** |
+| Painel do professor  | `teacher/panel.cy.ts`          |     15 |        15 |      0 |
+| Missões do professor | `teacher/missions.cy.ts`       |      7 |         7 |      0 |
+| Perfil do professor  | `teacher/profile.cy.ts`        |      3 |         3 |      0 |
+| **Total**            |                                | **70** |    **70** |  **0** |
 
-Tempo total: cerca de 40 segundos.
+Tempo total: cerca de 1 minuto e 45 segundos.
 
 ## 10. Defeitos encontrados
 
@@ -255,7 +304,13 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 **Próximos passos**
 
-| Versão | Escopo planejado                                                                                               | Pasta                  |
-| ------ | -------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| 1.1    | Professor: painel (aplicar atitudes, ajustar XP, cadastrar aluno), missões (criar, editar, desativar) e perfil | `cypress/e2e/teacher/` |
-| 1.2    | Admin: turmas, alunos, professores e atitudes                                                                  | `cypress/e2e/admin/`   |
+| Versão | Escopo planejado                              | Pasta                |
+| ------ | --------------------------------------------- | -------------------- |
+| 1.2    | Admin: turmas, alunos, professores e atitudes | `cypress/e2e/admin/` |
+
+## 12. Histórico de versões
+
+| Versão | Data       | Mudança                                                  |
+| ------ | ---------- | -------------------------------------------------------- |
+| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                |
+| 1.1    | 21/10/2026 | Telas do professor: painel, missões e perfil (25 casos). |
