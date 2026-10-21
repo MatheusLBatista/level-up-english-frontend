@@ -42,6 +42,31 @@ export type Ranking = {
   entries: { user: { _id: string; name: string }; xp: number; level: number }[];
 };
 
+export type ClassSummary = {
+  _id: string;
+  name: string;
+  students: string[];
+  missions: string[];
+};
+
+export type Attitude = {
+  _id: string;
+  name: string;
+  xp_value: number;
+  type: "positive" | "negative";
+};
+
+export type AttitudeLog = {
+  student: { name: string } | null;
+  attitude: { name: string } | null;
+};
+
+/** Envelope de resposta da API, para as respostas simuladas. */
+export function envelope<T>(data: T) {
+  return { message: "ok", errors: [], data };
+}
+
+/** Mesma regra de src/lib/missions.ts: sem nota máxima, dá para refazer. */
 export function isPending(mission: Mission, entry?: MissionProgress) {
   const canRetry =
     (mission.questions?.length ?? 0) > 0 &&
