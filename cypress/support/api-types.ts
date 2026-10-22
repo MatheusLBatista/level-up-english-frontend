@@ -24,6 +24,8 @@ export type User = {
   _id: string;
   name: string;
   email: string;
+  active: boolean;
+  class: string | null;
   xp: number;
   level: number;
   progress: { xp_to_next_level: number; next_level_xp: number | null };
@@ -45,6 +47,8 @@ export type Ranking = {
 export type ClassSummary = {
   _id: string;
   name: string;
+  active: boolean;
+  teacher: { _id: string; name: string } | null;
   students: string[];
   missions: string[];
 };
@@ -52,6 +56,8 @@ export type ClassSummary = {
 export type Attitude = {
   _id: string;
   name: string;
+  description: string | null;
+  active: boolean;
   xp_value: number;
   type: "positive" | "negative";
 };

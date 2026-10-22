@@ -11,6 +11,8 @@ declare global {
       visitWithSession(path: string, session: ApiSession): Chainable<void>;
 
       apiGet<T>(path: string, token: string): Chainable<T>;
+
+      selectOption(trigger: string, option: string): Chainable<void>;
     }
   }
 }
@@ -49,3 +51,11 @@ Cypress.Commands.add("apiGet", (path, token) =>
     })
     .its("body.data"),
 );
+
+// Escolhe pelo teclado: o Radix ignora o clique numa opção que abre por cima
+// do gatilho, porque o trata como o mesmo clique que abriu a lista.
+Cypress.Commands.add("selectOption", (trigger, option) => {
+  cy.get(trigger).click();
+  cy.contains('[role="option"]', option).focus().type("{enter}");
+  cy.get('[role="listbox"]').should("not.exist");
+});
