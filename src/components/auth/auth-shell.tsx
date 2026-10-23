@@ -1,5 +1,6 @@
 import { Gamepad2Icon } from "lucide-react";
 import { AuthShowcase } from "@/components/auth/auth-showcase";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/utils";
 
 function BrandLogo({ className }: { className?: string }) {
@@ -40,7 +41,8 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </p>
       </aside>
 
-      <div className="flex flex-col items-center justify-center gap-10 px-4 py-10 sm:px-6">
+      <div className="relative flex flex-col items-center justify-center gap-10 px-4 py-10 sm:px-6">
+        <ThemeToggle className="absolute top-4 right-4" />
         <BrandLogo className="md:hidden" />
         {children}
       </div>

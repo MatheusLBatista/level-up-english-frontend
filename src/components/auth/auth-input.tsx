@@ -8,7 +8,7 @@ export function AuthInput({
   return (
     <Input
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/40 h-10 border-white/40 bg-white/10 px-3 placeholder:text-white/50 dark:bg-white/10",
+        "focus-visible:border-ring focus-visible:ring-ring/40 border-input bg-card placeholder:text-muted-foreground h-10 px-3 dark:border-white/40 dark:bg-white/10 dark:placeholder:text-white/50",
         className,
       )}
       {...props}

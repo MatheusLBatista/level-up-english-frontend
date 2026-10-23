@@ -1,5 +1,6 @@
 "use client";
 
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/auth-context";
@@ -20,6 +21,7 @@ export function AppHeader() {
       <SidebarTrigger className="-ml-1" />
 
       <div className="ml-auto flex items-center gap-3">
+        <ThemeToggle />
         <div className="hidden text-right leading-tight sm:block">
           <p className="text-sm font-medium">{user?.name}</p>
           <p className="text-muted-foreground text-xs">
