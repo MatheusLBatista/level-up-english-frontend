@@ -73,7 +73,8 @@ turma e da mesma escola.
   senha (respostas 429).
 - **Técnico:** frontend Next.js 16 (App Router), React 19, Tailwind CSS 4,
   shadcn/ui; backend Express + MongoDB em repositório separado
-  (`../level-up-english`). O app usa sempre o tema escuro.
+  (`../level-up-english`). O app tem tema claro e escuro; por padrão segue
+  o sistema do aparelho.
 - **Em aberto:** o campo `streak` existe no banco, mas não é usado; o backend
   guarda só a nota de cada missão, não as respostas de cada tentativa.
 

@@ -33,7 +33,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} ${besley.variable} dark h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${besley.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
         <AppProviders>{children}</AppProviders>

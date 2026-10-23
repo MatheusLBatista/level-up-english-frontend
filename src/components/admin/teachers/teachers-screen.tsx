@@ -241,6 +241,7 @@ export function TeachersScreen() {
         open={editOpen}
         teacher={teacherToEdit}
         classes={classesQuery.data ?? []}
+        classesLoading={classesQuery.isPending}
         onClose={() => setEditOpen(false)}
       />
 

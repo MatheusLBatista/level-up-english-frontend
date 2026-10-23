@@ -107,8 +107,9 @@ depois de trocar o valor, reinicie o `npm run dev`.
 ## Testes
 
 Testes ponta a ponta com [Cypress](https://www.cypress.io/), em `cypress/e2e/`,
-separados por área (`auth/`, `student/`, `teacher/`). Eles rodam contra o backend local com
-os dados de demonstração (`npm run seed:demo` no backend):
+separados por área (`auth/`, `student/`, `teacher/`, `admin/`, `theme/`). Eles
+rodam contra o backend local com os dados de demonstração (`npm run seed:demo`
+no backend):
 
 ```bash
 # backend e frontend rodando (npm run dev em cada um)
@@ -235,8 +236,11 @@ Uma tela nova que use nuqs **fora** da área logada precisa do `<Suspense>`.
 
 Configuração em `components.json`: base **Radix UI**, preset **nova** (ícones
 Lucide + fonte Geist), cor base **zinc**, com CSS variables. Os tokens de tema e
-os gradientes da marca ficam em `src/app/globals.css`. O app usa sempre o tema
-escuro (classe `dark` fixa no `<html>`).
+as texturas de caderno (`bg-notebook`, `bg-notebook-page`) ficam em
+`src/app/globals.css`. O app tem tema claro e escuro: segue o sistema do
+aparelho na primeira visita e guarda a escolha do botão de sol/lua (no cabeçalho
+e no login) com o **next-themes**, que troca a classe `dark` no `<html>` antes
+da página aparecer, sem piscar.
 
 Para adicionar um componente:
 
