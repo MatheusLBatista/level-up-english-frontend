@@ -1,11 +1,11 @@
 # Plano de testes — LevelUp English (frontend)
 
-| Item            | Valor                                         |
-| --------------- | --------------------------------------------- |
-| Sistema         | LevelUp English — interface web (Next.js)     |
-| Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress |
-| Versão          | 1.1 — autenticação, aluno e professor         |
-| Última execução | 21/10/2026 — 72 casos, 72 aprovados           |
+| Item            | Valor                                              |
+| --------------- | -------------------------------------------------- |
+| Sistema         | LevelUp English — interface web (Next.js)          |
+| Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress      |
+| Versão          | 1.3 — autenticação, aluno, professor, admin e tema |
+| Última execução | 22/10/2026 — 108 casos, 108 aprovados              |
 
 ## 1. Objetivo
 
@@ -32,10 +32,16 @@ funcionando.
 | Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, edição, desativação e reativação                                                 |
 | Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                          |
 | Professor — Perfil   | Crachá, turmas com atalhos e atividade recente                                                                                                 |
+| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                     |
+| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                         |
+| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                               |
+| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                    |
+| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                   |
 
 ### 2.2 Fora do escopo (nesta versão)
 
-- Telas do admin — planejadas para a próxima versão (seção 11).
+- Aparência de cada tema: os testes conferem qual tema está ativo, não as cores
+  nem o contraste (verificados à parte, ver seção 11).
 - Testes unitários de funções isoladas e testes de componente.
 - Testes do backend — o repositório da API tem a própria suíte (Jest).
 - Desempenho, carga e segurança.
@@ -56,10 +62,10 @@ classes CSS, para que mudanças visuais não quebrem os testes.
 Os casos se dividem em dois grupos, indicados na coluna **Modo** das tabelas
 da seção 7:
 
-| Modo          | Como funciona                                                                            | Quando é usado                                                                                                                                                                                                                                                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Integrado** | O frontend conversa com o backend real, rodando localmente com os dados de demonstração. | Fluxos que só leem dados ou que não alteram o banco: login, listagens, ranking, erros reais da API.                                                                                                                                                                                                               |
-| **Simulado**  | O Cypress intercepta a requisição (`cy.intercept`) e devolve uma resposta preparada.     | Quando a chamada real mudaria os dados da demonstração (entregar missão, trocar nome ou senha, aplicar atitude, ajustar XP, cadastrar aluno, criar ou editar missão), dependeria de algo externo (e-mail de recuperação) ou exigiria um estado difícil de reproduzir (erro 500, conta desativada no meio do uso). |
+| Modo          | Como funciona                                                                            | Quando é usado                                                                                                                                                                                                                                                                                                                                 |
+| ------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Integrado** | O frontend conversa com o backend real, rodando localmente com os dados de demonstração. | Fluxos que só leem dados ou que não alteram o banco: login, listagens, ranking, erros reais da API.                                                                                                                                                                                                                                            |
+| **Simulado**  | O Cypress intercepta a requisição (`cy.intercept`) e devolve uma resposta preparada.     | Quando a chamada real mudaria os dados da demonstração (entregar missão, trocar nome ou senha, aplicar atitude, ajustar XP, cadastrar aluno, criar ou editar missão, turma, professor ou atitude), dependeria de algo externo (e-mail de recuperação) ou exigiria um estado difícil de reproduzir (erro 500, conta desativada no meio do uso). |
 
 Mesmo nos testes simulados, o caso confere **o que o frontend enviou** para a
 API (o corpo da requisição), e não só a tela.
@@ -70,6 +76,14 @@ Os identificadores de missões e usuários mudam toda vez que o banco é
 recriado. Por isso, os testes não guardam IDs fixos: antes de começar, buscam
 na API os dados de que precisam (as missões da turma, o progresso do aluno, o
 ranking) e calculam o resultado esperado a partir deles.
+
+### 3.4 Tema do aparelho simulado
+
+O tema da primeira visita vem da preferência do aparelho
+(`prefers-color-scheme`), que o navegador do Cypress não deixa trocar. Os casos
+de tema substituem o `window.matchMedia` antes de a página carregar e escolhem
+se o "aparelho" está no tema claro ou no escuro. Assim o teste vale em qualquer
+navegador.
 
 ## 4. Ambiente
 
@@ -261,6 +275,70 @@ O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
 | CT-TRK-01 | Ranking da turma | I    | Abre na turma do professor, com o seletor de turma e as posições na mesma ordem da API; nenhuma linha marcada como "Você". |
 | CT-TRK-02 | Ranking geral    | I    | "Geral" muda a URL, esconde o seletor de turma e mostra o ranking geral da API; "Turma" traz o seletor de volta.           |
 
+### 7.12 Admin — Turmas — `cypress/e2e/admin/classes.cy.ts`
+
+| ID        | Caso                    | Modo | Resultado esperado                                                                                       |
+| --------- | ----------------------- | ---- | -------------------------------------------------------------------------------------------------------- |
+| CT-TUR-01 | Turmas ativas           | I    | As mesmas turmas da API, cada uma com o professor e a contagem de alunos e missões.                      |
+| CT-TUR-02 | Busca                   | I    | A busca pelo nome do professor mostra só a turma dele; sem resultado, mostra "Nenhuma turma encontrada". |
+| CT-TUR-03 | Filtro por status       | I    | "Inativas" e "Todas" mudam a URL (`?status=`) e a lista.                                                 |
+| CT-TUR-04 | Validação da nova turma | I    | Sem nome e sem professor, os erros aparecem e nada é enviado.                                            |
+| CT-TUR-05 | Nome repetido           | I    | A API recusa e o erro "Já existe uma turma com este nome." aparece no próprio campo.                     |
+| CT-TUR-06 | Criar turma             | I+S  | Envia `{ name, teacher }` com o professor escolhido e fecha o diálogo.                                   |
+| CT-TUR-07 | Editar turma            | I+S  | O formulário vem preenchido; envia o nome novo, o novo professor e `active: true`.                       |
+| CT-TUR-08 | Desativar turma         | I+S  | Pede confirmação mostrando a turma e o professor; envia `{ active: false }`.                             |
+| CT-TUR-09 | Reativar turma          | S    | Uma turma inativa mostra o selo "Inativa" e "Reativar" envia `{ active: true }`.                         |
+
+### 7.13 Admin — Alunos — `cypress/e2e/admin/students.cy.ts`
+
+| ID        | Caso                  | Modo | Resultado esperado                                                                                         |
+| --------- | --------------------- | ---- | ---------------------------------------------------------------------------------------------------------- |
+| CT-ALU-01 | Alunos ativos         | I    | Total, alunos da primeira página, turma ("Sem turma" quando não tem), nível e paginação iguais aos da API. |
+| CT-ALU-02 | Busca pelo nome       | I    | A busca vai para a URL (`?busca=`) e a lista e a contagem batem com a busca na API.                        |
+| CT-ALU-03 | Filtro por turma      | I    | A URL ganha `?turma=` e a lista mostra só os alunos ativos daquela turma.                                  |
+| CT-ALU-04 | Inativos e reativação | I+S  | "Inativos" mostra o selo "Inativo"; "Reativar" envia `{ active: true }`.                                   |
+| CT-ALU-05 | Perfil do aluno       | I    | Abre com nome, nível e histórico de XP.                                                                    |
+| CT-ALU-06 | Tirar da turma        | I+S  | A edição vem preenchida; "Sem turma" envia `class: null`.                                                  |
+| CT-ALU-07 | Desativar aluno       | I+S  | Pede confirmação avisando que o aluno não vai mais conseguir entrar; envia `{ active: false }`.            |
+| CT-ALU-08 | Cadastrar sem turma   | I+S  | Sem turma, o campo `class` nem vai no corpo; mostra "Aluno criado".                                        |
+
+### 7.14 Admin — Professores — `cypress/e2e/admin/teachers.cy.ts`
+
+| ID        | Caso                        | Modo | Resultado esperado                                                                                                                 |
+| --------- | --------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| CT-PRO-01 | Professores e turmas        | I    | Cada professor da API com o e-mail e as turmas dele.                                                                               |
+| CT-PRO-02 | Busca pelo e-mail           | I    | Mostra só o professor buscado.                                                                                                     |
+| CT-PRO-03 | Desativados                 | I    | A URL ganha `?status=desativados` e aparece "Nenhum professor desativado."                                                         |
+| CT-PRO-04 | Validação do novo professor | I    | Nome com 1 letra e e-mail inválido são barrados sem chamar a API.                                                                  |
+| CT-PRO-05 | Cadastrar já com turma      | I+S  | O formulário avisa quem a turma deixa ("sai de …"); envia nome, e-mail e a turma; mostra "Professor cadastrado".                   |
+| CT-PRO-06 | Renomear e trocar turmas    | I+S  | Envia o nome novo; a turma marcada recebe o professor e a desmarcada fica sem (`teacher: null`).                                   |
+| CT-PRO-07 | Edição com turmas lentas    | I    | Com a resposta das turmas atrasada 1,5 s, a edição só mostra o formulário depois que elas chegam, com as do professor já marcadas. |
+| CT-PRO-08 | Desativar professor         | I+S  | A confirmação lista as turmas que ficam sem professor ativo; envia `{ active: false }`.                                            |
+
+### 7.15 Admin — Atitudes — `cypress/e2e/admin/attitudes.cy.ts`
+
+| ID        | Caso                      | Modo | Resultado esperado                                                                                       |
+| --------- | ------------------------- | ---- | -------------------------------------------------------------------------------------------------------- |
+| CT-ATI-01 | Atitudes ativas           | I    | As mesmas atitudes da API, com o XP com sinal (punição negativa).                                        |
+| CT-ATI-02 | Desativadas e reativação  | I+S  | Mostra o selo "Desativada", sem botão de editar; "Reativar" envia `{ active: true }`.                    |
+| CT-ATI-03 | Validação da nova atitude | I    | Nome com 1 letra e XP zero são barrados sem chamar a API.                                                |
+| CT-ATI-04 | Criar punição             | I+S  | A prévia mostra o card com "-8 XP"; o corpo leva o XP sem sinal (`xp_value: 8`) e `type: "negative"`.    |
+| CT-ATI-05 | Editar punição            | I+S  | O campo mostra o XP com sinal; trocar para positivo transforma a punição em prêmio (`type: "positive"`). |
+| CT-ATI-06 | Desativar atitude         | I+S  | Pede confirmação com o nome da atitude; envia `{ active: false }`.                                       |
+
+O CT-TUR-09 simula a lista de turmas inativas, porque o seed não tem turma
+desativada.
+
+### 7.16 Tema claro e escuro — `cypress/e2e/theme/theme.cy.ts`
+
+| ID        | Caso                           | Modo | Resultado esperado                                                                                            |
+| --------- | ------------------------------ | ---- | ------------------------------------------------------------------------------------------------------------- |
+| CT-TEM-01 | Aparelho no escuro             | I    | Na primeira visita, o `<html>` tem a classe `dark` e `color-scheme: dark`.                                    |
+| CT-TEM-02 | Aparelho no claro              | I    | Na primeira visita, o `<html>` fica sem `dark` e com `color-scheme: light`.                                   |
+| CT-TEM-03 | Botão no login                 | I    | O botão alterna claro e escuro e guarda a escolha (`levelup-english:theme`) no navegador.                     |
+| CT-TEM-04 | Escolha salva vence o aparelho | I    | Com o aparelho no escuro e "claro" salvo, a tela abre no claro.                                               |
+| CT-TEM-05 | Dentro do app                  | I    | A escolha salva vale no dashboard; o botão do cabeçalho troca o tema e a troca continua depois de recarregar. |
+
 ## 8. Critérios
 
 | Critério                 | Definição                                                                                                                                  |
@@ -272,30 +350,37 @@ O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
 
 ## 9. Resultados da execução
 
-Execução de 21/10/2026, ambiente da seção 4:
+Execução de 22/10/2026, ambiente da seção 4:
 
-| Suíte                | Arquivo                        |  Casos | Aprovados | Falhas |
-| -------------------- | ------------------------------ | -----: | --------: | -----: |
-| Login                | `auth/login.cy.ts`             |      6 |         6 |      0 |
-| Recuperação de senha | `auth/password-recovery.cy.ts` |      8 |         8 |      0 |
-| Sessão               | `auth/session.cy.ts`           |      6 |         6 |      0 |
-| Dashboard            | `student/dashboard.cy.ts`      |      6 |         6 |      0 |
-| Missões              | `student/mission.cy.ts`        |     11 |        11 |      0 |
-| Perfil               | `student/profile.cy.ts`        |      6 |         6 |      0 |
-| Ranking              | `student/ranking.cy.ts`        |      2 |         2 |      0 |
-| Painel do professor  | `teacher/panel.cy.ts`          |     15 |        15 |      0 |
-| Missões do professor | `teacher/missions.cy.ts`       |      7 |         7 |      0 |
-| Perfil do professor  | `teacher/profile.cy.ts`        |      3 |         3 |      0 |
-| Ranking do professor | `teacher/ranking.cy.ts`        |      2 |         2 |      0 |
-| **Total**            |                                | **72** |    **72** |  **0** |
+| Suíte                | Arquivo                        |   Casos | Aprovados | Falhas |
+| -------------------- | ------------------------------ | ------: | --------: | -----: |
+| Login                | `auth/login.cy.ts`             |       6 |         6 |      0 |
+| Recuperação de senha | `auth/password-recovery.cy.ts` |       8 |         8 |      0 |
+| Sessão               | `auth/session.cy.ts`           |       6 |         6 |      0 |
+| Dashboard            | `student/dashboard.cy.ts`      |       6 |         6 |      0 |
+| Missões              | `student/mission.cy.ts`        |      11 |        11 |      0 |
+| Perfil               | `student/profile.cy.ts`        |       6 |         6 |      0 |
+| Ranking              | `student/ranking.cy.ts`        |       2 |         2 |      0 |
+| Painel do professor  | `teacher/panel.cy.ts`          |      15 |        15 |      0 |
+| Missões do professor | `teacher/missions.cy.ts`       |       7 |         7 |      0 |
+| Perfil do professor  | `teacher/profile.cy.ts`        |       3 |         3 |      0 |
+| Ranking do professor | `teacher/ranking.cy.ts`        |       2 |         2 |      0 |
+| Turmas do admin      | `admin/classes.cy.ts`          |       9 |         9 |      0 |
+| Alunos do admin      | `admin/students.cy.ts`         |       8 |         8 |      0 |
+| Professores do admin | `admin/teachers.cy.ts`         |       8 |         8 |      0 |
+| Atitudes do admin    | `admin/attitudes.cy.ts`        |       6 |         6 |      0 |
+| Tema claro e escuro  | `theme/theme.cy.ts`            |       5 |         5 |      0 |
+| **Total**            |                                | **108** |   **108** |  **0** |
 
-Tempo total: cerca de 1 minuto e 50 segundos.
+Tempo total: cerca de 3 minutos e 10 segundos.
 
 ## 10. Defeitos encontrados
 
 | ID     | Defeito                                                                                                                                                                                                                                                                   | Como foi encontrado                                                                          | Situação                                                                                                                               |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | DEF-01 | **A sessão não era renovada quando o token vencia.** O backend responde **498** para token inválido ou expirado, mas o frontend só tentava renovar no **401**. Na prática, depois de 1 dia (validade do token), o aluno via as telas com erro e não era mandado ao login. | CT-SES-04 e CT-SES-05 falharam na primeira execução: nenhuma chamada de renovação acontecia. | Corrigido em `src/lib/api.ts` (`isSessionRejected` aceita 401 e 498) e documentado em `docs/api.md`. Os dois casos passam desde então. |
+
+| DEF-02 | **A edição de professor podia tirar o professor de todas as turmas.** O formulário marcava as turmas do professor só no momento em que o diálogo abria. Se o admin clicasse em "Editar" antes de as turmas carregarem (comum com a API hospedada "fria"), o formulário abria sem nenhuma turma marcada, e salvar removia o professor de todas elas. | CT-PRO-07 falhou na primeira execução: com as turmas atrasadas, as caixas continuavam desmarcadas. | Corrigido em `src/components/admin/teachers/edit-teacher-dialog.tsx`: enquanto as turmas carregam, o diálogo mostra "Carregando as turmas…" e o formulário só aparece com elas já marcadas. O caso passa desde então. |
 
 O CT-PRF-05 cobre um defeito corrigido antes da criação dos testes (errar a
 senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte.
@@ -307,19 +392,27 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 - Os testes integrados dependem dos dados do `seed:demo`. Se os dados mudarem
   (por exemplo, o Arthur resolver missões), alguns casos falham sem que haja
   defeito; a solução é rodar o seed de novo.
+- Os testes do admin contam com dados do seed: cada turma com um professor
+  diferente (CT-TUR-02), pelo menos um aluno e uma atitude desativados
+  (CT-ALU-04 e CT-ATI-02).
 - Os testes rodam só em tela de computador (1280 × 800) e num único navegador.
+- O contraste dos dois temas (WCAG AA) não é verificado pelo Cypress; ele foi
+  conferido com o detector do Impeccable nas telas principais, no celular e no
+  desktop.
 - O frontend roda em modo de desenvolvimento; a primeira abertura de cada tela é
   mais lenta, por isso o tempo limite por comando é de 10 s.
 
 **Próximos passos**
 
-| Versão | Escopo planejado                              | Pasta                |
-| ------ | --------------------------------------------- | -------------------- |
-| 1.2    | Admin: turmas, alunos, professores e atitudes | `cypress/e2e/admin/` |
+| Versão | Escopo planejado                                 | Pasta |
+| ------ | ------------------------------------------------ | ----- |
+| 1.4    | Fluxos principais em tela de celular (390 × 844) | todas |
 
 ## 12. Histórico de versões
 
-| Versão | Data       | Mudança                                                           |
-| ------ | ---------- | ----------------------------------------------------------------- |
-| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                         |
-| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos). |
+| Versão | Data       | Mudança                                                                    |
+| ------ | ---------- | -------------------------------------------------------------------------- |
+| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                                  |
+| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).          |
+| 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02. |
+| 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                             |
