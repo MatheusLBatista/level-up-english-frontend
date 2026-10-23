@@ -32,6 +32,7 @@ type EditTeacherDialogProps = {
   teacher: User | null;
   /** Turmas ativas da escola. */
   classes: ClassSummary[];
+  classesLoading: boolean;
   onClose: () => void;
 };
 
@@ -39,6 +40,7 @@ export function EditTeacherDialog({
   open,
   teacher,
   classes,
+  classesLoading,
   onClose,
 }: EditTeacherDialogProps) {
   const mutation = useEditTeacher();
@@ -57,14 +59,23 @@ export function EditTeacherDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[90vh] gap-6 overflow-y-auto sm:max-w-md">
-        {teacher && (
-          <EditTeacherForm
-            teacher={teacher}
-            classes={classes}
-            mutation={mutation}
-            onSaved={close}
-          />
-        )}
+        {teacher &&
+          (classesLoading ? (
+            <DialogHeader>
+              <DialogTitle>Editar professor</DialogTitle>
+              <DialogDescription className="flex items-center gap-2">
+                <Loader2Icon className="size-4 animate-spin" />
+                Carregando as turmas…
+              </DialogDescription>
+            </DialogHeader>
+          ) : (
+            <EditTeacherForm
+              teacher={teacher}
+              classes={classes}
+              mutation={mutation}
+              onSaved={close}
+            />
+          ))}
       </DialogContent>
     </Dialog>
   );
