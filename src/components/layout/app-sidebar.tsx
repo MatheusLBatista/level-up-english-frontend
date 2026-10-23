@@ -77,7 +77,7 @@ export function AppSidebar() {
             <span className="text-sm leading-tight font-semibold">
               LevelUp English
             </span>
-            <span className="text-sidebar-foreground/60 text-label font-medium">
+            <span className="text-muted-foreground text-label font-medium">
               English Learning
             </span>
           </span>
