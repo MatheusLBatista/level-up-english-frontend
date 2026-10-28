@@ -4,7 +4,7 @@
 | --------------- | -------------------------------------------------- |
 | Sistema         | LevelUp English — interface web (Next.js)          |
 | Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress      |
-| Versão          | 1.3 — autenticação, aluno, professor, admin e tema |
+| Versão          | 1.4 — autenticação, aluno, professor, admin e tema |
 | Última execução | 22/10/2026 — 108 casos, 108 aprovados              |
 
 ## 1. Objetivo
@@ -224,6 +224,10 @@ demonstração.
 | CT-PRF-04 | Validação da troca de senha | S    | Nova senha igual à atual e confirmação diferente são barradas sem chamar a API.                                     |
 | CT-PRF-05 | Senha atual errada          | I    | API responde 400, aparece "Senha atual incorreta." e o usuário **continua logado**.                                 |
 | CT-PRF-06 | Troca de senha              | S    | Envia `{ currentPassword, newPassword }` e mostra "Senha alterada com sucesso."                                     |
+| CT-PRF-07 | Foto inválida               | S    | Arquivo que não é JPEG, PNG ou WebP, ou acima de 2 MB, mostra o erro e não chama a API.                             |
+| CT-PRF-08 | Enviar foto                 | S    | Mostra a prévia, envia `multipart/form-data` e atualiza perfil, cabeçalho e sessão, mantendo o e-mail.              |
+| CT-PRF-09 | Erro ao enviar foto         | S    | A mensagem do servidor aparece e o diálogo continua aberto.                                                         |
+| CT-PRF-10 | Remover foto                | S    | Chama `DELETE /users/:id/avatar` e o avatar volta para as iniciais.                                                 |
 
 ### 7.8 Professor — Painel — `cypress/e2e/teacher/panel.cy.ts`
 
@@ -267,6 +271,7 @@ O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
 | CT-TPR-01 | Crachá            | I    | Papel, nome, e-mail e as turmas do professor.                                                            |
 | CT-TPR-02 | Suas turmas       | I    | Cada turma com a contagem de alunos e missões da API e atalhos para o painel e as missões daquela turma. |
 | CT-TPR-03 | Atividade recente | I    | Total de atitudes aplicadas e a mais recente, com aluno e atitude, iguais aos da API.                    |
+| CT-TPR-04 | Foto do crachá    | I    | O avatar do crachá abre o diálogo da foto, com os formatos aceitos e o botão de salvar desativado.       |
 
 ### 7.11 Professor — Ranking — `cypress/e2e/teacher/ranking.cy.ts`
 
@@ -380,7 +385,7 @@ Tempo total: cerca de 3 minutos e 10 segundos.
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | DEF-01 | **A sessão não era renovada quando o token vencia.** O backend responde **498** para token inválido ou expirado, mas o frontend só tentava renovar no **401**. Na prática, depois de 1 dia (validade do token), o aluno via as telas com erro e não era mandado ao login. | CT-SES-04 e CT-SES-05 falharam na primeira execução: nenhuma chamada de renovação acontecia. | Corrigido em `src/lib/api.ts` (`isSessionRejected` aceita 401 e 498) e documentado em `docs/api.md`. Os dois casos passam desde então. |
 
-| DEF-02 | **A edição de professor podia tirar o professor de todas as turmas.** O formulário marcava as turmas do professor só no momento em que o diálogo abria. Se o admin clicasse em "Editar" antes de as turmas carregarem (comum com a API hospedada "fria"), o formulário abria sem nenhuma turma marcada, e salvar removia o professor de todas elas. | CT-PRO-07 falhou na primeira execução: com as turmas atrasadas, as caixas continuavam desmarcadas. | Corrigido em `src/components/admin/teachers/edit-teacher-dialog.tsx`: enquanto as turmas carregam, o diálogo mostra "Carregando as turmas…" e o formulário só aparece com elas já marcadas. O caso passa desde então. |
+| DEF-02 | **A edição de professor podia tirar o professor de todas as turmas.** O formulário marcava as turmas do professor só no momento em que o diálogo abria. Se o admin clicasse em "Editar" antes de as turmas carregarem (comum com a rede lenta), o formulário abria sem nenhuma turma marcada, e salvar removia o professor de todas elas. | CT-PRO-07 falhou na primeira execução: com as turmas atrasadas, as caixas continuavam desmarcadas. | Corrigido em `src/components/admin/teachers/edit-teacher-dialog.tsx`: enquanto as turmas carregam, o diálogo mostra "Carregando as turmas…" e o formulário só aparece com elas já marcadas. O caso passa desde então. |
 
 O CT-PRF-05 cobre um defeito corrigido antes da criação dos testes (errar a
 senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte.
@@ -406,7 +411,7 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 | Versão | Escopo planejado                                 | Pasta |
 | ------ | ------------------------------------------------ | ----- |
-| 1.4    | Fluxos principais em tela de celular (390 × 844) | todas |
+| 1.5    | Fluxos principais em tela de celular (390 × 844) | todas |
 
 ## 12. Histórico de versões
 
@@ -416,3 +421,4 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 | 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).          |
 | 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02. |
 | 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                             |
+| 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                          |

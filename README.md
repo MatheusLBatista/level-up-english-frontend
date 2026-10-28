@@ -51,17 +51,16 @@ raiz `/` redireciona para o login.
 
 ## Backend
 
-|                           |                                                         |
-| ------------------------- | ------------------------------------------------------- |
-| API (produção)            | https://level-up-english-api.onrender.com               |
-| Documentação (Swagger UI) | https://level-up-english-api.onrender.com/api-docs/     |
-| OpenAPI (JSON)            | https://level-up-english-api.onrender.com/api-docs.json |
+O backend fica no repositório `level-up-english` e roda local na porta 5011.
+
+|                           |                                     |
+| ------------------------- | ----------------------------------- |
+| API                       | http://localhost:5011               |
+| Documentação (Swagger UI) | http://localhost:5011/api-docs/     |
+| OpenAPI (JSON)            | http://localhost:5011/api-docs.json |
 
 Um resumo das rotas, das permissões e do fluxo de autenticação está em
 [`docs/api.md`](docs/api.md).
-
-> A API está hospedada no plano gratuito do Render: a primeira requisição depois
-> de um período ocioso pode levar ~50s até o serviço acordar.
 
 ## Requisitos
 
@@ -81,9 +80,9 @@ A aplicação sobe em http://localhost:3000.
 
 ## Variáveis de ambiente
 
-| Variável              | Descrição                                                                  |
-| --------------------- | -------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_API_URL` | URL base da API. Produção: Render; backend local: `http://localhost:5011`. |
+| Variável              | Descrição                                                      |
+| --------------------- | -------------------------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | URL base da API; com o backend local, `http://localhost:5011`. |
 
 Copie `.env.example` para `.env.local` e ajuste conforme o ambiente. O
 `.env.local` não é versionado. Variáveis `NEXT_PUBLIC_*` são embutidas no build:

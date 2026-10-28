@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PaginationControls } from "@/components/shared/pagination-controls";
 import { XpHistoryList } from "@/components/shared/xp-history-list";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -17,7 +17,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useXpHistory } from "@/hooks/use-xp-history";
 import type { User } from "@/lib/types";
-import { getInitials } from "@/lib/user";
 import { cn } from "@/lib/utils";
 
 const numberFormatter = new Intl.NumberFormat("pt-BR");
@@ -69,11 +68,7 @@ function ProfileContent({
     <>
       <SheetHeader className="border-border border-b pb-5">
         <div className="flex items-center gap-3">
-          <Avatar className="size-12">
-            <AvatarFallback className="bg-secondary text-secondary-foreground font-semibold">
-              {getInitials(student.name)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar user={student} className="size-12" />
           <div className="min-w-0">
             <SheetTitle className="flex items-center gap-2 text-lg">
               <span className="truncate">{student.name}</span>

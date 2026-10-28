@@ -1,7 +1,6 @@
 import { TrophyIcon } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
-import { getInitials } from "@/lib/user";
 import type { RankingEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -44,16 +43,14 @@ export function RankingRow({
         <span className="sr-only">{position}º lugar</span>
       </span>
 
-      <Avatar
+      <UserAvatar
+        user={entry.user}
         className={cn(
           "size-10 shrink-0",
           position === 1 && "ring-brand-level/60 ring-2",
         )}
-      >
-        <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
-          {getInitials(entry.user.name)}
-        </AvatarFallback>
-      </Avatar>
+        fallbackClassName="text-xs"
+      />
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">

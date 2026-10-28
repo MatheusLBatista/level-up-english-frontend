@@ -1,10 +1,9 @@
 import { TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import type { User } from "@/lib/types";
-import { getInitials } from "@/lib/user";
 import { cn } from "@/lib/utils";
 
 const xpFormatter = new Intl.NumberFormat("pt-BR");
@@ -24,11 +23,11 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
       )}
     >
       <div className="flex min-w-0 flex-1 items-center gap-3">
-        <Avatar className="size-9">
-          <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
-            {getInitials(student.name)}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          user={student}
+          className="size-9"
+          fallbackClassName="text-xs"
+        />
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
