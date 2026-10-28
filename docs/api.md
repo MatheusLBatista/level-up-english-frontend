@@ -3,14 +3,13 @@
 Referência rápida da API consumida por este frontend. A fonte da verdade é o
 Swagger:
 
-- Swagger UI: https://level-up-english-api.onrender.com/api-docs/
-- OpenAPI JSON: https://level-up-english-api.onrender.com/api-docs.json
+- Swagger UI: http://localhost:5011/api-docs/
+- OpenAPI JSON: http://localhost:5011/api-docs.json
 
-URL base (Render): `https://level-up-english-api.onrender.com`
 URL base (backend local em dev): `http://localhost:5011`
 
-No frontend, sempre via `process.env.NEXT_PUBLIC_API_URL` — troque o valor no
-`.env.local` para alternar entre os dois.
+No frontend, sempre via `process.env.NEXT_PUBLIC_API_URL`, definida no
+`.env.local`.
 
 ## Formato das respostas
 

@@ -177,7 +177,7 @@ describe("Professores do admin", () => {
   it("abre a edição com as turmas do professor mesmo se elas demorarem a carregar", () => {
     const teacher = teachers.find((item) => classesOf(item).length > 0)!;
 
-    // Turmas mais lentas que os professores, como na API hospedada fria.
+    // Turmas mais lentas que os professores, como numa rede lenta.
     cy.intercept("GET", "**/classes?*", (request) => {
       request.on("response", (response) => {
         response.setDelay(1500);

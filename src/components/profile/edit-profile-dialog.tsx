@@ -50,9 +50,12 @@ export function EditProfileDialog({ user }: { user: User }) {
 
       return updateUser(user._id, values, token);
     },
+    // A resposta do PATCH não traz o e-mail: mescla com o que já existe.
     onSuccess: (updated) => {
-      queryClient.setQueryData(["users", updated._id], updated);
-      updateSessionUser(updated);
+      const merged = { ...user, ...updated };
+
+      queryClient.setQueryData(["users", updated._id], merged);
+      updateSessionUser(merged);
       setOpen(false);
     },
   });

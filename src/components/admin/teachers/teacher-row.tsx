@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import type { ClassSummary, User } from "@/lib/types";
-import { getInitials } from "@/lib/user";
 import { cn } from "@/lib/utils";
 
 type TeacherRowProps = {
@@ -21,11 +20,11 @@ export function TeacherRow({ teacher, classes, actions }: TeacherRowProps) {
       )}
     >
       <div className="flex min-w-0 flex-1 items-center gap-3">
-        <Avatar className="size-9 rounded-xl after:rounded-xl">
-          <AvatarFallback className="rounded-xl text-xs font-semibold">
-            {getInitials(teacher.name)}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          user={teacher}
+          className="size-9 rounded-xl after:rounded-xl"
+          fallbackClassName="bg-muted text-muted-foreground text-xs"
+        />
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">

@@ -1,9 +1,10 @@
 import { ChangePasswordDialog } from "@/components/profile/change-password-dialog";
 import { EditProfileDialog } from "@/components/profile/edit-profile-dialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ProfilePhotoDialog } from "@/components/profile/profile-photo-dialog";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ClassSummary, User } from "@/lib/types";
-import { getInitials, roleLabels } from "@/lib/user";
+import { roleLabels } from "@/lib/user";
 
 const sinceFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "long",
@@ -22,11 +23,13 @@ export function TeacherBadgeCard({ user, classes }: TeacherBadgeCardProps) {
     <Card className="border-border bg-card">
       <CardContent className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <div className="flex flex-col items-center gap-2 self-start">
-          <Avatar className="size-24 rounded-2xl after:rounded-2xl">
-            <AvatarFallback className="bg-secondary text-secondary-foreground rounded-2xl text-3xl font-bold">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
+          <ProfilePhotoDialog user={user} className="rounded-2xl">
+            <UserAvatar
+              user={user}
+              className="size-24 rounded-2xl after:rounded-2xl"
+              fallbackClassName="text-3xl font-bold"
+            />
+          </ProfilePhotoDialog>
           <span className="text-muted-foreground text-label font-mono tracking-widest">
             ID {badgeId}
           </span>

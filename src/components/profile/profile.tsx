@@ -1,11 +1,12 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { User } from "@/lib/types";
-import { getInitials, roleLabels } from "@/lib/user";
+import { roleLabels } from "@/lib/user";
 import { ChangePasswordDialog } from "@/components/profile/change-password-dialog";
 import { EditProfileDialog } from "@/components/profile/edit-profile-dialog";
+import { ProfilePhotoDialog } from "@/components/profile/profile-photo-dialog";
+import { UserAvatar } from "@/components/shared/user-avatar";
 
 const memberSinceFormatter = new Intl.DateTimeFormat("pt-BR", {
   month: "long",
@@ -19,11 +20,13 @@ export function ProfileIdentity({ user }: { user: User }) {
     <Card className="border-border bg-card">
       <CardContent className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center gap-4">
-          <Avatar className="ring-primary/40 size-16 ring-2">
-            <AvatarFallback className="bg-secondary text-secondary-foreground text-lg font-semibold">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
+          <ProfilePhotoDialog user={user}>
+            <UserAvatar
+              user={user}
+              className="ring-primary/40 size-16 ring-2"
+              fallbackClassName="text-lg"
+            />
+          </ProfilePhotoDialog>
 
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">

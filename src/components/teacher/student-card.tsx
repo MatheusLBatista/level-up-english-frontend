@@ -1,8 +1,7 @@
 import { CheckIcon, IdCardIcon, TrophyIcon } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getInitials } from "@/lib/user";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -51,11 +50,11 @@ export function StudentCard({
           </span>
         )}
 
-        <Avatar className="size-10 sm:size-14">
-          <AvatarFallback className="bg-secondary text-secondary-foreground text-sm font-semibold">
-            {getInitials(student.name)}
-          </AvatarFallback>
-        </Avatar>
+        <UserAvatar
+          user={student}
+          className="size-10 sm:size-14"
+          fallbackClassName="text-sm"
+        />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1 sm:w-full sm:flex-none sm:gap-3">
           <p className="truncate text-sm font-semibold">{student.name}</p>

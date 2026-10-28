@@ -1,11 +1,10 @@
 "use client";
 
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/shared/user-avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/contexts/auth-context";
 import type { Role } from "@/lib/types";
-import { getInitials } from "@/lib/user";
 
 const roleLabels: Record<Role, string> = {
   student: "Aluno",
@@ -29,11 +28,13 @@ export function AppHeader() {
           </p>
         </div>
 
-        <Avatar className="ring-primary/40 size-9 ring-2">
-          <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
-            {user ? getInitials(user.name) : ""}
-          </AvatarFallback>
-        </Avatar>
+        {user && (
+          <UserAvatar
+            user={user}
+            className="ring-primary/40 size-9 ring-2"
+            fallbackClassName="text-xs"
+          />
+        )}
       </div>
     </header>
   );

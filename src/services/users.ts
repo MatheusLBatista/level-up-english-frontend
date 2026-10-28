@@ -91,3 +91,18 @@ export function getXpHistory(
     { token },
   );
 }
+
+export function uploadAvatar(id: string, file: File, token: string) {
+  const body = new FormData();
+  body.append("avatar", file);
+
+  return apiFetch<User>(`/users/${id}/avatar`, {
+    method: "PATCH",
+    body,
+    token,
+  });
+}
+
+export function removeAvatar(id: string, token: string) {
+  return apiFetch<User>(`/users/${id}/avatar`, { method: "DELETE", token });
+}

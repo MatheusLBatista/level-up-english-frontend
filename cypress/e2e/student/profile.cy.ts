@@ -1,5 +1,5 @@
 import users from "../../fixtures/users.json";
-import type { Ranking, User } from "../../support/api-types";
+import { envelope, type Ranking, type User } from "../../support/api-types";
 import { SESSION_KEY, type ApiSession } from "../../support/session";
 
 const xpFormatter = new Intl.NumberFormat("pt-BR");
@@ -88,6 +88,115 @@ describe("Perfil do aluno", () => {
         .invoke("getItem", SESSION_KEY)
         .then((raw) => JSON.parse(String(raw)).user.name)
         .should("eq", name);
+    });
+  });
+
+  describe("Foto de perfil", () => {
+    const dialog = '[role="dialog"]';
+    const avatarUrl = "/uploads/avatars/foto-teste.webp";
+
+    // O envio e a remoção são simulados, para não mudar os dados da demonstração.
+    beforeEach(() => {
+      cy.intercept("GET", "**/uploads/avatars/*", { fixture: "avatar.png" });
+      cy.intercept("PATCH", `**/users/${user._id}/avatar`, {
+        body: envelope({ ...user, email: undefined, avatar_url: avatarUrl }),
+      }).as("upload");
+
+      cy.get('[aria-label="Trocar foto de perfil"]').click();
+      cy.contains(dialog, "Foto de perfil").should("be.visible");
+    });
+
+    function pickFile(file: Cypress.FileReferenceObject | string) {
+      cy.get(`${dialog} input[type="file"]`).selectFile(file, { force: true });
+    }
+
+    it("recusa arquivo que não é imagem ou passa de 2 MB", () => {
+      pickFile({
+        contents: Cypress.Buffer.from("anotações"),
+        fileName: "notas.txt",
+        mimeType: "text/plain",
+      });
+      cy.contains(dialog, "Escolha uma imagem JPEG, PNG ou WebP.").should(
+        "be.visible",
+      );
+
+      pickFile({
+        contents: Cypress.Buffer.alloc(2 * 1024 * 1024 + 1),
+        fileName: "grande.png",
+        mimeType: "image/png",
+      });
+      cy.contains(dialog, "A foto deve ter no máximo 2 MB.").should(
+        "be.visible",
+      );
+
+      cy.contains(`${dialog} button`, "Salvar foto").should("be.disabled");
+      cy.get("@upload.all").should("have.length", 0);
+    });
+
+    it("mostra a prévia, envia a foto e atualiza a tela e a sessão", () => {
+      pickFile("cypress/fixtures/avatar.png");
+      cy.get(`${dialog} img`)
+        .should("have.attr", "src")
+        .and("match", /^blob:/);
+
+      cy.contains(`${dialog} button`, "Salvar foto").click();
+
+      cy.wait("@upload")
+        .its("request.headers.content-type")
+        .should("match", /^multipart\/form-data/);
+      cy.get(dialog).should("not.exist");
+
+      cy.get("header img").should("have.attr", "src").and("contain", avatarUrl);
+      cy.get('[aria-label="Trocar foto de perfil"] img').should("be.visible");
+      // A resposta não traz o e-mail, e ele continua na tela.
+      cy.contains(user.email).should("be.visible");
+      cy.window()
+        .its("localStorage")
+        .invoke("getItem", SESSION_KEY)
+        .then((raw) => JSON.parse(String(raw)).user)
+        .should((stored) => {
+          expect(stored.avatar_url).to.eq(avatarUrl);
+          expect(stored.email).to.eq(user.email);
+        });
+    });
+
+    it("mostra o erro do servidor sem fechar o diálogo", () => {
+      cy.intercept("PATCH", `**/users/${user._id}/avatar`, {
+        statusCode: 400,
+        body: {
+          message:
+            "O arquivo enviado não é uma imagem válida ou é grande demais.",
+          data: null,
+          errors: [],
+        },
+      }).as("upload");
+
+      pickFile("cypress/fixtures/avatar.png");
+      cy.contains(`${dialog} button`, "Salvar foto").click();
+
+      cy.wait("@upload");
+      cy.contains(
+        `${dialog} [role="alert"]`,
+        "O arquivo enviado não é uma imagem válida ou é grande demais.",
+      ).should("be.visible");
+    });
+
+    it("remove a foto atual", () => {
+      cy.intercept("GET", `**/users/${user._id}`, {
+        body: envelope({ ...user, avatar_url: avatarUrl }),
+      });
+      cy.intercept("DELETE", `**/users/${user._id}/avatar`, {
+        body: envelope({ ...user, avatar_url: null }),
+      }).as("remove");
+      cy.reload();
+
+      cy.get('[aria-label="Trocar foto de perfil"] img').should("be.visible");
+      cy.get('[aria-label="Trocar foto de perfil"]').click();
+      cy.contains(`${dialog} button`, "Remover foto").click();
+
+      cy.wait("@remove");
+      cy.get(dialog).should("not.exist");
+      cy.get('[aria-label="Trocar foto de perfil"] img').should("not.exist");
     });
   });
 
