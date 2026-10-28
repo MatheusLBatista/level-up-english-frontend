@@ -15,6 +15,18 @@ if (!API_URL) {
   throw new Error("NEXT_PUBLIC_API_URL não está definida.");
 }
 
+/**
+ * Arquivos enviados (como a foto de perfil) vêm da API com caminho relativo,
+ * servidos pelo mesmo host dela.
+ */
+export function apiAssetUrl(path: string | null | undefined) {
+  if (!path) {
+    return undefined;
+  }
+
+  return /^https?:\/\//.test(path) ? path : `${API_URL}${path}`;
+}
+
 type ApiErrorItem = {
   path?: string;
   message: string;
@@ -112,15 +124,22 @@ export async function apiFetch<T>(
   path: string,
   { body, token, headers, ...init }: ApiFetchOptions = {},
 ): Promise<T> {
+  // FormData vai cru: o navegador monta o Content-Type com o boundary.
+  const isForm = body instanceof FormData;
+
   const send = (accessToken?: string) =>
     fetch(`${API_URL}${path}`, {
       ...init,
       headers: {
-        "Content-Type": "application/json",
+        ...(isForm ? {} : { "Content-Type": "application/json" }),
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         ...headers,
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: isForm
+        ? body
+        : body !== undefined
+          ? JSON.stringify(body)
+          : undefined,
       cache: "no-store",
     });
 

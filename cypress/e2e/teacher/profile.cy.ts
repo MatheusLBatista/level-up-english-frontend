@@ -37,6 +37,16 @@ describe("Perfil do professor", () => {
     });
   });
 
+  it("troca a foto pelo avatar do crachá", () => {
+    cy.get('[aria-label="Trocar foto de perfil"]').click();
+
+    cy.contains('[role="dialog"]', "Foto de perfil")
+      .should("contain", "JPEG, PNG ou WebP de até 2 MB")
+      .find("button")
+      .contains("Salvar foto")
+      .should("be.disabled");
+  });
+
   it("lista as turmas com alunos, missões e atalhos", () => {
     classes.forEach((item) => {
       classesCard()

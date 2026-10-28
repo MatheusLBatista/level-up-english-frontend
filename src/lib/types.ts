@@ -127,6 +127,8 @@ export type User = {
   mission_progress: MissionProgressEntry[];
   streak: number;
   badges: string[];
+  /** Caminho relativo à API (`/uploads/...`); `null` sem foto. */
+  avatar_url?: string | null;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -146,6 +148,7 @@ export type RankingUser = {
   email: string;
   xp: number;
   level: number;
+  avatar_url?: string | null;
 };
 
 export type RankingEntry = {

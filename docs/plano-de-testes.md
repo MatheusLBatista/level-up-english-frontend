@@ -4,7 +4,7 @@
 | --------------- | -------------------------------------------------- |
 | Sistema         | LevelUp English — interface web (Next.js)          |
 | Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress      |
-| Versão          | 1.3 — autenticação, aluno, professor, admin e tema |
+| Versão          | 1.4 — autenticação, aluno, professor, admin e tema |
 | Última execução | 22/10/2026 — 108 casos, 108 aprovados              |
 
 ## 1. Objetivo
@@ -224,6 +224,10 @@ demonstração.
 | CT-PRF-04 | Validação da troca de senha | S    | Nova senha igual à atual e confirmação diferente são barradas sem chamar a API.                                     |
 | CT-PRF-05 | Senha atual errada          | I    | API responde 400, aparece "Senha atual incorreta." e o usuário **continua logado**.                                 |
 | CT-PRF-06 | Troca de senha              | S    | Envia `{ currentPassword, newPassword }` e mostra "Senha alterada com sucesso."                                     |
+| CT-PRF-07 | Foto inválida               | S    | Arquivo que não é JPEG, PNG ou WebP, ou acima de 2 MB, mostra o erro e não chama a API.                             |
+| CT-PRF-08 | Enviar foto                 | S    | Mostra a prévia, envia `multipart/form-data` e atualiza perfil, cabeçalho e sessão, mantendo o e-mail.              |
+| CT-PRF-09 | Erro ao enviar foto         | S    | A mensagem do servidor aparece e o diálogo continua aberto.                                                         |
+| CT-PRF-10 | Remover foto                | S    | Chama `DELETE /users/:id/avatar` e o avatar volta para as iniciais.                                                 |
 
 ### 7.8 Professor — Painel — `cypress/e2e/teacher/panel.cy.ts`
 
@@ -267,6 +271,7 @@ O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
 | CT-TPR-01 | Crachá            | I    | Papel, nome, e-mail e as turmas do professor.                                                            |
 | CT-TPR-02 | Suas turmas       | I    | Cada turma com a contagem de alunos e missões da API e atalhos para o painel e as missões daquela turma. |
 | CT-TPR-03 | Atividade recente | I    | Total de atitudes aplicadas e a mais recente, com aluno e atitude, iguais aos da API.                    |
+| CT-TPR-04 | Foto do crachá    | I    | O avatar do crachá abre o diálogo da foto, com os formatos aceitos e o botão de salvar desativado.       |
 
 ### 7.11 Professor — Ranking — `cypress/e2e/teacher/ranking.cy.ts`
 
@@ -406,7 +411,7 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 | Versão | Escopo planejado                                 | Pasta |
 | ------ | ------------------------------------------------ | ----- |
-| 1.4    | Fluxos principais em tela de celular (390 × 844) | todas |
+| 1.5    | Fluxos principais em tela de celular (390 × 844) | todas |
 
 ## 12. Histórico de versões
 
@@ -416,3 +421,4 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 | 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).          |
 | 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02. |
 | 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                             |
+| 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                          |
