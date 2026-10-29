@@ -5,17 +5,20 @@ export type QuizQuestion = MissionQuestion & {
   originalIndex: number;
 };
 
+export function withOriginalIndex(
+  questions: MissionQuestion[],
+): QuizQuestion[] {
+  return questions.map((question, originalIndex) => ({
+    ...question,
+    originalIndex,
+  }));
+}
+
 export function shuffleQuestions(
   questions: MissionQuestion[],
   random = Math.random,
 ): QuizQuestion[] {
-  return shuffle(
-    questions.map((question, originalIndex) => ({
-      ...question,
-      originalIndex,
-    })),
-    random,
-  );
+  return shuffle(withOriginalIndex(questions), random);
 }
 
 export function chooseAnswer(

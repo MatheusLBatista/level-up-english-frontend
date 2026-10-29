@@ -7,15 +7,27 @@ import type {
 } from "../../support/api-types";
 import type { ApiSession } from "../../support/session";
 
-/** Responde as `count` primeiras questões da missão aberta com a alternativa. */
-function answerQuestions(mission: Mission, count: number, option = "a") {
+/** Responde as `count` primeiras questões na ordem em que aparecem na tela. */
+function answerQuestions(
+  mission: Mission,
+  count: number,
+  pick: (index: number) => string = () => "a",
+) {
   const questions = mission.questions!;
 
-  questions.slice(0, count).forEach((question, index) => {
-    cy.contains("legend", question.question).should("be.visible");
-    cy.contains("label", question.options[option]).click();
+  Cypress._.times(count, (position) => {
+    cy.get("legend")
+      .should("be.visible")
+      .invoke("text")
+      .then((text) => {
+        const index = questions.findIndex((item) => item.question === text);
 
-    if (index < questions.length - 1) {
+        cy.get(`input[type="radio"][value="${pick(index)}"]`)
+          .closest("label")
+          .click();
+      });
+
+    if (position < questions.length - 1) {
       cy.contains("button", "Próxima").click();
     }
   });
@@ -46,7 +58,7 @@ describe("Missões do aluno", () => {
   /** Abre o quiz e responde as `count` primeiras questões com a alternativa. */
   function answerQuiz(count: number, option = "a") {
     cy.visitWithSession(`/missoes/${quiz._id}`, session);
-    answerQuestions(quiz, count, option);
+    answerQuestions(quiz, count, () => option);
   }
 
   it("lista as missões da turma e filtra por tipo", () => {
@@ -178,13 +190,39 @@ describe("Missões do aluno", () => {
 
   it("guarda as respostas ao recarregar a página", () => {
     answerQuiz(2, "b");
+    cy.get("legend").invoke("text").as("current", { type: "static" });
 
     cy.reload();
 
-    cy.contains("Questão 3 de 5").should("be.visible");
-    cy.get('[aria-label="Questão 1, respondida"]').should("exist");
-    cy.get('[aria-label="Questão 2, respondida"]').click();
+    cy.get<string>("@current").then((text) => {
+      cy.contains("legend", text).should("be.visible");
+    });
+    cy.get('[aria-label$=", respondida"]')
+      .should("have.length", 2)
+      .first()
+      .click();
     cy.get('input[type="radio"][value="b"]').should("be.checked");
+  });
+
+  it("entrega as respostas do quiz embaralhado na ordem original", () => {
+    const keys = ["a", "b", "c", "d"];
+    const pick = (index: number) => keys[index % keys.length];
+
+    cy.intercept("POST", `**/missions/${quiz._id}/progress`, {
+      statusCode: 500,
+      body: { message: "Erro interno do servidor.", data: null, errors: [] },
+    }).as("submit");
+
+    cy.visitWithSession(`/missoes/${quiz._id}`, session);
+    answerQuestions(quiz, quiz.questions!.length, pick);
+    cy.contains("button", "Entregar").click();
+
+    cy.wait("@submit")
+      .its("request.body.answers")
+      .should(
+        "deep.eq",
+        quiz.questions!.map((_, index) => pick(index)),
+      );
   });
 
   it("pede confirmação para sair no meio da missão", () => {

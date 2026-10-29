@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { chooseAnswer, inScreenOrder, shuffleQuestions } from "@/lib/quiz";
+import {
+  chooseAnswer,
+  inScreenOrder,
+  shuffleQuestions,
+  withOriginalIndex,
+} from "@/lib/quiz";
 import type { MissionQuestion, QuizAnswer } from "@/lib/types";
 
 const questions: MissionQuestion[] = [
@@ -7,6 +12,21 @@ const questions: MissionQuestion[] = [
   { question: "Q2", options: { a: "2a", b: "2b", c: "2c", d: "2d" } },
   { question: "Q3", options: { a: "3a", b: "3b", c: "3c", d: "3d" } },
 ];
+
+describe("withOriginalIndex", () => {
+  it("anota a posição sem mudar a ordem", () => {
+    expect(
+      withOriginalIndex(questions).map((item) => [
+        item.question,
+        item.originalIndex,
+      ]),
+    ).toEqual([
+      ["Q1", 0],
+      ["Q2", 1],
+      ["Q3", 2],
+    ]);
+  });
+});
 
 describe("shuffleQuestions", () => {
   it("guarda a posição original de cada pergunta", () => {

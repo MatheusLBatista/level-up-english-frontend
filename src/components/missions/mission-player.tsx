@@ -39,6 +39,12 @@ import {
   missionTypeLabels,
   missionXpLeft,
 } from "@/lib/missions";
+import {
+  chooseAnswer,
+  inScreenOrder,
+  shuffleQuestions,
+  withOriginalIndex,
+} from "@/lib/quiz";
 import type {
   LevelProgress,
   Mission,
@@ -151,11 +157,19 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
     progress?.done === true && !canRetryMission(mission, progress);
 
   const [draft] = useState(() => readMissionDraft(userId, mission._id));
+  const [screenQuestions] = useState(() =>
+    isQuiz ? shuffleQuestions(questions) : withOriginalIndex(questions),
+  );
   const [answers, setAnswers] = useState<(QuizAnswer | null)[]>(() =>
     questions.map((_, index) => draft?.answers[index] ?? null),
   );
   const [current, setCurrent] = useState(() =>
-    Math.min(draft?.question ?? 0, Math.max(questions.length - 1, 0)),
+    Math.max(
+      screenQuestions.findIndex(
+        (question) => question.originalIndex === draft?.question,
+      ),
+      0,
+    ),
   );
   const [step, setStep] = useState<Step>(() =>
     draft?.answers.some(Boolean) || !hasMaterial ? "questions" : "study",
@@ -163,9 +177,11 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
   const [levelBefore, setLevelBefore] = useState(level);
   const [confirmExit, setConfirmExit] = useState(false);
 
+  const currentQuestion = screenQuestions[current];
+  const screenAnswers = inScreenOrder(screenQuestions, answers);
   const answeredCount = answers.filter(Boolean).length;
   const dirty = step !== "result" && answeredCount > 0;
-  const missing = answers.flatMap((answer, index) =>
+  const missing = screenAnswers.flatMap((answer, index) =>
     answer ? [] : [index + 1],
   );
 
@@ -179,8 +195,11 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
       return;
     }
 
-    saveMissionDraft(userId, mission._id, { answers, question: current });
-  }, [userId, mission._id, answers, current, answeredCount, step]);
+    saveMissionDraft(userId, mission._id, {
+      answers,
+      question: currentQuestion.originalIndex,
+    });
+  }, [userId, mission._id, answers, currentQuestion, answeredCount, step]);
 
   useEffect(() => {
     if (!dirty) {
@@ -196,9 +215,7 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
   }, [dirty]);
 
   function choose(answer: QuizAnswer) {
-    setAnswers((list) =>
-      list.map((value, index) => (index === current ? answer : value)),
-    );
+    setAnswers((list) => chooseAnswer(list, currentQuestion, answer));
   }
 
   function submit() {
@@ -256,15 +273,13 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
 
       if (option) {
         event.preventDefault();
-        setAnswers((list) =>
-          list.map((value, index) => (index === current ? option : value)),
-        );
+        setAnswers((list) => chooseAnswer(list, currentQuestion, option));
       }
     }
 
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [step, current]);
+  }, [step, currentQuestion]);
 
   const result = mutation.data;
 
@@ -292,7 +307,7 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
 
         {step === "questions" && hasQuestions && (
           <QuestionTrack
-            answers={answers}
+            answers={screenAnswers}
             current={current}
             onJump={setCurrent}
           />
@@ -371,8 +386,8 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
         <QuestionStep
           index={current}
           total={questions.length}
-          question={questions[current]}
-          answer={answers[current]}
+          question={currentQuestion}
+          answer={screenAnswers[current]}
           onChoose={choose}
         />
       ) : (
