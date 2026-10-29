@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api";
-import type { Paginated, User, XpHistoryItem } from "@/lib/types";
+import type { Paginated, Performance, User, XpHistoryItem } from "@/lib/types";
 
 export function getUserById(id: string, token: string) {
   return apiFetch<User>(`/users/${id}`, { token });
@@ -90,6 +90,34 @@ export function getXpHistory(
     `/users/${studentId}/xp-history?${params}`,
     { token },
   );
+}
+
+export type PerformancePeriod = {
+  /** ISO 8601 com fuso, como `date.toISOString()`. */
+  from?: string;
+  to?: string;
+};
+
+export function getPerformance(
+  studentId: string,
+  token: string,
+  period: PerformancePeriod = {},
+) {
+  const params = new URLSearchParams();
+
+  if (period.from) {
+    params.set("from", period.from);
+  }
+
+  if (period.to) {
+    params.set("to", period.to);
+  }
+
+  const query = params.size > 0 ? `?${params}` : "";
+
+  return apiFetch<Performance>(`/users/${studentId}/performance${query}`, {
+    token,
+  });
 }
 
 export function uploadAvatar(id: string, file: File, token: string) {

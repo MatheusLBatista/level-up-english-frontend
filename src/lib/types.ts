@@ -134,6 +134,23 @@ export type User = {
   updatedAt: string;
 };
 
+export type TypePerformance = {
+  /** 0 a 100. `null` sem missão concluída do tipo, diferente de nota 0. */
+  score: number | null;
+  missions: number;
+};
+
+export type ClassTypePerformance = {
+  score: number | null;
+  students: number;
+};
+
+export type Performance = {
+  student: Record<MissionType, TypePerformance>;
+  /** Média dos alunos ativos da turma; `null` quando o aluno não tem turma. */
+  class: Record<MissionType, ClassTypePerformance> | null;
+};
+
 export type LoginResponse = {
   accessToken: string;
   refreshToken: string;
