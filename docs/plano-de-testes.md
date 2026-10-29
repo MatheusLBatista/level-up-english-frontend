@@ -1,11 +1,11 @@
 # Plano de testes — LevelUp English (frontend)
 
-| Item            | Valor                                              |
-| --------------- | -------------------------------------------------- |
-| Sistema         | LevelUp English — interface web (Next.js)          |
-| Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress      |
-| Versão          | 1.4 — autenticação, aluno, professor, admin e tema |
-| Última execução | 22/10/2026 — 108 casos, 108 aprovados              |
+| Item            | Valor                                                          |
+| --------------- | -------------------------------------------------------------- |
+| Sistema         | LevelUp English — interface web (Next.js)                      |
+| Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress                  |
+| Versão          | 1.5 — autenticação, aluno, professor, admin, tema e desempenho |
+| Última execução | 22/10/2026 — 108 casos, 108 aprovados                          |
 
 ## 1. Objetivo
 
@@ -19,24 +19,25 @@ funcionando.
 
 ### 2.1 Dentro do escopo
 
-| Área                 | O que é testado                                                                                                                                |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                        |
-| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                               |
-| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                          |
-| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor                                 |
-| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, rascunho, saída, refazer, erros                                                            |
-| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL                                                                    |
-| Aluno — Perfil       | Dados, turma, conquistas, edição do nome e troca de senha                                                                                      |
-| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis |
-| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, edição, desativação e reativação                                                 |
-| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                          |
-| Professor — Perfil   | Crachá, turmas com atalhos e atividade recente                                                                                                 |
-| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                     |
-| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                         |
-| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                               |
-| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                    |
-| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                   |
+| Área                 | O que é testado                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                                                  |
+| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                                                         |
+| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                                                    |
+| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor, radar de desempenho                                      |
+| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, rascunho, saída, refazer, erros                                                                                      |
+| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL                                                                                              |
+| Aluno — Perfil       | Dados, turma, conquistas, edição do nome, troca de senha e foto de perfil                                                                                                |
+| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno com o radar de desempenho, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis |
+| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, edição, desativação e reativação                                                                           |
+| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                                                    |
+| Professor — Perfil   | Crachá, foto de perfil, turmas com atalhos e atividade recente                                                                                                           |
+| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                                               |
+| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                                                   |
+| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                                                         |
+| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                                              |
+| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                                             |
+| Radar de desempenho  | Notas por tipo de missão comparadas com a turma, filtro de período, tipo sem nota, aluno sem turma e estado vazio                                                        |
 
 ### 2.2 Fora do escopo (nesta versão)
 
@@ -248,6 +249,7 @@ demonstração.
 | CT-PNL-13 | Acesso a `/dashboard`              | I    | Tela de aluno: o professor volta para `/painel`.                                                                                                                                   |
 | CT-PNL-14 | Acesso a `/turmas`                 | I    | Tela de admin: o professor volta para `/painel`.                                                                                                                                   |
 | CT-PNL-15 | Acesso a `/atitudes`               | I    | Tela de admin: o professor volta para `/painel`.                                                                                                                                   |
+| CT-PNL-16 | Desempenho na ficha do aluno       | I    | A ficha busca `/users/:id/performance` do aluno (200) e mostra o radar com a legenda "Aluno" e as notas iguais às da API.                                                          |
 
 ### 7.9 Professor — Missões — `cypress/e2e/teacher/missions.cy.ts`
 
@@ -344,6 +346,19 @@ desativada.
 | CT-TEM-04 | Escolha salva vence o aparelho | I    | Com o aparelho no escuro e "claro" salvo, a tela abre no claro.                                               |
 | CT-TEM-05 | Dentro do app                  | I    | A escolha salva vale no dashboard; o botão do cabeçalho troca o tema e a troca continua depois de recarregar. |
 
+### 7.17 Aluno — Radar de desempenho — `cypress/e2e/student/performance.cy.ts`
+
+As notas aparecem no gráfico e, para leitores de tela, num texto escondido por
+tipo ("Quiz: Você 100; média da turma 81"). Os testes comparam esse texto com a
+resposta da API, porque o desenho do gráfico não tem texto para conferir.
+
+| ID        | Caso                     | Modo | Resultado esperado                                                                                                                       |
+| --------- | ------------------------ | ---- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-DES-01 | Radar no dashboard       | I    | Gráfico com a legenda "Você" e "Média da turma", filtro em "Tudo" e as notas dos três tipos iguais às da API.                            |
+| CT-DES-02 | Filtro de período        | I    | A primeira busca vai sem `from` e sem `to`; "30 dias" manda só o `from`, em ISO 8601, cerca de 30 dias atrás, e a API responde 200.      |
+| CT-DES-03 | Tipo sem nota, sem turma | S    | Tipo com `score: null` aparece como "Sem missões concluídas", nunca "0"; com `class: null`, a média da turma some da legenda e do texto. |
+| CT-DES-04 | Nenhuma nota             | S    | Com os três tipos sem nota, mostra "Conclua missões para ver seu desempenho em cada tipo." no lugar do gráfico.                          |
+
 ## 8. Critérios
 
 | Critério                 | Definição                                                                                                                                  |
@@ -404,6 +419,10 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 - O contraste dos dois temas (WCAG AA) não é verificado pelo Cypress; ele foi
   conferido com o detector do Impeccable nas telas principais, no celular e no
   desktop.
+- O tooltip do radar de desempenho não é testado: o gráfico (Recharts) não
+  reage ao mouse simulado pelo Cypress. O texto "Sem missões concluídas" é
+  conferido pelo resumo para leitores de tela (CT-DES-03), e o tooltip foi
+  conferido à mão.
 - O frontend roda em modo de desenvolvimento; a primeira abertura de cada tela é
   mais lenta, por isso o tempo limite por comando é de 10 s.
 
@@ -411,7 +430,7 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 | Versão | Escopo planejado                                 | Pasta |
 | ------ | ------------------------------------------------ | ----- |
-| 1.5    | Fluxos principais em tela de celular (390 × 844) | todas |
+| 1.6    | Fluxos principais em tela de celular (390 × 844) | todas |
 
 ## 12. Histórico de versões
 
@@ -422,3 +441,4 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 | 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02. |
 | 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                             |
 | 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                          |
+| 1.5    | 28/10/2026 | Radar de desempenho no dashboard e na ficha do aluno (5 casos).            |
