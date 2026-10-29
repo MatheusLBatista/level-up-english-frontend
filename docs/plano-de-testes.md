@@ -143,7 +143,7 @@ Legenda do **Modo**: **I** = integrado (backend real) · **S** = API simulada ·
 | --------- | ----------------------- | ---- | ----------------------------------------------------------------------------------------------- |
 | CT-LOG-01 | Login do aluno          | I    | API responde 200, aluno vai para `/dashboard` e a sessão é gravada no navegador.                |
 | CT-LOG-02 | Login do professor      | I    | Professor vai para `/painel`.                                                                   |
-| CT-LOG-03 | Login do admin          | I    | Admin vai para `/turmas`.                                                                       |
+| CT-LOG-03 | Login do admin          | I    | Admin vai para `/painel`.                                                                       |
 | CT-LOG-04 | Validação do formulário | I    | E-mail inválido e senha com menos de 6 caracteres mostram erro, e nenhuma requisição é enviada. |
 | CT-LOG-05 | Credenciais inválidas   | I    | API responde 401 e aparece "Credenciais inválidas"; o usuário continua no `/login`.             |
 | CT-LOG-06 | Conta desativada        | I    | Com a senha certa de uma conta desativada, aparece "Conta bloqueada".                           |
