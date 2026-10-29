@@ -23,16 +23,21 @@ export function XpHistory() {
       id="historico"
       className="flex scroll-mt-20 flex-col gap-4 lg:row-span-2 lg:grid lg:grid-rows-subgrid"
     >
-      <header className="flex items-baseline justify-between gap-3">
-        <h2 className="font-heading text-heading font-semibold">
-          Histórico de XP
-        </h2>
-        {current && current.totalDocs > 0 && (
-          <span className="text-muted-foreground text-sm tabular-nums">
-            {current.totalDocs}{" "}
-            {current.totalDocs === 1 ? "registro" : "registros"}
-          </span>
-        )}
+      <header className="flex flex-col gap-1">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="font-heading text-heading font-semibold">
+            Histórico de XP
+          </h2>
+          {current && current.totalDocs > 0 && (
+            <span className="text-muted-foreground text-sm tabular-nums">
+              {current.totalDocs}{" "}
+              {current.totalDocs === 1 ? "registro" : "registros"}
+            </span>
+          )}
+        </div>
+        <p className="text-muted-foreground text-sm">
+          Cada mudança no seu XP, de missões, atitudes e ajustes do professor.
+        </p>
       </header>
 
       <Card className="border-border bg-card">
