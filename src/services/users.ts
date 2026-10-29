@@ -11,6 +11,8 @@ export type UpdateUserBody = {
   class?: string | null;
   /** Só admin. */
   active?: boolean;
+  /** Só o próprio usuário ou o admin; o professor recebe 403. */
+  show_in_global_ranking?: boolean;
 };
 
 export function updateUser(id: string, body: UpdateUserBody, token: string) {

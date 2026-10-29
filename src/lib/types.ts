@@ -129,6 +129,8 @@ export type User = {
   badges: string[];
   /** Caminho relativo à API (`/uploads/...`); `null` sem foto. */
   avatar_url?: string | null;
+  /** Ausente em usuários antigos: vale como `true`. */
+  show_in_global_ranking?: boolean;
   active: boolean;
   createdAt: string;
   updatedAt: string;
