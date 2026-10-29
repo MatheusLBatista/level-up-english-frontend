@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PaginationControls } from "@/components/shared/pagination-controls";
+import { PerformanceRadar } from "@/components/shared/performance-radar";
 import { XpHistoryList } from "@/components/shared/xp-history-list";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +144,13 @@ function ProfileContent({
             </dd>
           </div>
         </dl>
+
+        <section aria-labelledby="performance" className="flex flex-col gap-3">
+          <h3 id="performance" className="text-sm font-semibold">
+            Desempenho
+          </h3>
+          <PerformanceRadar key={student._id} studentId={student._id} />
+        </section>
 
         <XpHistorySection key={student._id} studentId={student._id} />
       </div>

@@ -102,10 +102,12 @@ function PerformanceTooltip({
 
 type PeriodRange = "all" | "30d" | "90d";
 
+// Rótulos curtos para caber na ficha do aluno no celular; o grupo se chama
+// "Período do desempenho", então "30 dias" já se lê como "últimos 30 dias".
 const periodOptions = [
   { value: "all", label: "Tudo" },
-  { value: "30d", label: "Últimos 30 dias" },
-  { value: "90d", label: "Últimos 90 dias" },
+  { value: "30d", label: "30 dias" },
+  { value: "90d", label: "90 dias" },
 ] as const satisfies readonly { value: PeriodRange; label: string }[];
 
 const DAY_MS = 24 * 60 * 60 * 1000;
