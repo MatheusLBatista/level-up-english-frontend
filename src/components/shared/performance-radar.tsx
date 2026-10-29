@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -9,6 +10,7 @@ import {
   type TooltipContentProps,
   type TooltipValueType,
 } from "recharts";
+import { SegmentedFilter } from "@/components/shared/segmented-filter";
 import { Button } from "@/components/ui/button";
 import {
   ChartContainer,
@@ -22,6 +24,7 @@ import { usePerformance } from "@/hooks/use-performance";
 import { missionTypeLabels } from "@/lib/missions";
 import type { MissionType, Performance } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import type { PerformancePeriod } from "@/services/users";
 
 const MISSION_TYPES: MissionType[] = ["quiz", "vocabulary", "audio"];
 
@@ -76,7 +79,7 @@ function PerformanceTooltip({
         return (
           <div key={String(item.dataKey)} className="flex items-center gap-2">
             <span
-              className="size-2.5 shrink-0 rounded-[2px]"
+              className="size-2.5 shrink-0 rounded-xs"
               style={{ backgroundColor: item.color }}
             />
             <span className="text-muted-foreground">{item.name}</span>
@@ -97,6 +100,35 @@ function PerformanceTooltip({
   );
 }
 
+type PeriodRange = "all" | "30d" | "90d";
+
+const periodOptions = [
+  { value: "all", label: "Tudo" },
+  { value: "30d", label: "Últimos 30 dias" },
+  { value: "90d", label: "Últimos 90 dias" },
+] as const satisfies readonly { value: PeriodRange; label: string }[];
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const periodDays: Record<Exclude<PeriodRange, "all">, number> = {
+  "30d": 30,
+  "90d": 90,
+};
+
+/**
+ * Calculado na troca do filtro, não a cada render: o `from` entra na queryKey,
+ * e um horário novo a cada render faria a consulta recomeçar sem parar.
+ */
+function periodFor(range: PeriodRange): PerformancePeriod {
+  if (range === "all") {
+    return {};
+  }
+
+  return {
+    from: new Date(Date.now() - periodDays[range] * DAY_MS).toISOString(),
+  };
+}
+
 type PerformanceRadarProps = {
   studentId: string | null | undefined;
   isSelf?: boolean;
@@ -106,7 +138,47 @@ export function PerformanceRadar({
   studentId,
   isSelf = false,
 }: PerformanceRadarProps) {
-  const performanceQuery = usePerformance(studentId);
+  const [range, setRange] = useState<PeriodRange>("all");
+  const [period, setPeriod] = useState<PerformancePeriod>({});
+  const performanceQuery = usePerformance(studentId, period);
+
+  function changeRange(next: PeriodRange) {
+    setRange(next);
+    setPeriod(periodFor(next));
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex">
+        <SegmentedFilter
+          label="Período do desempenho"
+          options={periodOptions}
+          value={range}
+          onChange={changeRange}
+        />
+      </div>
+
+      <PerformanceBody
+        query={performanceQuery}
+        isSelf={isSelf}
+        filtered={range !== "all"}
+      />
+    </div>
+  );
+}
+
+type PerformanceBodyProps = {
+  query: ReturnType<typeof usePerformance>;
+  isSelf: boolean;
+  /** Com período, o vazio quer dizer "nada neste período", não "nada ainda". */
+  filtered: boolean;
+};
+
+function PerformanceBody({
+  query: performanceQuery,
+  isSelf,
+  filtered,
+}: PerformanceBodyProps) {
   const performance = performanceQuery.data;
 
   if (performanceQuery.isError) {
@@ -133,10 +205,17 @@ export function PerformanceRadar({
 
   if (points.every((point) => point.studentScore === null)) {
     return (
-      <div className="text-muted-foreground border-border rounded-xl border border-dashed p-6 text-center text-sm">
-        {isSelf
-          ? "Conclua missões para ver seu desempenho em cada tipo."
-          : "O aluno ainda não concluiu nenhuma missão."}
+      <div
+        className={cn(
+          "text-muted-foreground border-border rounded-xl border border-dashed p-6 text-center text-sm transition-opacity",
+          performanceQuery.isPlaceholderData && "opacity-60",
+        )}
+      >
+        {filtered
+          ? "Nenhuma missão concluída neste período."
+          : isSelf
+            ? "Conclua missões para ver seu desempenho em cada tipo."
+            : "O aluno ainda não concluiu nenhuma missão."}
       </div>
     );
   }
@@ -158,7 +237,7 @@ export function PerformanceRadar({
     >
       <ChartContainer
         config={config}
-        className="mx-auto aspect-[5/4] max-h-80 w-full"
+        className="mx-auto aspect-5/4 max-h-80 w-full"
         aria-hidden
       >
         <RadarChart data={points} cy="56%" outerRadius="78%">
