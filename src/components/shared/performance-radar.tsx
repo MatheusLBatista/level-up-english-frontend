@@ -39,10 +39,36 @@ type RadarPoint = {
   classScore: number | null;
 };
 
-function toPoints(performance: Performance): RadarPoint[] {
+/**
+ * De quem é o radar. Na turma, a série principal é a média da turma: ela vem
+ * no desempenho de qualquer aluno ativo dela, e não há segunda série.
+ */
+export type RadarSubject = "self" | "student" | "class";
+
+const subjectLabels: Record<RadarSubject, string> = {
+  self: "Você",
+  student: "Aluno",
+  class: "Média da turma",
+};
+
+function toPoints(
+  performance: Performance,
+  subject: RadarSubject,
+): RadarPoint[] {
   return MISSION_TYPES.map((type) => {
-    const studentScore = performance.student[type].score;
     const classScore = performance.class?.[type].score ?? null;
+
+    if (subject === "class") {
+      return {
+        label: missionTypeLabels[type],
+        student: classScore ?? 0,
+        class: 0,
+        studentScore: classScore,
+        classScore: null,
+      };
+    }
+
+    const studentScore = performance.student[type].score;
 
     return {
       label: missionTypeLabels[type],
@@ -100,6 +126,12 @@ function PerformanceTooltip({
   );
 }
 
+const emptyMessages: Record<RadarSubject, string> = {
+  self: "Conclua missões para ver seu desempenho em cada tipo.",
+  student: "O aluno ainda não concluiu nenhuma missão.",
+  class: "Ninguém da turma concluiu missões ainda.",
+};
+
 type PeriodRange = "all" | "30d" | "90d";
 
 // Rótulos curtos para caber na ficha do aluno no celular; o grupo se chama
@@ -132,13 +164,14 @@ function periodFor(range: PeriodRange): PerformancePeriod {
 }
 
 type PerformanceRadarProps = {
+  /** Na turma, qualquer aluno ativo dela. */
   studentId: string | null | undefined;
-  isSelf?: boolean;
+  subject?: RadarSubject;
 };
 
 export function PerformanceRadar({
   studentId,
-  isSelf = false,
+  subject = "student",
 }: PerformanceRadarProps) {
   const [range, setRange] = useState<PeriodRange>("all");
   const [period, setPeriod] = useState<PerformancePeriod>({});
@@ -162,7 +195,7 @@ export function PerformanceRadar({
 
       <PerformanceBody
         query={performanceQuery}
-        isSelf={isSelf}
+        subject={subject}
         filtered={range !== "all"}
       />
     </div>
@@ -171,14 +204,14 @@ export function PerformanceRadar({
 
 type PerformanceBodyProps = {
   query: ReturnType<typeof usePerformance>;
-  isSelf: boolean;
+  subject: RadarSubject;
   /** Com período, o vazio quer dizer "nada neste período", não "nada ainda". */
   filtered: boolean;
 };
 
 function PerformanceBody({
   query: performanceQuery,
-  isSelf,
+  subject,
   filtered,
 }: PerformanceBodyProps) {
   const performance = performanceQuery.data;
@@ -203,7 +236,7 @@ function PerformanceBody({
     return <Skeleton className="mx-auto aspect-square w-full max-w-72" />;
   }
 
-  const points = toPoints(performance);
+  const points = toPoints(performance, subject);
 
   if (points.every((point) => point.studentScore === null)) {
     return (
@@ -215,15 +248,13 @@ function PerformanceBody({
       >
         {filtered
           ? "Nenhuma missão concluída neste período."
-          : isSelf
-            ? "Conclua missões para ver seu desempenho em cada tipo."
-            : "O aluno ainda não concluiu nenhuma missão."}
+          : emptyMessages[subject]}
       </div>
     );
   }
 
-  const studentLabel = isSelf ? "Você" : "Aluno";
-  const showClass = performance.class !== null;
+  const studentLabel = subjectLabels[subject];
+  const showClass = subject !== "class" && performance.class !== null;
 
   const config = {
     student: { label: studentLabel, color: "var(--chart-2)" },

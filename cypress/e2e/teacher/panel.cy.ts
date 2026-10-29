@@ -128,6 +128,29 @@ describe("Painel do professor", () => {
     });
   });
 
+  it("mostra o radar com a média da turma abaixo dos alunos", () => {
+    // O front pega a média da turma no desempenho de um aluno ativo dela.
+    cy.apiGet<Performance>(
+      `/users/${students[0]._id}/performance`,
+      session.accessToken,
+    ).then((performance) => {
+      const summary = performanceSummary(
+        { student: performance.class!, class: null },
+        "Média da turma",
+      );
+
+      cy.contains("section", "Desempenho da turma").within(() => {
+        cy.get("svg.recharts-surface").should("be.visible");
+        cy.contains(".recharts-legend-wrapper", "Média da turma").should(
+          "be.visible",
+        );
+        summary.forEach((line) => {
+          cy.get("figcaption").should("contain.text", line);
+        });
+      });
+    });
+  });
+
   describe("Aplicar atitudes", () => {
     let attitudes: Attitude[];
 

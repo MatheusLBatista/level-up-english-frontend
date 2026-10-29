@@ -51,10 +51,12 @@ export type Performance = {
   class: Record<MissionType, { score: number | null; students: number }> | null;
 };
 
+type Scores = Record<MissionType, { score: number | null }>;
+
 /** O mesmo texto que o radar deixa para leitores de tela, por tipo. */
 export function performanceSummary(
-  performance: Performance,
-  studentLabel: "Você" | "Aluno",
+  performance: { student: Scores; class: Scores | null },
+  studentLabel: "Você" | "Aluno" | "Média da turma",
 ) {
   const labels: Record<MissionType, string> = {
     quiz: "Quiz",
