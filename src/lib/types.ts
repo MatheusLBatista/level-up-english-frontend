@@ -246,3 +246,24 @@ export type XpHistoryItem = {
   teacher?: string | null;
   date: string | null;
 };
+
+export type NotificationType = "attitude" | "xp_adjustment" | "new_mission";
+
+type NotificationBase = {
+  _id: string;
+  user: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UserNotification = NotificationBase &
+  (
+    | {
+        type: "attitude";
+        data: { xp: number; attitude: string; attitude_log?: string };
+      }
+    | { type: "xp_adjustment"; data: { xp: number; xp_adjustment: string } }
+    | { type: "new_mission"; data: { mission: string } }
+  );
