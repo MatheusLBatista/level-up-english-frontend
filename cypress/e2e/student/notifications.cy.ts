@@ -293,3 +293,136 @@ describe("Painel de notificações", () => {
     cy.document().its("documentElement.scrollWidth").should("eq", 375);
   });
 });
+
+describe("Ler notificações", () => {
+  let session: ApiSession;
+
+  const mission = notification(1, {
+    type: "new_mission",
+    message: "Nova missão: Colors.",
+    data: { mission: "mission-1" },
+  });
+  const attitude = notification(2);
+  const adjustment = notification(3, {
+    type: "xp_adjustment",
+    message: "Seu professor ajustou seu XP (-5 XP).",
+    data: { xp: -5, xp_adjustment: "adjustment-1" },
+  });
+
+  beforeEach(() => {
+    cy.loginByApi(users.student.email, users.password).then((created) => {
+      session = created;
+    });
+  });
+
+  function openPanel() {
+    cy.visitWithSession("/dashboard", session);
+    cy.get(bell).click();
+    cy.get(item).should("have.length.greaterThan", 0);
+  }
+
+  it("cada notificação é um link para a tela do tipo", () => {
+    stubUnread(3);
+    stubPage(1, [mission, attitude, adjustment]);
+    openPanel();
+
+    cy.get(`${item} a`).eq(0).should("have.attr", "href", "/missoes/mission-1");
+    cy.get(`${item} a`)
+      .eq(1)
+      .should("have.attr", "href", "/dashboard#historico");
+    cy.get(`${item} a`)
+      .eq(2)
+      .should("have.attr", "href", "/dashboard#historico");
+  });
+
+  it("marca como lida na hora e abre a missão", () => {
+    let countCalls = 0;
+    cy.intercept("GET", "**/notifications/unread-count", (request) => {
+      countCalls += 1;
+      request.reply({ body: envelope({ unread: countCalls === 1 ? 3 : 2 }) });
+    });
+    stubPage(1, [mission, attitude, adjustment]);
+    cy.intercept("PATCH", "**/notifications/notification-1/read", {
+      delay: 1000,
+      body: envelope({ ...mission, read: true }),
+    }).as("read");
+    openPanel();
+
+    cy.get(`${item} a`).eq(0).click();
+
+    cy.get(bell).should("have.attr", "aria-label", "Notificações, 2 não lidas");
+    cy.get(panel).should("not.exist");
+    cy.location("pathname").should("eq", "/missoes/mission-1");
+    cy.wait("@read");
+  });
+
+  it("desfaz a marcação quando a API falha", () => {
+    let countCalls = 0;
+    cy.intercept("GET", "**/notifications/unread-count", (request) => {
+      countCalls += 1;
+      request.reply({
+        delay: countCalls === 1 ? 0 : 8000,
+        body: envelope({ unread: 3 }),
+      });
+    });
+    stubPage(1, [mission, attitude, adjustment]);
+    cy.intercept("PATCH", "**/notifications/notification-2/read", {
+      delay: 1000,
+      statusCode: 500,
+      body: { message: "Erro interno do servidor.", data: null, errors: [] },
+    }).as("read");
+    openPanel();
+
+    cy.get(`${item} a`).eq(1).click();
+    cy.get(bell).should("have.attr", "aria-label", "Notificações, 2 não lidas");
+
+    cy.wait("@read");
+    cy.get(bell).should("have.attr", "aria-label", "Notificações, 3 não lidas");
+  });
+
+  it("não chama a API ao abrir uma notificação já lida", () => {
+    stubUnread(0);
+    stubPage(1, [{ ...attitude, read: true }]);
+    cy.intercept("PATCH", "**/notifications/*/read").as("read");
+    openPanel();
+
+    cy.get(`${item} a`).first().click();
+
+    cy.location("hash").should("eq", "#historico");
+    cy.get(panel).should("not.exist");
+    cy.get("@read.all").should("have.length", 0);
+  });
+
+  it("marca todas como lidas e zera o contador", () => {
+    stubUnread(2);
+    stubPage(1, [mission, attitude, { ...adjustment, read: true }]);
+    cy.intercept("PATCH", "**/notifications/read-all", {
+      body: envelope({ updated: 2 }),
+    }).as("readAll");
+    openPanel();
+
+    cy.contains(`${panel} button`, "Marcar todas como lidas").click();
+    cy.wait("@readAll");
+
+    cy.get(item).each((element) => {
+      cy.wrap(element).should("have.attr", "data-read", "true");
+    });
+    cy.get(bell)
+      .should("have.attr", "aria-label", "Notificações")
+      .find('[data-slot="notification-count"]')
+      .should("not.exist");
+    cy.contains(`${panel} button`, "Marcar todas como lidas").should(
+      "be.disabled",
+    );
+  });
+
+  it("deixa marcar todas desabilitado sem não lidas", () => {
+    stubUnread(0);
+    stubPage(1, [{ ...attitude, read: true }]);
+    openPanel();
+
+    cy.contains(`${panel} button`, "Marcar todas como lidas").should(
+      "be.disabled",
+    );
+  });
+});

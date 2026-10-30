@@ -1,6 +1,7 @@
 "use client";
 
 import { BellIcon } from "lucide-react";
+import { useState } from "react";
 import { NotificationsPanel } from "@/components/layout/notifications-panel";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +15,10 @@ import { cn } from "@/lib/utils";
 
 export function NotificationBell({ className }: { className?: string }) {
   const { data: unread = 0 } = useUnreadNotificationsCount();
+  const [open, setOpen] = useState(false);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           type="button"
@@ -48,7 +50,7 @@ export function NotificationBell({ className }: { className?: string }) {
         aria-label="Notificações"
         className="w-screen rounded-none p-0 sm:w-96 sm:rounded-lg"
       >
-        <NotificationsPanel />
+        <NotificationsPanel onNavigate={() => setOpen(false)} />
       </PopoverContent>
     </Popover>
   );

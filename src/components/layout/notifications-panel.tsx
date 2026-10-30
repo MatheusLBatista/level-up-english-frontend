@@ -1,27 +1,72 @@
 "use client";
 
 import {
+  CheckCheckIcon,
   Gamepad2Icon,
   Loader2Icon,
   TrendingDownIcon,
   TrendingUpIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNotifications } from "@/hooks/use-notifications";
+import {
+  useMarkAllNotificationsRead,
+  useMarkNotificationRead,
+  useNotifications,
+  useUnreadNotificationsCount,
+} from "@/hooks/use-notifications";
 import { formatFullDate, formatRelativeTime } from "@/lib/date";
+import { notificationHref } from "@/lib/notifications";
 import type { UserNotification } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function NotificationsPanel() {
+export function NotificationsPanel({ onNavigate }: { onNavigate: () => void }) {
   const notificationsQuery = useNotifications();
+  const { data: unread = 0 } = useUnreadNotificationsCount();
+  const markRead = useMarkNotificationRead();
+  const markAllRead = useMarkAllNotificationsRead();
   const notifications = notificationsQuery.data;
+  const hasUnread =
+    unread > 0 ||
+    (notifications?.some((notification) => !notification.read) ?? false);
+
+  function open(notification: UserNotification) {
+    if (!notification.read) {
+      markRead.mutate(notification._id);
+    }
+
+    onNavigate();
+  }
 
   return (
     <div className="flex max-h-[min(32rem,calc(100dvh-5rem))] flex-col">
       <header className="border-border flex items-center gap-3 border-b px-4 py-3">
         <h2 className="text-sm font-semibold">Notificações</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-foreground ml-auto"
+          disabled={!hasUnread || markAllRead.isPending}
+          onClick={() => markAllRead.mutate()}
+        >
+          {markAllRead.isPending ? (
+            <Loader2Icon className="animate-spin" />
+          ) : (
+            <CheckCheckIcon />
+          )}
+          Marcar todas como lidas
+        </Button>
       </header>
+
+      {markAllRead.isError && (
+        <p
+          role="alert"
+          className="border-destructive/40 bg-destructive/10 border-b px-4 py-2 text-sm"
+        >
+          Não foi possível marcar todas como lidas. Tente de novo.
+        </p>
+      )}
 
       <div className="flex-1 overflow-y-auto">
         {!notifications ? (
@@ -48,6 +93,7 @@ export function NotificationsPanel() {
                 <NotificationItem
                   key={notification._id}
                   notification={notification}
+                  onOpen={() => open(notification)}
                 />
               ))}
             </ol>
@@ -124,53 +170,57 @@ function notificationTone(notification: UserNotification) {
 
 function NotificationItem({
   notification,
+  onOpen,
 }: {
   notification: UserNotification;
+  onOpen: () => void;
 }) {
   const { icon: Icon, className } = notificationTone(notification);
 
   return (
-    <li
-      data-slot="notification-item"
-      data-read={notification.read}
-      className={cn(
-        "flex items-start gap-3 px-4 py-3",
-        !notification.read && "bg-primary/5",
-      )}
-    >
-      <span
-        aria-hidden
+    <li data-slot="notification-item" data-read={notification.read}>
+      <Link
+        href={notificationHref(notification)}
+        onClick={onOpen}
         className={cn(
-          "grid size-8 shrink-0 place-items-center rounded-full [&_svg]:size-4",
-          className,
+          "hover:bg-accent focus-visible:bg-accent focus-visible:ring-ring/50 flex items-start gap-3 px-4 py-3 outline-none focus-visible:ring-3 focus-visible:ring-inset",
+          !notification.read && "bg-primary/5",
         )}
       >
-        <Icon />
-      </span>
-
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <p
+        <span
+          aria-hidden
           className={cn(
-            "text-sm wrap-anywhere",
-            !notification.read && "font-medium",
+            "grid size-8 shrink-0 place-items-center rounded-full [&_svg]:size-4",
+            className,
           )}
         >
-          {notification.message}
-        </p>
-        <time
-          dateTime={notification.createdAt}
-          title={formatFullDate(notification.createdAt)}
-          className="text-muted-foreground text-xs"
-        >
-          {formatRelativeTime(notification.createdAt)}
-        </time>
-      </div>
-
-      {!notification.read && (
-        <span className="bg-primary mt-1.5 size-2 shrink-0 rounded-full">
-          <span className="sr-only">Não lida</span>
+          <Icon />
         </span>
-      )}
+
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <p
+            className={cn(
+              "text-sm wrap-anywhere",
+              !notification.read && "font-medium",
+            )}
+          >
+            {notification.message}
+          </p>
+          <time
+            dateTime={notification.createdAt}
+            title={formatFullDate(notification.createdAt)}
+            className="text-muted-foreground text-xs"
+          >
+            {formatRelativeTime(notification.createdAt)}
+          </time>
+        </div>
+
+        {!notification.read && (
+          <span className="bg-primary mt-1.5 size-2 shrink-0 rounded-full">
+            <span className="sr-only">Não lida</span>
+          </span>
+        )}
+      </Link>
     </li>
   );
 }
