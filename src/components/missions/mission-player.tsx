@@ -584,8 +584,11 @@ function QuestionStep({
   const name = `question-${index}`;
 
   return (
-    <fieldset className="flex flex-col gap-5" aria-describedby={`${name}-hint`}>
-      <legend className="font-english text-heading mb-5 font-semibold">
+    <fieldset
+      className="flex min-w-0 flex-col gap-5"
+      aria-describedby={`${name}-hint`}
+    >
+      <legend className="font-english text-heading mb-5 font-semibold wrap-anywhere">
         {question.question}
       </legend>
 
@@ -622,7 +625,7 @@ function QuestionStep({
               >
                 {key}
               </span>
-              <span className="font-english text-base">
+              <span className="font-english min-w-0 text-base wrap-anywhere">
                 {question.options[key]}
               </span>
               <span className="sr-only">

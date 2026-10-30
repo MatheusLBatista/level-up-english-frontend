@@ -21,13 +21,32 @@ export function describeQuestionLimit(type: MissionType) {
 
 export const answerKeys = ["a", "b", "c", "d"] as const;
 
+export const questionTextLimits = {
+  question: 500,
+  option: 200,
+} as const;
+
+const optionSchema = z
+  .string()
+  .trim()
+  .max(
+    questionTextLimits.option,
+    `Use no máximo ${questionTextLimits.option} caracteres.`,
+  );
+
 const questionDraftSchema = z.object({
-  question: z.string().trim(),
+  question: z
+    .string()
+    .trim()
+    .max(
+      questionTextLimits.question,
+      `Use no máximo ${questionTextLimits.question} caracteres.`,
+    ),
   options: z.object({
-    a: z.string().trim(),
-    b: z.string().trim(),
-    c: z.string().trim(),
-    d: z.string().trim(),
+    a: optionSchema,
+    b: optionSchema,
+    c: optionSchema,
+    d: optionSchema,
   }),
   correct_answer: z.enum(answerKeys),
 });
