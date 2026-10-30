@@ -129,9 +129,28 @@ export type User = {
   badges: string[];
   /** Caminho relativo à API (`/uploads/...`); `null` sem foto. */
   avatar_url?: string | null;
+  /** Ausente em usuários antigos: vale como `true`. */
+  show_in_global_ranking?: boolean;
   active: boolean;
   createdAt: string;
   updatedAt: string;
+};
+
+export type TypePerformance = {
+  /** 0 a 100. `null` sem missão concluída do tipo, diferente de nota 0. */
+  score: number | null;
+  missions: number;
+};
+
+export type ClassTypePerformance = {
+  score: number | null;
+  students: number;
+};
+
+export type Performance = {
+  student: Record<MissionType, TypePerformance>;
+  /** Média dos alunos ativos da turma; `null` quando o aluno não tem turma. */
+  class: Record<MissionType, ClassTypePerformance> | null;
 };
 
 export type LoginResponse = {
@@ -227,3 +246,24 @@ export type XpHistoryItem = {
   teacher?: string | null;
   date: string | null;
 };
+
+export type NotificationType = "attitude" | "xp_adjustment" | "new_mission";
+
+type NotificationBase = {
+  _id: string;
+  user: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UserNotification = NotificationBase &
+  (
+    | {
+        type: "attitude";
+        data: { xp: number; attitude: string; attitude_log?: string };
+      }
+    | { type: "xp_adjustment"; data: { xp: number; xp_adjustment: string } }
+    | { type: "new_mission"; data: { mission: string } }
+  );

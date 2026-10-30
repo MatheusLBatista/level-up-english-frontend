@@ -1,5 +1,6 @@
 "use client";
 
+import { NotificationBell } from "@/components/layout/notification-bell";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -21,6 +22,7 @@ export function AppHeader() {
 
       <div className="ml-auto flex items-center gap-3">
         <ThemeToggle />
+        {user?.role === "student" && <NotificationBell />}
         <div className="hidden text-right leading-tight sm:block">
           <p className="text-sm font-medium">{user?.name}</p>
           <p className="text-muted-foreground text-xs">

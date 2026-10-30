@@ -7,9 +7,9 @@ import {
   useFormState,
   type UseFormReturn,
 } from "react-hook-form";
+import { AutoTextarea } from "@/components/ui/auto-textarea";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { createEmptyQuestion } from "@/lib/mission-form";
 import type { MissionType } from "@/lib/types";
@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import {
   answerKeys,
   questionLimits,
+  questionTextLimits,
   type MissionFormInput,
 } from "@/schemas/mission";
 
@@ -99,8 +100,9 @@ export function QuestionsEditor({
                 >
                   Enunciado da pergunta {number}
                 </FieldLabel>
-                <Input
+                <AutoTextarea
                   id={`questions.${index}.question`}
+                  maxLength={questionTextLimits.question}
                   placeholder={
                     isQuiz
                       ? "Ex.: What color is the sky?"
@@ -133,14 +135,15 @@ export function QuestionsEditor({
                           data-invalid={Boolean(optionError)}
                           className="gap-1"
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-start gap-2">
                             <RadioGroupItem
                               value={key}
                               aria-label={`Marcar ${key.toUpperCase()} como correta`}
+                              className="mt-2 pointer-coarse:mt-3.5"
                             />
                             <span
                               className={cn(
-                                "w-4 text-xs",
+                                "mt-2 w-4 text-xs leading-4 pointer-coarse:mt-3.5",
                                 isCorrect
                                   ? "text-brand-done"
                                   : "text-muted-foreground",
@@ -148,7 +151,8 @@ export function QuestionsEditor({
                             >
                               {key}
                             </span>
-                            <Input
+                            <AutoTextarea
+                              maxLength={questionTextLimits.option}
                               aria-label={`Alternativa ${key.toUpperCase()} da pergunta ${number}`}
                               aria-invalid={Boolean(optionError)}
                               placeholder={`Alternativa ${key.toUpperCase()}`}

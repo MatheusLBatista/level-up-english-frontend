@@ -26,6 +26,20 @@ function fillQuestion(number: number, correct: "a" | "b" | "c" | "d") {
     .click();
 }
 
+function paste(selector: string, text: string) {
+  cy.get(selector).then(($field) => {
+    const field = $field[0] as HTMLTextAreaElement;
+    const win = field.ownerDocument.defaultView!;
+    const setValue = Object.getOwnPropertyDescriptor(
+      win.HTMLTextAreaElement.prototype,
+      "value",
+    )!.set!;
+
+    setValue.call(field, field.value + text);
+    field.dispatchEvent(new win.Event("input", { bubbles: true }));
+  });
+}
+
 // A Carla criou todas as missões do 1º Ano A no seed:demo. Criar, editar e
 // desativar são simulados, para as missões da demonstração não mudarem.
 describe("Missões do professor", () => {
@@ -113,6 +127,58 @@ describe("Missões do professor", () => {
       cy.contains(
         "Link inválido. Use um endereço completo, com https://.",
       ).should("be.visible");
+    });
+
+    it("mantém o enunciado numa linha só e cresce com o texto", () => {
+      const question = '[id="questions.0.question"]';
+
+      cy.get(question).invoke("outerHeight").should("eq", 32);
+
+      cy.get(question).type("What color{enter} is the sky?");
+      cy.get(question).should("have.value", "What color is the sky?");
+
+      paste(question, "\nWhat color\r\n\n  is the grass?");
+      cy.get(question).should(
+        "have.value",
+        "What color is the sky? What color is the grass?",
+      );
+
+      cy.get(question)
+        .clear()
+        .type("Tell me about the sky. ".repeat(4), { delay: 0 })
+        .invoke("outerHeight")
+        .should("be.greaterThan", 32);
+    });
+
+    it("limita o tamanho do texto e mostra o contador", () => {
+      const question = '[id="questions.0.question"]';
+      const option = '[aria-label="Alternativa A da pergunta 1"]';
+      const counter = (field: string) =>
+        cy.get(field).parent().find('[data-slot="auto-textarea-counter"]');
+
+      cy.get(question).should("have.attr", "maxlength", "500");
+      cy.get(option).should("have.attr", "maxlength", "200");
+      counter(question).should("not.be.visible");
+
+      cy.get(question).type("Sky");
+      counter(question).should("be.visible").and("have.text", "3/500");
+
+      cy.get(option).type("a".repeat(205), { delay: 0 });
+      cy.get(option).invoke("val").should("have.length", 200);
+      cy.get(question).focus();
+      counter(option).should("be.visible").and("have.text", "200/200");
+
+      cy.get(question)
+        .clear()
+        .type("x".repeat(505), { delay: 0 })
+        .should(($field) => {
+          expect($field.val()).to.have.length(500);
+          expect($field[0].scrollHeight).to.be.greaterThan(
+            $field[0].clientHeight,
+          );
+        })
+        .invoke("outerHeight")
+        .should("eq", 6 * 20 + 12);
     });
 
     it("cria um quiz com cinco perguntas", () => {

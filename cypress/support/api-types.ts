@@ -44,6 +44,37 @@ export type Ranking = {
   entries: { user: { _id: string; name: string }; xp: number; level: number }[];
 };
 
+type MissionType = Mission["type"];
+
+export type Performance = {
+  student: Record<MissionType, { score: number | null; missions: number }>;
+  class: Record<MissionType, { score: number | null; students: number }> | null;
+};
+
+type Scores = Record<MissionType, { score: number | null }>;
+
+/** O mesmo texto que o radar deixa para leitores de tela, por tipo. */
+export function performanceSummary(
+  performance: { student: Scores; class: Scores | null },
+  studentLabel: "Você" | "Aluno" | "Média da turma",
+) {
+  const labels: Record<MissionType, string> = {
+    quiz: "Quiz",
+    vocabulary: "Vocabulário",
+    audio: "Áudio",
+  };
+  const format = (score: number | null) =>
+    score === null ? "Sem missões concluídas" : `${score}`;
+
+  return (Object.keys(labels) as MissionType[]).map((type) => {
+    const own = `${labels[type]}: ${studentLabel} ${format(performance.student[type].score)}`;
+
+    return performance.class
+      ? `${own}; média da turma ${format(performance.class[type].score)}`
+      : own;
+  });
+}
+
 export type ClassSummary = {
   _id: string;
   name: string;
