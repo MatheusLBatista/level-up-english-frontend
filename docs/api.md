@@ -150,8 +150,18 @@ O quiz exige no mínimo 5 perguntas; vocabulário e áudio, de 1 a 3 perguntas d
 checagem. Missões antigas de vocabulário e áudio, sem perguntas, continuam
 valendo até serem editadas.
 
+O formulário limita o enunciado a 500 caracteres e cada alternativa a 200
+(`questionTextLimits` em `src/schemas/mission.ts`). Por enquanto o limite existe
+só no frontend: o backend ainda não valida esses tamanhos e deve adotar os
+mesmos valores.
+
 No `progress`, toda missão com perguntas manda `answers` na ordem das questões
-e o servidor corrige — o `score` do corpo é ignorado. Vocabulário e áudio
+e o servidor corrige — o `score` do corpo é ignorado. O servidor compara
+`answers[i]` com o gabarito da pergunta `i` na ordem em que ela veio da API, e
+recusa um `answers` de tamanho diferente do número de perguntas. O quiz mostra
+as perguntas em ordem aleatória para o aluno, mas guarda cada resposta pela
+posição original da pergunta (`src/lib/quiz.ts`); o envio continua na ordem da
+API. As alternativas não são embaralhadas. Vocabulário e áudio
 antigos, sem perguntas, mandam só `{ done: true }`. O XP é
 `xp_reward × melhor nota / 100`, descontado o que já foi creditado — refazer a
 missão só paga a diferença. O progresso guarda a melhor nota (`best_score` na
@@ -198,6 +208,41 @@ própria: os ajustes aparecem no `GET /users/{id}/xp-history`.
 O ranking de uma turma só existe depois que alguém dela ganha XP; antes disso a
 rota responde 404, e o frontend mostra o ranking vazio. `/rankings/me` usa a
 turma do usuário logado (só faz sentido para aluno).
+
+### Notificações
+
+| Método | Rota                          | Papéis          |
+| ------ | ----------------------------- | --------------- |
+| GET    | `/notifications/unread-count` | qualquer logado |
+| GET    | `/notifications`              | qualquer logado |
+| PATCH  | `/notifications/{id}/read`    | qualquer logado |
+| PATCH  | `/notifications/read-all`     | qualquer logado |
+
+Cada usuário só vê e altera as próprias notificações. Hoje só alunos recebem
+notificações, por isso o frontend mostra o sino apenas para o papel `student`.
+
+- `unread-count` devolve `{ unread }`. É uma rota leve, feita para ser
+  consultada periodicamente; o frontend consulta a cada 60 s, com pausa quando a
+  aba está oculta.
+- `GET /notifications` é paginado com `page` e `limit` (padrão 10, máximo 50),
+  da mais recente para a mais antiga.
+- `PATCH /{id}/read` devolve a notificação com `read: true`. Id inexistente ou de
+  outro usuário responde 404; marcar de novo uma já lida responde 200.
+- `PATCH /read-all` devolve `{ updated }`, a quantidade marcada.
+
+Cada notificação traz `_id`, `user`, `type`, `message`, `data`, `read`,
+`createdAt` e `updatedAt`. O `message` já vem pronto para exibir; o frontend não
+monta texto. O conteúdo de `data` depende do `type`:
+
+| `type`          | `data`                           | Ao clicar, o frontend abre |
+| --------------- | -------------------------------- | -------------------------- |
+| `attitude`      | `{ xp, attitude_log, attitude }` | `/dashboard#historico`     |
+| `xp_adjustment` | `{ xp, xp_adjustment }`          | `/dashboard#historico`     |
+| `new_mission`   | `{ mission }` (id da missão)     | `/missoes/{mission}`       |
+
+O `xp` tem sinal: positivo ganhou, negativo perdeu. Numa atitude removida, o
+`attitude_log` não vem. Notificações com mais de 90 dias são apagadas pelo
+servidor.
 
 ## Observações do schema
 

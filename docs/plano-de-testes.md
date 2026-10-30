@@ -1,11 +1,11 @@
 # Plano de testes — LevelUp English (frontend)
 
-| Item            | Valor                                                          |
-| --------------- | -------------------------------------------------------------- |
-| Sistema         | LevelUp English — interface web (Next.js)                      |
-| Tipo de teste   | Ponta a ponta (E2E), automatizado com Cypress                  |
-| Versão          | 1.5 — autenticação, aluno, professor, admin, tema e desempenho |
-| Última execução | 22/10/2026 — 108 casos, 108 aprovados                          |
+| Item            | Valor                                                                                                |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| Sistema         | LevelUp English — interface web (Next.js)                                                            |
+| Tipo de teste   | Ponta a ponta (E2E) com Cypress e unitário com Vitest                                                |
+| Versão          | 1.6 — quiz embaralhado, campos de pergunta, visibilidade no ranking, notificações e testes unitários |
+| Última execução | 29/10/2026 — 141 casos E2E e 21 unitários, todos aprovados                                           |
 
 ## 1. Objetivo
 
@@ -19,44 +19,55 @@ funcionando.
 
 ### 2.1 Dentro do escopo
 
-| Área                 | O que é testado                                                                                                                                                                          |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                                                                  |
-| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                                                                         |
-| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                                                                    |
-| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor, radar de desempenho                                                      |
-| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, rascunho, saída, refazer, erros                                                                                                      |
-| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL                                                                                                              |
-| Aluno — Perfil       | Dados, turma, conquistas, edição do nome, troca de senha e foto de perfil                                                                                                                |
-| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno com o radar de desempenho, radar da turma, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis |
-| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, edição, desativação e reativação                                                                                           |
-| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                                                                    |
-| Professor — Perfil   | Crachá, foto de perfil, turmas com atalhos e atividade recente                                                                                                                           |
-| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                                                               |
-| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                                                                   |
-| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                                                                         |
-| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                                                              |
-| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                                                             |
-| Radar de desempenho  | Notas por tipo de missão comparadas com a turma, filtro de período, tipo sem nota, aluno sem turma e estado vazio                                                                        |
+| Área                 | O que é testado                                                                                                                                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                                                                                      |
+| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                                                                                             |
+| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                                                                                        |
+| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor, radar de desempenho                                                                          |
+| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, perguntas do quiz em ordem aleatória com envio na ordem original, rascunho, saída, refazer, erros                                                        |
+| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL, opção de não aparecer no ranking geral                                                                                          |
+| Aluno — Perfil       | Dados, turma, conquistas, edição do nome, troca de senha e foto de perfil                                                                                                                                    |
+| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno com o radar de desempenho, radar da turma, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis                     |
+| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, campos de pergunta que crescem com o texto, limite de caracteres e contador, edição, desativação e reativação                                  |
+| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                                                                                        |
+| Professor — Perfil   | Crachá, foto de perfil, turmas com atalhos e atividade recente                                                                                                                                               |
+| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                                                                                   |
+| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                                                                                       |
+| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                                                                                             |
+| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                                                                                  |
+| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                                                                                 |
+| Radar de desempenho  | Notas por tipo de missão comparadas com a turma, filtro de período, tipo sem nota, aluno sem turma e estado vazio                                                                                            |
+| Aluno — Notificações | Sino com contador e consulta periódica (pausada com a aba oculta), painel paginado, estados vazio e de erro, marcar como lida (otimista, com desfazer), marcar todas e navegação por tipo, painel no celular |
+| Funções puras        | Embaralhamento do quiz, respostas na ordem original, texto em linha única e textos do contador de notificações (testes unitários)                                                                            |
 
 ### 2.2 Fora do escopo (nesta versão)
 
 - Aparência de cada tema: os testes conferem qual tema está ativo, não as cores
   nem o contraste (verificados à parte, ver seção 11).
-- Testes unitários de funções isoladas e testes de componente.
+- Testes de componente (um componente React renderizado isoladamente). As
+  funções puras de `src/lib/` têm testes unitários (seção 7.20).
 - Testes do backend — o repositório da API tem a própria suíte (Jest).
 - Desempenho, carga e segurança.
-- Layout no celular e outros navegadores além do usado pelo Cypress.
+- Layout no celular e outros navegadores além do usado pelo Cypress. A exceção
+  é o painel de notificações, conferido em 375 px (CT-NOT-11).
 
 ## 3. Estratégia
 
 ### 3.1 Tipo de teste
 
-Todos os casos são **testes ponta a ponta**: o Cypress abre a aplicação num
-navegador real, clica, digita e confere o que aparece na tela, como um usuário
-faria. Os elementos são encontrados pelo texto visível, pelo `id` dos campos e
-pelos papéis de acessibilidade (`role="alert"`, `role="dialog"`), nunca por
-classes CSS, para que mudanças visuais não quebrem os testes.
+Os casos das seções 7.1 a 7.19 são **testes ponta a ponta**: o Cypress abre a
+aplicação num navegador real, clica, digita e confere o que aparece na tela,
+como um usuário faria. Os elementos são encontrados pelo texto visível, pelo `id` dos campos e
+pelos papéis de acessibilidade (`role="alert"`, `role="dialog"`) e por
+atributos `data-*` próprios (como `data-tone` no ícone da notificação), nunca
+por classes CSS, para que mudanças visuais não quebrem os testes. A exceção é a
+legenda do radar (CT-DES-03), que só existe como classe do Recharts.
+
+Os casos da seção 7.20 são **testes unitários**: o Vitest chama as funções puras
+de `src/lib/` direto, em Node, sem navegador nem servidor. Eles cobrem regras
+que no navegador dependem de sorte (a ordem aleatória do quiz) ou que valem a
+pena testar com muitas entradas (textos e limites).
 
 ### 3.2 Testes integrados e testes com API simulada
 
@@ -131,6 +142,7 @@ deve ser usado em demonstrações; se resolver missões com ele, rode o
 | `npm run cy:run`                                  | Roda todos os testes no terminal.                                |
 | `npx cypress run --spec "cypress/e2e/student/**"` | Roda só uma pasta.                                               |
 | `npx cypress run --headed --browser chrome`       | Roda tudo mostrando o Chrome.                                    |
+| `npm run test`                                    | Roda os testes unitários (não precisa de backend nem frontend).  |
 
 ## 7. Casos de teste
 
@@ -198,12 +210,13 @@ de 5 pedidos por hora) e o código só existe dentro do e-mail.
 | CT-MIS-03 | Falha ao entregar       | I+S  | Com erro 500, aparece "Suas respostas continuam aqui", nada se perde e dá para tentar de novo.                                                                           |
 | CT-MIS-04 | Material de vocabulário | I    | A missão abre no material ("Estude antes de responder"); as perguntas vêm depois, e dá para voltar ao material.                                                          |
 | CT-MIS-05 | Questões em branco      | I    | "Entregar" fica desabilitado e a tela lista as questões que faltam, com atalho para cada uma.                                                                            |
-| CT-MIS-06 | Rascunho                | I    | Depois de recarregar a página, as respostas e a questão atual continuam lá.                                                                                              |
+| CT-MIS-06 | Rascunho                | I    | Depois de recarregar a página, as respostas continuam lá e a mesma pergunta volta à tela, mesmo com o quiz embaralhado de novo.                                          |
 | CT-MIS-07 | Sair no meio            | I    | Pede confirmação; "Continuar a missão" mantém o aluno, "Sair" volta à lista com a missão marcada como "Continuar".                                                       |
 | CT-MIS-08 | Missão de outra turma   | I    | API responde 403 e a tela mostra "Esta missão é de outra turma."                                                                                                         |
 | CT-MIS-09 | Missão inexistente      | I    | API responde 404 e a tela mostra "Não encontramos esta missão".                                                                                                          |
 | CT-MIS-10 | Missão com nota máxima  | I    | Mostra "Missão concluída" e não deixa refazer.                                                                                                                           |
 | CT-MIS-11 | Refazer abaixo de 100%  | I+S  | Mostra a melhor nota e quanto XP ainda dá para ganhar; se a nova tentativa não supera a melhor, mostra "0 XP" e "Nenhum XP novo"; "Tentar de novo" recomeça do material. |
+| CT-MIS-12 | Quiz embaralhado        | S    | Cada pergunta é reconhecida pelo enunciado e respondida com uma alternativa que depende da posição dela na API; o `answers` enviado sai na ordem original da API.        |
 
 As entregas são simuladas para não mudar o XP nem o progresso dos alunos da
 demonstração.
@@ -254,15 +267,17 @@ demonstração.
 
 ### 7.9 Professor — Missões — `cypress/e2e/teacher/missions.cy.ts`
 
-| ID        | Caso                             | Modo | Resultado esperado                                                                                   |
-| --------- | -------------------------------- | ---- | ---------------------------------------------------------------------------------------------------- |
-| CT-TMS-01 | Listar, paginar e filtrar        | I    | Seis missões por página; "Próxima" e o filtro "Quiz" mudam a URL e a lista bate com a API.           |
-| CT-TMS-02 | Validação do quiz                | I    | Sem título, perguntas e alternativas, os erros aparecem e nada é enviado.                            |
-| CT-TMS-03 | Validação de vocabulário e áudio | I    | Vocabulário exige conteúdo; áudio exige link completo com `https://`.                                |
-| CT-TMS-04 | Criar quiz                       | I+S  | Envia tipo, título, descrição, XP, turma e as cinco perguntas com a alternativa correta de cada uma. |
-| CT-TMS-05 | Editar missão                    | I+S  | O formulário vem preenchido, o tipo fica bloqueado e o título novo é enviado.                        |
-| CT-TMS-06 | Desativar missão                 | I+S  | Pede confirmação; "Cancelar" não envia nada; "Desativar" envia `{ active: false }`.                  |
-| CT-TMS-07 | Reativar missão                  | S    | Uma missão inativa mostra o selo "Inativa" e "Reativar" envia `{ active: true }`.                    |
+| ID        | Caso                              | Modo | Resultado esperado                                                                                                                                                  |
+| --------- | --------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-TMS-01 | Listar, paginar e filtrar         | I    | Seis missões por página; "Próxima" e o filtro "Quiz" mudam a URL e a lista bate com a API.                                                                          |
+| CT-TMS-02 | Validação do quiz                 | I    | Sem título, perguntas e alternativas, os erros aparecem e nada é enviado.                                                                                           |
+| CT-TMS-03 | Validação de vocabulário e áudio  | I    | Vocabulário exige conteúdo; áudio exige link completo com `https://`.                                                                                               |
+| CT-TMS-04 | Criar quiz                        | I+S  | Envia tipo, título, descrição, XP, turma e as cinco perguntas com a alternativa correta de cada uma.                                                                |
+| CT-TMS-05 | Editar missão                     | I+S  | O formulário vem preenchido, o tipo fica bloqueado e o título novo é enviado.                                                                                       |
+| CT-TMS-06 | Desativar missão                  | I+S  | Pede confirmação; "Cancelar" não envia nada; "Desativar" envia `{ active: false }`.                                                                                 |
+| CT-TMS-07 | Reativar missão                   | S    | Uma missão inativa mostra o selo "Inativa" e "Reativar" envia `{ active: true }`.                                                                                   |
+| CT-TMS-08 | Enunciado em uma linha que cresce | I    | O campo começa com 32 px como o input antigo; Enter não quebra linha; texto colado com quebras vira uma linha só; texto longo faz o campo crescer.                  |
+| CT-TMS-09 | Limite e contador                 | I    | `maxlength` de 500 no enunciado e 200 na alternativa; o contador aparece com foco ou no limite; acima de 6 linhas o campo para de crescer (132 px) e ganha rolagem. |
 
 O CT-TMS-07 altera a resposta da listagem no caminho (`cy.intercept` com
 `req.continue`), porque o seed não tem missão desativada.
@@ -360,40 +375,101 @@ resposta da API, porque o desenho do gráfico não tem texto para conferir.
 | CT-DES-03 | Tipo sem nota, sem turma | S    | Tipo com `score: null` aparece como "Sem missões concluídas", nunca "0"; com `class: null`, a média da turma some da legenda e do texto. |
 | CT-DES-04 | Nenhuma nota             | S    | Com os três tipos sem nota, mostra "Conclua missões para ver seu desempenho em cada tipo." no lugar do gráfico.                          |
 
+### 7.18 Aluno — Visibilidade no ranking geral — `cypress/e2e/student/ranking-visibility.cy.ts`
+
+As chamadas são reais: o backend recalcula o ranking geral a cada troca. Cada
+caso deixa a opção como encontrou.
+
+| ID        | Caso                  | Modo | Resultado esperado                                                                                         |
+| --------- | --------------------- | ---- | ---------------------------------------------------------------------------------------------------------- |
+| CT-VIS-01 | Sair do ranking geral | I    | Desligar a opção no perfil tira o aluno do ranking geral, com o aviso na tela, e ele continua no da turma. |
+| CT-VIS-02 | Voltar ao ranking     | I    | Religar a opção no perfil devolve o aluno ao ranking geral.                                                |
+
+### 7.19 Aluno — Notificações — `cypress/e2e/student/notifications.cy.ts`
+
+A aluna de demonstração não tem notificações no banco, por isso todos os casos
+simulam as rotas `/notifications`. Os casos de consulta periódica controlam o
+relógio da página com `cy.clock()` e simulam a aba oculta trocando
+`document.visibilityState` e disparando o evento `visibilitychange`.
+
+| ID        | Caso                        | Modo | Resultado esperado                                                                                                                    |
+| --------- | --------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-NOT-01 | Mais de nove não lidas      | S    | O contador mostra "9+" e o `aria-label` do sino diz o número real ("Notificações, 12 não lidas").                                     |
+| CT-NOT-02 | Até nove e nenhuma          | S    | Com 3, mostra "3"; com 0, o contador some e o `aria-label` fica só "Notificações".                                                    |
+| CT-NOT-03 | Consulta periódica          | S    | Consulta ao abrir e de novo depois de 1 minuto; com a aba oculta não consulta; ao voltar a ficar visível, consulta na hora.           |
+| CT-NOT-04 | Logout                      | S    | Depois de "Sair", nenhuma consulta nova acontece.                                                                                     |
+| CT-NOT-05 | Professor                   | I    | O sino não aparece para o professor.                                                                                                  |
+| CT-NOT-06 | Lista                       | S    | Ícone e cor por tipo (`data-tone`: positivo, negativo, missão), destaque e "Não lida" só nas não lidas, data relativa ("há 2 horas"). |
+| CT-NOT-07 | Carregar mais               | S    | Com `hasNextPage`, "Carregar mais" busca a página 2 e junta à lista; na última página o botão some.                                   |
+| CT-NOT-08 | Vazio                       | S    | Mostra "Você não tem notificações."                                                                                                   |
+| CT-NOT-09 | Erro                        | S    | Com erro 500, mostra a falha e "Tentar de novo" busca de novo.                                                                        |
+| CT-NOT-10 | Fechar                      | S    | Esc fecha o painel e devolve o foco ao sino; clicar fora também fecha.                                                                |
+| CT-NOT-11 | Celular                     | S    | Em 375 px, o painel tem a largura da tela e a página não rola para o lado.                                                            |
+| CT-NOT-12 | Links por tipo              | S    | Nova missão leva a `/missoes/{id}`; atitude e ajuste de XP levam a `/dashboard#historico`.                                            |
+| CT-NOT-13 | Marcar como lida            | S    | O contador cai na hora, antes de a API responder; o painel fecha e o aluno vai para a missão.                                         |
+| CT-NOT-14 | Desfazer quando a API falha | S    | Com o PATCH respondendo 500, o contador cai e volta ao valor anterior quando o erro chega.                                            |
+| CT-NOT-15 | Notificação já lida         | S    | Abre o histórico de XP sem chamar o PATCH.                                                                                            |
+| CT-NOT-16 | Marcar todas                | S    | Todos os itens ficam lidos, o contador some e o botão fica desabilitado.                                                              |
+| CT-NOT-17 | Marcar todas sem não lidas  | S    | O botão começa desabilitado.                                                                                                          |
+
+O CT-NOT-14 atrasa a nova consulta do contador em 8 s: assim, o valor só pode
+voltar pelo desfazer da atualização otimista, e não por uma nova busca.
+
+### 7.20 Testes unitários — `tests/unit/lib/`
+
+Rodam com `npm run test`. Cada arquivo testa o módulo de mesmo nome em
+`src/lib/`.
+
+| Arquivo                 |  Casos | O que garantem                                                                                                                                                                   |
+| ----------------------- | -----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shuffle.test.ts`       |      4 | O embaralhamento (Fisher–Yates) mantém os mesmos elementos, não altera a lista original, segue o número sorteado e aceita lista vazia.                                           |
+| `quiz.test.ts`          |      7 | Cada pergunta embaralhada guarda a posição original; as respostas dadas na ordem da tela viram a lista na ordem da API, do mesmo tamanho; a tela lê as respostas na ordem certa. |
+| `text.test.ts`          |      4 | Quebras de linha coladas (inclusive as do Windows e linhas em branco) viram um espaço só; texto de uma linha não muda.                                                           |
+| `notifications.test.ts` |      6 | O contador mostra "9+" acima de 9; o `aria-label` usa singular e plural; cada tipo de notificação leva à tela certa.                                                             |
+| **Total**               | **21** |                                                                                                                                                                                  |
+
 ## 8. Critérios
 
 | Critério                 | Definição                                                                                                                                  |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Entrada**              | Backend e frontend rodando localmente; banco com o `seed:demo`; `npm run typecheck` e `npm run lint` sem erros.                            |
+| **Entrada**              | Backend e frontend rodando localmente; banco com o `seed:demo`; `npm run typecheck`, `npm run lint` e `npm run test` sem erros.            |
 | **Aprovação de um caso** | Todas as verificações do caso passam dentro do tempo limite (10 s por comando).                                                            |
 | **Saída**                | 100% dos casos aprovados. Um caso que falha bloqueia o merge da branch até ser corrigido o sistema ou, se a regra mudou, o próprio teste.  |
 | **Suspensão**            | Backend fora do ar, ou banco sem os dados de demonstração: a execução é interrompida, porque as falhas não indicariam defeito no frontend. |
 
 ## 9. Resultados da execução
 
-Execução de 22/10/2026, ambiente da seção 4:
+Execução de 29/10/2026, ambiente da seção 4.
 
-| Suíte                | Arquivo                        |   Casos | Aprovados | Falhas |
-| -------------------- | ------------------------------ | ------: | --------: | -----: |
-| Login                | `auth/login.cy.ts`             |       6 |         6 |      0 |
-| Recuperação de senha | `auth/password-recovery.cy.ts` |       8 |         8 |      0 |
-| Sessão               | `auth/session.cy.ts`           |       6 |         6 |      0 |
-| Dashboard            | `student/dashboard.cy.ts`      |       6 |         6 |      0 |
-| Missões              | `student/mission.cy.ts`        |      11 |        11 |      0 |
-| Perfil               | `student/profile.cy.ts`        |       6 |         6 |      0 |
-| Ranking              | `student/ranking.cy.ts`        |       2 |         2 |      0 |
-| Painel do professor  | `teacher/panel.cy.ts`          |      15 |        15 |      0 |
-| Missões do professor | `teacher/missions.cy.ts`       |       7 |         7 |      0 |
-| Perfil do professor  | `teacher/profile.cy.ts`        |       3 |         3 |      0 |
-| Ranking do professor | `teacher/ranking.cy.ts`        |       2 |         2 |      0 |
-| Turmas do admin      | `admin/classes.cy.ts`          |       9 |         9 |      0 |
-| Alunos do admin      | `admin/students.cy.ts`         |       8 |         8 |      0 |
-| Professores do admin | `admin/teachers.cy.ts`         |       8 |         8 |      0 |
-| Atitudes do admin    | `admin/attitudes.cy.ts`        |       6 |         6 |      0 |
-| Tema claro e escuro  | `theme/theme.cy.ts`            |       5 |         5 |      0 |
-| **Total**            |                                | **108** |   **108** |  **0** |
+**Ponta a ponta (Cypress):**
 
-Tempo total: cerca de 3 minutos e 10 segundos.
+| Suíte                   | Arquivo                            |   Casos | Aprovados | Falhas |
+| ----------------------- | ---------------------------------- | ------: | --------: | -----: |
+| Login                   | `auth/login.cy.ts`                 |       6 |         6 |      0 |
+| Recuperação de senha    | `auth/password-recovery.cy.ts`     |       8 |         8 |      0 |
+| Sessão                  | `auth/session.cy.ts`               |       6 |         6 |      0 |
+| Dashboard               | `student/dashboard.cy.ts`          |       6 |         6 |      0 |
+| Missões                 | `student/mission.cy.ts`            |      12 |        12 |      0 |
+| Notificações            | `student/notifications.cy.ts`      |      17 |        17 |      0 |
+| Radar de desempenho     | `student/performance.cy.ts`        |       4 |         4 |      0 |
+| Perfil                  | `student/profile.cy.ts`            |      10 |        10 |      0 |
+| Visibilidade no ranking | `student/ranking-visibility.cy.ts` |       2 |         2 |      0 |
+| Ranking                 | `student/ranking.cy.ts`            |       2 |         2 |      0 |
+| Painel do professor     | `teacher/panel.cy.ts`              |      17 |        17 |      0 |
+| Missões do professor    | `teacher/missions.cy.ts`           |       9 |         9 |      0 |
+| Perfil do professor     | `teacher/profile.cy.ts`            |       4 |         4 |      0 |
+| Ranking do professor    | `teacher/ranking.cy.ts`            |       2 |         2 |      0 |
+| Turmas do admin         | `admin/classes.cy.ts`              |       9 |         9 |      0 |
+| Alunos do admin         | `admin/students.cy.ts`             |       8 |         8 |      0 |
+| Professores do admin    | `admin/teachers.cy.ts`             |       8 |         8 |      0 |
+| Atitudes do admin       | `admin/attitudes.cy.ts`            |       6 |         6 |      0 |
+| Tema claro e escuro     | `theme/theme.cy.ts`                |       5 |         5 |      0 |
+| **Total E2E**           |                                    | **141** |   **141** |  **0** |
+
+Tempo total: 2 minutos e 53 segundos.
+
+**Unitários (Vitest):** 21 casos em 4 arquivos (seção 7.20), 21 aprovados, em
+menos de 1 segundo.
 
 ## 10. Defeitos encontrados
 
@@ -416,7 +492,8 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 - Os testes do admin contam com dados do seed: cada turma com um professor
   diferente (CT-TUR-02), pelo menos um aluno e uma atitude desativados
   (CT-ALU-04 e CT-ATI-02).
-- Os testes rodam só em tela de computador (1280 × 800) e num único navegador.
+- Os testes rodam em tela de computador (1280 × 800) e num único navegador. Só
+  o painel de notificações é conferido também em 375 px (CT-NOT-11).
 - O contraste dos dois temas (WCAG AA) não é verificado pelo Cypress; ele foi
   conferido com o detector do Impeccable nas telas principais, no celular e no
   desktop.
@@ -431,15 +508,16 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 | Versão | Escopo planejado                                 | Pasta |
 | ------ | ------------------------------------------------ | ----- |
-| 1.6    | Fluxos principais em tela de celular (390 × 844) | todas |
+| 1.7    | Fluxos principais em tela de celular (390 × 844) | todas |
 
 ## 12. Histórico de versões
 
-| Versão | Data       | Mudança                                                                             |
-| ------ | ---------- | ----------------------------------------------------------------------------------- |
-| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                                           |
-| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).                   |
-| 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02.          |
-| 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                                      |
-| 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                                   |
-| 1.5    | 28/10/2026 | Radar de desempenho no dashboard, na ficha do aluno e no painel da turma (6 casos). |
+| Versão | Data       | Mudança                                                                                                                                                                                              |
+| ------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                                                                                                                                                            |
+| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).                                                                                                                                    |
+| 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02.                                                                                                                           |
+| 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                                                                                                                                                       |
+| 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                                                                                                                                                    |
+| 1.5    | 28/10/2026 | Radar de desempenho no dashboard, na ficha do aluno e no painel da turma (6 casos).                                                                                                                  |
+| 1.6    | 29/10/2026 | Quiz embaralhado (1 caso), campos de pergunta que crescem (2), visibilidade no ranking geral (2, criados em 28/10), notificações (17) e testes unitários (21). Seção 9 refeita com a suíte completa. |

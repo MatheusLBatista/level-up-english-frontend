@@ -150,6 +150,7 @@ function PanelError({
 function notificationTone(notification: UserNotification) {
   if (notification.type === "new_mission") {
     return {
+      tone: "mission",
       icon: Gamepad2Icon,
       className: "bg-brand-mission/15 text-brand-mission",
     };
@@ -157,12 +158,14 @@ function notificationTone(notification: UserNotification) {
 
   if (notification.data.xp < 0) {
     return {
+      tone: "negative",
       icon: TrendingDownIcon,
       className: "bg-destructive/15 text-destructive",
     };
   }
 
   return {
+    tone: "positive",
     icon: TrendingUpIcon,
     className: "bg-brand-done/15 text-brand-done",
   };
@@ -175,7 +178,7 @@ function NotificationItem({
   notification: UserNotification;
   onOpen: () => void;
 }) {
-  const { icon: Icon, className } = notificationTone(notification);
+  const { tone, icon: Icon, className } = notificationTone(notification);
 
   return (
     <li data-slot="notification-item" data-read={notification.read}>
@@ -189,6 +192,7 @@ function NotificationItem({
       >
         <span
           aria-hidden
+          data-tone={tone}
           className={cn(
             "grid size-8 shrink-0 place-items-center rounded-full [&_svg]:size-4",
             className,

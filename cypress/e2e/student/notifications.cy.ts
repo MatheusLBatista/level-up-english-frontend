@@ -193,19 +193,19 @@ describe("Painel de notificações", () => {
         .and("contain", "Atitude registrada: Participação (+10 XP).")
         .and("contain", "há 2 horas")
         .and("contain", "Não lida")
-        .find(".text-brand-done")
+        .find('[data-tone="positive"]')
         .should("exist");
       cy.get(item)
         .eq(1)
         .should("have.attr", "data-read", "true")
         .and("contain", "ontem")
         .and("not.contain", "Não lida")
-        .find(".text-destructive")
+        .find('[data-tone="negative"]')
         .should("exist");
       cy.get(item)
         .eq(2)
         .should("contain", "há 3 dias")
-        .find(".text-brand-mission")
+        .find('[data-tone="mission"]')
         .should("exist");
     });
   });
