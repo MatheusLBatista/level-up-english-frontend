@@ -1,9 +1,11 @@
 import users from "../../fixtures/users.json";
 import {
   envelope,
+  performanceSummary,
   type Attitude,
   type ClassSummary,
   type Page,
+  type Performance,
   type User,
 } from "../../support/api-types";
 import type { ApiSession } from "../../support/session";
@@ -101,6 +103,52 @@ describe("Painel do professor", () => {
       .should("contain", student.name)
       .and("contain", `Nível ${student.level}`)
       .and("contain", "Histórico de XP");
+  });
+
+  it("mostra o radar de desempenho na ficha do aluno", () => {
+    const student = students[0];
+
+    cy.intercept("GET", `**/users/${student._id}/performance*`).as(
+      "performance",
+    );
+    cy.apiGet<Performance>(
+      `/users/${student._id}/performance`,
+      session.accessToken,
+    ).then((performance) => {
+      cy.get(`[aria-label="Ver ficha de ${student.name}"]`).click();
+
+      cy.wait("@performance").its("response.statusCode").should("eq", 200);
+      cy.contains('[role="dialog"] section', "Desempenho").within(() => {
+        cy.get("svg.recharts-surface").should("be.visible");
+        cy.contains(".recharts-legend-wrapper", "Aluno").should("be.visible");
+        performanceSummary(performance, "Aluno").forEach((line) => {
+          cy.get("figcaption").should("contain.text", line);
+        });
+      });
+    });
+  });
+
+  it("mostra o radar com a média da turma abaixo dos alunos", () => {
+    // O front pega a média da turma no desempenho de um aluno ativo dela.
+    cy.apiGet<Performance>(
+      `/users/${students[0]._id}/performance`,
+      session.accessToken,
+    ).then((performance) => {
+      const summary = performanceSummary(
+        { student: performance.class!, class: null },
+        "Média da turma",
+      );
+
+      cy.contains("section", "Desempenho da turma").within(() => {
+        cy.get("svg.recharts-surface").should("be.visible");
+        cy.contains(".recharts-legend-wrapper", "Média da turma").should(
+          "be.visible",
+        );
+        summary.forEach((line) => {
+          cy.get("figcaption").should("contain.text", line);
+        });
+      });
+    });
   });
 
   describe("Aplicar atitudes", () => {

@@ -14,12 +14,17 @@ A navegação muda conforme o papel de quem entra. Cada página checa o papel
 
 ### Aluno
 
-| Tela      | Rota         | O que faz                                                                          |
-| --------- | ------------ | ---------------------------------------------------------------------------------- |
-| Dashboard | `/dashboard` | Nível, XP, progresso, missões recomendadas e histórico de XP.                      |
-| Missões   | `/missoes`   | Missões da turma (quiz, vocabulário, áudio) com filtro por tipo; resolve no modal. |
-| Ranking   | `/ranking`   | Ranking geral e da própria turma.                                                  |
-| Perfil    | `/perfil`    | Dados, turma, conquistas; edição do nome e troca de senha.                         |
+| Tela      | Rota         | O que faz                                                                                                                                       |
+| --------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dashboard | `/dashboard` | Nível, XP, progresso, missões recomendadas e histórico de XP.                                                                                   |
+| Missões   | `/missoes`   | Missões da turma (quiz, vocabulário, áudio) com filtro por tipo; cada uma abre em `/missoes/[id]`, com as perguntas do quiz em ordem aleatória. |
+| Ranking   | `/ranking`   | Ranking geral e da própria turma.                                                                                                               |
+| Perfil    | `/perfil`    | Dados, turma, conquistas; edição do nome e troca de senha.                                                                                      |
+
+No cabeçalho, o aluno tem o **sino de notificações**: o contador de não lidas é
+consultado a cada minuto (com pausa quando a aba fica oculta) e o painel lista
+atitudes, ajustes de XP e missões novas. Clicar numa notificação marca como
+lida e abre a missão ou o histórico de XP.
 
 ### Professor
 
@@ -100,15 +105,31 @@ depois de trocar o valor, reinicie o `npm run dev`.
 | `npm run typecheck`    | Gera os tipos de rota do Next e roda o TypeScript.  |
 | `npm run format`       | Formata com Prettier.                               |
 | `npm run format:check` | Verifica a formatação sem alterar arquivos.         |
+| `npm run test`         | Roda os testes unitários (Vitest).                  |
 | `npm run cy:open`      | Abre o Cypress para escolher e assistir aos testes. |
 | `npm run cy:run`       | Roda todos os testes E2E no terminal.               |
 
 ## Testes
 
-Testes ponta a ponta com [Cypress](https://www.cypress.io/), em `cypress/e2e/`,
-separados por área (`auth/`, `student/`, `teacher/`, `admin/`, `theme/`). Eles
-rodam contra o backend local com os dados de demonstração (`npm run seed:demo`
-no backend):
+O projeto tem dois tipos de teste, cada um na sua pasta:
+
+| Tipo          | Ferramenta                         | Pasta          | Precisa de servidor? |
+| ------------- | ---------------------------------- | -------------- | -------------------- |
+| Unitário      | [Vitest](https://vitest.dev/)      | `tests/unit/`  | Não                  |
+| Ponta a ponta | [Cypress](https://www.cypress.io/) | `cypress/e2e/` | Front e backend      |
+
+Os **unitários** testam funções puras de `src/lib/` (embaralhar o quiz, montar
+as respostas na ordem original, textos do contador de notificações etc.). A
+pasta espelha `src/`: o teste de `src/lib/text.ts` fica em
+`tests/unit/lib/text.test.ts`. Rodam em segundos, sem navegador:
+
+```bash
+npm run test
+```
+
+Os **ponta a ponta** ficam separados por área (`auth/`, `student/`, `teacher/`,
+`admin/`, `theme/`) e rodam contra o backend local com os dados de
+demonstração (`npm run seed:demo` no backend):
 
 ```bash
 # backend e frontend rodando (npm run dev em cada um)
@@ -129,7 +150,7 @@ src/
 │   ├── admin/           # telas do admin (turmas, alunos, professores, atitudes)
 │   ├── auth/            # formulários de acesso e guards (Auth, Guest, Role)
 │   ├── dashboard/       # dashboard do aluno
-│   ├── layout/          # sidebar e header
+│   ├── layout/          # sidebar, header e sino de notificações
 │   ├── missions/        # listagem, resolução e gestão de missões
 │   ├── profile/         # perfis do aluno e do professor/admin
 │   ├── ranking/         # ranking
@@ -146,6 +167,8 @@ cypress/
 ├── e2e/                 # testes ponta a ponta, uma pasta por área
 ├── fixtures/            # usuários de teste (seed:demo)
 └── support/             # comandos e tipos compartilhados
+tests/
+└── unit/                # testes unitários (Vitest), espelhando src/
 docs/                    # documentação do projeto (API e plano de testes)
 ```
 
@@ -176,8 +199,8 @@ componente → hook (TanStack Query) → service → apiFetch (lib/api.ts) → A
 
 - desembrulha o envelope `{ message, data, errors }` da API e devolve só `data`;
 - transforma respostas de erro em `ApiError` (com `status` e erros por campo);
-- quando recebe **401**, renova os tokens com `POST /auth/refresh` e repete a
-  requisição. Várias requisições que falham ao mesmo tempo esperam uma única
+- quando recebe **401** ou **498** (token inválido ou expirado), renova os
+  tokens com `POST /auth/refresh` e repete a requisição. Várias requisições que falham ao mesmo tempo esperam uma única
   renovação. Se a renovação falhar, a sessão é encerrada.
 
 ### Autenticação
@@ -205,6 +228,12 @@ compartilhado vazaria cache entre usuários) e um único client no navegador.
 Defaults: `staleTime` de 60s e `refetchOnWindowFocus` desligado. Depois de cada
 escrita, os hooks de mutation invalidam as chaves afetadas (ex.: aplicar uma
 atitude atualiza a grade do painel e os rankings).
+
+A exceção é o contador de notificações (`hooks/use-notifications.ts`): ele
+consulta a API a cada 60s (`refetchInterval`), o React Query pula essas
+consultas enquanto a aba está oculta, e `refetchOnWindowFocus: "always"` busca
+de novo assim que ela volta a ficar visível. Marcar uma notificação como lida é
+otimista: o cache muda na hora e volta ao estado anterior se a API falhar.
 
 O nuqs lê os search params, o que no App Router normalmente exige um
 `<Suspense>` em volta. Aqui não é preciso: toda tela que usa nuqs fica dentro do

@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useClassStudents } from "@/hooks/use-class-students";
 import { SelectAllCard } from "@/components/teacher/select-all-card";
+import { ClassPerformance } from "@/components/teacher/class-performance";
 import { SelectionBar } from "@/components/teacher/selection-bar";
 import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialog";
 import { AdjustXpDialog } from "@/components/teacher/adjust-xp-dialog";
@@ -43,6 +44,8 @@ export function TeacherPanel() {
     null;
 
   const className = classes.find((item) => item._id === classId)?.name ?? null;
+  // A lista sem a pesquisa: o radar da turma não muda com o que se digita.
+  const anyStudentId = studentsQuery.data?.[0]?._id;
 
   const selectedStudents = useMemo(
     () =>
@@ -200,6 +203,10 @@ export function TeacherPanel() {
             />
           ))}
         </ul>
+      )}
+
+      {classId && anyStudentId && (
+        <ClassPerformance classId={classId} studentId={anyStudentId} />
       )}
 
       {Boolean(studentsQuery.data?.length) && (

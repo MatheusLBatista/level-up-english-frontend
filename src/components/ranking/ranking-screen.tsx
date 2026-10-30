@@ -1,6 +1,7 @@
 "use client";
 
-import { UsersRoundIcon } from "lucide-react";
+import { EyeOffIcon, UsersRoundIcon } from "lucide-react";
+import Link from "next/link";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { RankingRow } from "@/components/ranking/ranking-row";
 import { RankingScopeFilter } from "@/components/ranking/ranking-scope-filter";
@@ -49,6 +50,14 @@ export function RankingScreen() {
       ? `${className ? `${className} · ` : ""}Ainda sem pontuação`
       : "Carregando…";
 
+  // A sessão é atualizada pelo interruptor do perfil, então o aviso já
+  // aparece ao voltar para o ranking. Sem o campo (usuário antigo), vale
+  // como visível e não há aviso.
+  const hiddenFromGlobal =
+    escopo === "global" &&
+    user?.role === "student" &&
+    user.show_in_global_ranking === false;
+
   const noClasses =
     pickingClass && classesQuery.isSuccess && classes.length === 0;
 
@@ -82,6 +91,22 @@ export function RankingScreen() {
           <RankingScopeFilter value={escopo} onChange={setEscopo} />
         </div>
       </div>
+
+      {hiddenFromGlobal && (
+        <p className="border-border bg-muted/40 text-muted-foreground flex items-start gap-2 rounded-xl border px-4 py-3 text-sm">
+          <EyeOffIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>
+            Você escolheu não aparecer no ranking geral. Dá para mudar isso{" "}
+            <Link
+              href="/perfil"
+              className="text-foreground font-medium underline underline-offset-4"
+            >
+              no seu perfil
+            </Link>
+            .
+          </span>
+        </p>
+      )}
 
       {pickingClass && classesQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-4">
