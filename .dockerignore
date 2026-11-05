@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.env*
+!.env.example
+cypress
+tests
+docs
+coverage
+.claude
+.agent
+.gemini
+.impeccable
+.DS_Store
+tsconfig.tsbuildinfo
+Dockerfile
+.dockerignore
