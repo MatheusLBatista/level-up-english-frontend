@@ -75,8 +75,8 @@ turma e da mesma escola.
   shadcn/ui; backend Express + MongoDB em repositório separado
   (`../level-up-english`). O app tem tema claro e escuro; por padrão segue
   o sistema do aparelho.
-- **Em aberto:** o campo `streak` existe no banco, mas não é usado; o backend
-  guarda só a nota de cada missão, não as respostas de cada tentativa.
+- **Em aberto:** o backend guarda só a nota de cada missão, não as respostas
+  de cada tentativa.
 
 ## Brand Commitments
 
