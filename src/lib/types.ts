@@ -125,7 +125,6 @@ export type User = {
   progress: LevelProgress;
   class: string | null;
   mission_progress: MissionProgressEntry[];
-  streak: number;
   badges: string[];
   /** Caminho relativo à API (`/uploads/...`); `null` sem foto. */
   avatar_url?: string | null;
