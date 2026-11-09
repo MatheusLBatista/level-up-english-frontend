@@ -250,7 +250,6 @@ servidor.
   turma, chamar `GET /classes/{id}`.
 - Não existe moeda: a gamificação é só XP, nível (`level`) e o progresso até o
   próximo nível (virtual `progress`, com o campo `percentage`).
-- `User.streak` está previsto no RF-009 mas nenhuma regra o alimenta hoje —
-  é sempre `0` — e `User.badges` vem sempre vazio. O frontend não usa nenhum
-  dos dois: as conquistas do perfil são calculadas a partir do
-  `mission_progress` (`src/lib/achievements.ts`).
+- `User.badges` vem sempre vazio e o frontend não o usa: as conquistas do
+  perfil são calculadas a partir do `mission_progress`
+  (`src/lib/achievements.ts`).
