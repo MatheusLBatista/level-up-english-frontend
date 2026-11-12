@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, MailCheckIcon, UserPlusIcon } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GuardianConsentCheckbox } from "@/components/shared/guardian-consent-checkbox";
 import { useRegisterStudent } from "@/hooks/use-register-student";
 import { ApiError } from "@/lib/api";
 import type { ClassSummary } from "@/lib/types";
@@ -92,7 +93,12 @@ export function CreateStudentDialog({
   );
 }
 
-const formFields = new Set<string>(["name", "email", "class"]);
+const formFields = new Set<string>([
+  "name",
+  "email",
+  "class",
+  "guardian_consent",
+]);
 
 function isFormField(path: string): path is keyof StudentFormInput {
   return formFields.has(path);
@@ -129,11 +135,17 @@ function StudentForm({
       name: "",
       email: "",
       class: getInitialClass(classes, defaultClassId, allowNoClass),
+      guardian_consent: false,
     },
   });
 
   const { errors } = form.formState;
   const hasFieldErrors = Object.keys(errors).length > 0;
+  // Sem o termo marcado, o aluno não pode ser criado: o botão nem libera.
+  const consentChecked = useWatch({
+    control: form.control,
+    name: "guardian_consent",
+  });
 
   function handleSubmit(values: StudentFormInput) {
     if (!allowNoClass && values.class === NO_CLASS) {
@@ -245,6 +257,21 @@ function StudentForm({
             )}
           </Field>
 
+          <Controller
+            control={form.control}
+            name="guardian_consent"
+            render={({ field }) => (
+              <GuardianConsentCheckbox
+                id="student-guardian-consent"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
+                disabled={mutation.isPending}
+                error={errors.guardian_consent?.message}
+              />
+            )}
+          />
+
           {mutation.isError && !hasFieldErrors && (
             <FieldError>{mutation.error.message}</FieldError>
           )}
@@ -258,7 +285,11 @@ function StudentForm({
           </Button>
         </DialogClose>
 
-        <Button type="submit" form="student-form" disabled={mutation.isPending}>
+        <Button
+          type="submit"
+          form="student-form"
+          disabled={!consentChecked || mutation.isPending}
+        >
           {mutation.isPending ? (
             <Loader2Icon className="animate-spin" />
           ) : (

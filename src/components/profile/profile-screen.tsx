@@ -3,6 +3,7 @@
 import { ProfileBadges } from "@/components/profile/profile-badges";
 import { ProfileClass } from "@/components/profile/profile-class";
 import { ProfileIdentity } from "@/components/profile/profile";
+import { PrivacyCard } from "@/components/profile/privacy-card";
 import { RankingVisibilityCard } from "@/components/profile/ranking-visibility-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -49,6 +50,8 @@ export function ProfileScreen() {
           {userQuery.data.role === "student" && (
             <RankingVisibilityCard user={userQuery.data} />
           )}
+
+          <PrivacyCard role={userQuery.data.role} />
         </div>
       )}
     </div>

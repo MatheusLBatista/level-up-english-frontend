@@ -38,6 +38,8 @@ export type RegisterStudentBody = {
   name: string;
   email: string;
   class?: string;
+  /** Termo dos responsáveis recebido pela escola. Só `true` é aceito. */
+  guardian_consent: true;
 };
 
 export function registerStudent(body: RegisterStudentBody, token: string) {

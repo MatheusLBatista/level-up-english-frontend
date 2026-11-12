@@ -1,5 +1,6 @@
 "use client";
 
+import { PrivacyCard } from "@/components/profile/privacy-card";
 import { TeacherActivityCard } from "@/components/profile/teacher-activity-card";
 import { TeacherBadgeCard } from "@/components/profile/teacher-badge-card";
 import { TeacherClassesCard } from "@/components/profile/teacher-classes-card";
@@ -58,6 +59,8 @@ export function TeacherProfileScreen() {
               onRetry={() => void logsQuery.refetch()}
             />
           </div>
+
+          <PrivacyCard role={userQuery.data.role} />
         </>
       )}
     </div>

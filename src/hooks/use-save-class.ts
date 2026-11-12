@@ -22,7 +22,14 @@ export function useSaveClass() {
 
       return classId
         ? updateClass(classId, values, token)
-        : createClass({ name: values.name, teacher: values.teacher }, token);
+        : createClass(
+            {
+              name: values.name,
+              teacher: values.teacher,
+              class_ranking_visible: values.class_ranking_visible,
+            },
+            token,
+          );
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["classes"] }),
   });

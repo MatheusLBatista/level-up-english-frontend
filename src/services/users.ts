@@ -1,5 +1,11 @@
 import { apiFetch } from "@/lib/api";
-import type { Paginated, Performance, User, XpHistoryItem } from "@/lib/types";
+import type {
+  DataExport,
+  Paginated,
+  Performance,
+  User,
+  XpHistoryItem,
+} from "@/lib/types";
 
 export function getUserById(id: string, token: string) {
   return apiFetch<User>(`/users/${id}`, { token });
@@ -13,6 +19,11 @@ export type UpdateUserBody = {
   active?: boolean;
   /** Só o próprio usuário ou o admin; o professor recebe 403. */
   show_in_global_ranking?: boolean;
+  /**
+   * Só admin, ao reativar (`active: true`) um aluno com consentimento
+   * revogado: registra o termo novo, obrigatório nesse caso.
+   */
+  guardian_consent?: true;
 };
 
 export function updateUser(id: string, body: UpdateUserBody, token: string) {
@@ -71,6 +82,28 @@ export function listStudents(token: string, filters: StudentFilters = {}) {
   }
 
   return apiFetch<Paginated<User>>(`/users?${params}`, { token });
+}
+
+/** Revoga o consentimento; o backend também desativa a conta do aluno. */
+export function revokeGuardianConsent(id: string, token: string) {
+  return apiFetch<User>(`/users/${id}/guardian-consent/revoke`, {
+    method: "POST",
+    token,
+  });
+}
+
+/** Só admin. Anonimiza o aluno na hora; não tem volta (art. 18, VI). */
+export function eraseStudentData(id: string, token: string) {
+  return apiFetch<User>(`/users/${id}/erasure`, {
+    method: "POST",
+    body: { confirm: true },
+    token,
+  });
+}
+
+/** Só admin. Todos os dados do aluno em JSON (art. 18, II). */
+export function exportStudentData(id: string, token: string) {
+  return apiFetch<DataExport>(`/users/${id}/data-export`, { token });
 }
 
 export type XpHistoryFilters = {

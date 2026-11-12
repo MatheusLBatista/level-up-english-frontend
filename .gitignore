@@ -50,3 +50,4 @@ next-env.d.ts
 # cypress
 /cypress/screenshots/
 /cypress/videos/
+/cypress/downloads/

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { PaginationControls } from "@/components/shared/pagination-controls";
+import { StudentDataSection } from "@/components/admin/students/student-data-section";
 import { PerformanceRadar } from "@/components/shared/performance-radar";
+import { StudentPrivacySection } from "@/components/shared/student-privacy-section";
 import { XpHistoryList } from "@/components/shared/xp-history-list";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +46,12 @@ export function StudentProfileSheet({
     <Sheet open={open} onOpenChange={(next) => !next && onClose()}>
       <SheetContent className="w-full gap-0 overflow-y-auto sm:max-w-md">
         {student && (
-          <ProfileContent student={student} classLabel={classLabel} />
+          // A key zera as alterações locais ao trocar de aluno.
+          <ProfileContent
+            key={student._id}
+            student={student}
+            classLabel={classLabel}
+          />
         )}
       </SheetContent>
     </Sheet>
@@ -52,12 +59,21 @@ export function StudentProfileSheet({
 }
 
 function ProfileContent({
-  student,
+  student: initialStudent,
   classLabel,
 }: {
   student: User;
   classLabel: string | null;
 }) {
+  // Registrar, revogar ou eliminar devolve o aluno atualizado. A ficha mostra
+  // essa versão na hora, mesmo que ele saia da lista filtrada por trás.
+  const [changes, setChanges] = useState<Partial<User>>({});
+  const student: User = { ...initialStudent, ...changes };
+
+  function applyChanges(updated: User) {
+    setChanges((previous) => ({ ...previous, ...updated }));
+  }
+
   const completed = student.mission_progress.filter((entry) => entry.done);
   const missionXp = completed.reduce(
     (total, entry) => total + entry.xp_earned,
@@ -153,6 +169,10 @@ function ProfileContent({
         </section>
 
         <XpHistorySection key={student._id} studentId={student._id} />
+
+        <StudentPrivacySection student={student} onChange={applyChanges} />
+
+        <StudentDataSection student={student} onChange={applyChanges} />
       </div>
     </>
   );

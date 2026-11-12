@@ -1,5 +1,6 @@
 import { Gamepad2Icon } from "lucide-react";
 import { AuthShowcase } from "@/components/auth/auth-showcase";
+import { LegalLinks } from "@/components/legal/legal-links";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +46,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <ThemeToggle className="absolute top-4 right-4" />
         <BrandLogo className="md:hidden" />
         {children}
+        <LegalLinks className="max-w-sm" />
       </div>
     </main>
   );

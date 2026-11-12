@@ -1,5 +1,6 @@
 import { TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import { ConsentBadge } from "@/components/shared/consent-badge";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -30,7 +31,7 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
         />
 
         <div className="min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
             <p className="truncate font-semibold">{student.name}</p>
             {!student.active && (
               <Badge
@@ -40,6 +41,7 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
                 Inativo
               </Badge>
             )}
+            <ConsentBadge student={student} />
           </div>
           <p className="text-muted-foreground truncate text-xs">
             {student.email}

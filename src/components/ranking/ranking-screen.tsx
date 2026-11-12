@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
 import { useRanking } from "@/hooks/use-ranking";
+import { ApiError } from "@/lib/api";
 import { useSelectedClass } from "@/hooks/use-selected-class";
 import type { RankingScope } from "@/lib/types";
 
@@ -61,6 +62,14 @@ export function RankingScreen() {
   const noClasses =
     pickingClass && classesQuery.isSuccess && classes.length === 0;
 
+  // Com `class_ranking_visible: false`, o backend responde 403 só para o
+  // aluno; não é erro, é a escolha do professor.
+  const classRankingHidden =
+    escopo === "class" &&
+    !isStaff &&
+    rankingQuery.error instanceof ApiError &&
+    rankingQuery.error.status === 403;
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -70,7 +79,7 @@ export function RankingScreen() {
           </h1>
         </div>
 
-        {!noClasses && (
+        {!noClasses && !classRankingHidden && (
           <p className="text-muted-foreground mt-1 text-sm">{subtitle}</p>
         )}
       </div>
@@ -127,6 +136,17 @@ export function RankingScreen() {
             {user?.role === "teacher"
               ? "Você ainda não é responsável por nenhuma turma."
               : "Nenhuma turma ativa ainda."}
+          </p>
+        </div>
+      ) : classRankingHidden ? (
+        <div className="border-border bg-card flex flex-col items-center gap-2 rounded-xl border border-dashed p-12 text-center">
+          <EyeOffIcon className="text-muted-foreground size-7" />
+          <p className="text-sm font-medium">
+            O professor ocultou o ranking desta turma.
+          </p>
+          <p className="text-muted-foreground text-sm">
+            Você continua ganhando XP normalmente e ainda pode ver o ranking
+            geral.
           </p>
         </div>
       ) : rankingQuery.isPending ? (

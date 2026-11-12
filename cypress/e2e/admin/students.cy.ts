@@ -191,12 +191,14 @@ describe("Alunos do admin", () => {
     cy.get("#student-class").should("contain", "Sem turma por enquanto");
     cy.get("#student-name").type("Carlos Teste");
     cy.get("#student-email").type("carlos.teste@levelup.edu.br");
+    cy.get("#student-guardian-consent").click();
     cy.contains(`${dialog} button`, "Criar aluno").click();
 
     // Sem turma, o campo `class` nem vai no corpo.
     cy.wait("@register").its("request.body").should("deep.eq", {
       name: "Carlos Teste",
       email: "carlos.teste@levelup.edu.br",
+      guardian_consent: true,
     });
     cy.contains(dialog, "Aluno criado").should("be.visible");
   });

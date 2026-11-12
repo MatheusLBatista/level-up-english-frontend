@@ -2,7 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { GuardianConsentCheckbox } from "@/components/shared/guardian-consent-checkbox";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -31,6 +33,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useUpdateUser } from "@/hooks/use-update-user";
 import { ApiError } from "@/lib/api";
+import { needsNewConsentToReactivate } from "@/lib/consent";
 import type { ClassSummary, User } from "@/lib/types";
 import {
   editStudentSchema,
@@ -110,7 +113,16 @@ function EditStudentForm({
   });
 
   const { errors } = form.formState;
-  const hasFieldErrors = Object.keys(errors).length > 0;
+
+  // Ligar "Ativo" num aluno com consentimento revogado exige um termo novo;
+  // sem ele, o backend responde 409.
+  const activeValue = useWatch({ control: form.control, name: "active" });
+  const needsConsent = needsNewConsentToReactivate(student) && activeValue;
+  const [newConsent, setNewConsent] = useState(false);
+  const [consentError, setConsentError] = useState<string>();
+
+  const hasFieldErrors =
+    Object.keys(errors).length > 0 || Boolean(consentError);
 
   const options = classes.filter(
     (item) => item.active || item._id === student.class,
@@ -124,6 +136,7 @@ function EditStudentForm({
           name: values.name,
           class: values.class === NO_CLASS ? null : values.class,
           active: values.active,
+          ...(needsConsent ? { guardian_consent: true as const } : {}),
         },
       },
       {
@@ -134,6 +147,10 @@ function EditStudentForm({
           }
 
           for (const item of error.errors) {
+            if (item.path === "guardian_consent") {
+              setConsentError(item.message);
+            }
+
             if (item.path && isFormField(item.path)) {
               form.setError(item.path, { message: item.message });
             }
@@ -227,6 +244,20 @@ function EditStudentForm({
             )}
           />
 
+          {needsConsent && (
+            <GuardianConsentCheckbox
+              id="edit-student-guardian-consent"
+              label="Termo novo assinado pelos responsáveis recebido"
+              checked={newConsent}
+              onCheckedChange={(checked) => {
+                setNewConsent(checked);
+                setConsentError(undefined);
+              }}
+              disabled={mutation.isPending}
+              error={consentError}
+            />
+          )}
+
           {mutation.isError && !hasFieldErrors && (
             <FieldError>{mutation.error.message}</FieldError>
           )}
@@ -243,7 +274,7 @@ function EditStudentForm({
         <Button
           type="submit"
           form="edit-student-form"
-          disabled={mutation.isPending}
+          disabled={(needsConsent && !newConsent) || mutation.isPending}
         >
           {mutation.isPending && <Loader2Icon className="animate-spin" />}
           {mutation.isPending ? "Salvando…" : "Salvar alterações"}

@@ -61,4 +61,28 @@ describe("Ranking do aluno", () => {
     cy.contains("button", "Turma").click();
     cy.contains("h1", "Ranking da turma").should("be.visible");
   });
+
+  it("avisa quando o professor ocultou o ranking da turma", () => {
+    // Simulado: o backend responde 403 ao aluno com class_ranking_visible false.
+    cy.intercept("GET", "**/rankings/me", {
+      statusCode: 403,
+      body: {
+        message: "O professor ocultou o ranking desta turma.",
+        data: null,
+        errors: [],
+      },
+    }).as("classRanking");
+
+    cy.visitWithSession("/ranking", session);
+
+    cy.wait("@classRanking");
+    cy.contains("O professor ocultou o ranking desta turma.").should(
+      "be.visible",
+    );
+    cy.contains("Tentar de novo").should("not.exist");
+    cy.get("main ol").should("not.exist");
+
+    cy.contains("button", "Geral").click();
+    expectRows(globalRanking, session.user._id);
+  });
 });

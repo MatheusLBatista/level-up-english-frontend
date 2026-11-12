@@ -8,6 +8,7 @@ export const classFormSchema = z.object({
     .max(60, "Use no máximo 60 caracteres."),
   teacher: z.string().min(1, "Escolha o professor da turma."),
   active: z.boolean(),
+  class_ranking_visible: z.boolean(),
 });
 
 export type ClassFormInput = z.infer<typeof classFormSchema>;

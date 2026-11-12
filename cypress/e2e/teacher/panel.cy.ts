@@ -347,6 +347,7 @@ describe("Painel do professor", () => {
 
       cy.get("#student-name").type("A");
       cy.get("#student-email").type("nao-e-email");
+      cy.get("#student-guardian-consent").click();
       cy.contains('[role="dialog"] button', "Criar aluno").click();
 
       cy.contains("Use pelo menos 2 letras no nome.").should("be.visible");
@@ -358,6 +359,7 @@ describe("Painel do professor", () => {
       // Chamada real: o e-mail já existe, então o backend recusa sem criar nada.
       cy.get("#student-name").type("Aluno Repetido");
       cy.get("#student-email").type(users.student.email);
+      cy.get("#student-guardian-consent").click();
       cy.contains('[role="dialog"] button', "Criar aluno").click();
 
       cy.get("#student-email").should("have.attr", "aria-invalid", "true");
@@ -376,11 +378,15 @@ describe("Painel do professor", () => {
 
       cy.get("#student-name").type(name);
       cy.get("#student-email").type(email.toUpperCase());
+      cy.get("#student-guardian-consent").click();
       cy.contains('[role="dialog"] button', "Criar aluno").click();
 
-      cy.wait("@register")
-        .its("request.body")
-        .should("deep.eq", { name, email, class: schoolClass._id });
+      cy.wait("@register").its("request.body").should("deep.eq", {
+        name,
+        email,
+        class: schoolClass._id,
+        guardian_consent: true,
+      });
       cy.contains('[role="dialog"]', "Aluno criado")
         .should("contain", name)
         .and("contain", email);

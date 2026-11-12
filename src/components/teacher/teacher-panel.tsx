@@ -15,8 +15,10 @@ import { SelectionBar } from "@/components/teacher/selection-bar";
 import { ApplyAttitudesDialog } from "@/components/teacher/apply-attitudes-dialog";
 import { AdjustXpDialog } from "@/components/teacher/adjust-xp-dialog";
 import { ClassSelect } from "@/components/shared/class-select";
+import { ClassRankingToggle } from "@/components/teacher/class-ranking-toggle";
 import { useSelectedClass } from "@/hooks/use-selected-class";
 import { matchesSearch } from "@/lib/text";
+import type { User } from "@/lib/types";
 
 export function TeacherPanel() {
   const [search, setSearch] = useState("");
@@ -37,13 +39,17 @@ export function TeacherPanel() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
   const [profileOpen, setProfileOpen] = useState(false);
-  const [profileId, setProfileId] = useState<string | null>(null);
+  const [profileSnapshot, setProfileSnapshot] = useState<User | null>(null);
 
+  // Prefere a versão da lista (mais nova); a cópia guardada segura a ficha
+  // aberta quando o aluno sai da lista (ex.: revogação desativa a conta).
   const profileStudent =
-    (studentsQuery.data ?? []).find((student) => student._id === profileId) ??
-    null;
+    (studentsQuery.data ?? []).find(
+      (student) => student._id === profileSnapshot?._id,
+    ) ?? profileSnapshot;
 
-  const className = classes.find((item) => item._id === classId)?.name ?? null;
+  const selectedClass = classes.find((item) => item._id === classId) ?? null;
+  const className = selectedClass?.name ?? null;
   // A lista sem a pesquisa: o radar da turma não muda com o que se digita.
   const anyStudentId = studentsQuery.data?.[0]?._id;
 
@@ -94,7 +100,9 @@ export function TeacherPanel() {
   }
 
   function openProfile(id: string) {
-    setProfileId(id);
+    setProfileSnapshot(
+      (studentsQuery.data ?? []).find((student) => student._id === id) ?? null,
+    );
     setProfileOpen(true);
   }
 
@@ -145,6 +153,8 @@ export function TeacherPanel() {
           }}
         />
       </div>
+
+      {selectedClass && <ClassRankingToggle schoolClass={selectedClass} />}
 
       {classesQuery.isError || studentsQuery.isError ? (
         <div className="border-destructive/40 bg-destructive/10 flex flex-wrap items-center gap-3 rounded-xl border p-4">

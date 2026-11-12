@@ -115,16 +115,24 @@ describe("Turmas do admin", () => {
 
       cy.get("#class-name").type("4º Ano C — Noite");
       cy.selectOption("#class-teacher", teacher.name);
+      // O ranking da turma nasce visível para os alunos.
+      cy.get("#class-ranking-visible").should(
+        "have.attr",
+        "aria-checked",
+        "true",
+      );
       cy.contains(`${dialog} button`, "Criar turma").click();
 
-      cy.wait("@create")
-        .its("request.body")
-        .should("deep.eq", { name: "4º Ano C — Noite", teacher: teacher._id });
+      cy.wait("@create").its("request.body").should("deep.eq", {
+        name: "4º Ano C — Noite",
+        teacher: teacher._id,
+        class_ranking_visible: true,
+      });
       cy.get(dialog).should("not.exist");
     });
   });
 
-  it("edita o nome e o professor da turma", () => {
+  it("edita o nome, o professor e o ranking da turma", () => {
     const item = classes[0];
     const other = teachers.find(
       (teacher) => teacher._id !== item.teacher!._id,
@@ -141,6 +149,7 @@ describe("Turmas do admin", () => {
 
     cy.get("#class-name").clear().type(`${item.name} (2027)`);
     cy.selectOption("#class-teacher", other.name);
+    cy.get("#class-ranking-visible").click();
     cy.contains(`${dialog} button`, "Salvar alterações").click();
 
     cy.wait("@update")
@@ -149,6 +158,7 @@ describe("Turmas do admin", () => {
         name: `${item.name} (2027)`,
         teacher: other._id,
         active: true,
+        class_ranking_visible: false,
       });
     cy.get(dialog).should("not.exist");
   });

@@ -20,6 +20,7 @@ import { useState } from "react";
 import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
 import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
 import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
+import { ReactivateStudentDialog } from "@/components/admin/students/reactivate-student-dialog";
 import { StudentProfileSheet } from "@/components/shared/student-profile-sheet";
 import { StudentRow } from "@/components/admin/students/student-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
@@ -38,6 +39,7 @@ import { useAdminClasses } from "@/hooks/use-admin-classes";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useStudents } from "@/hooks/use-students";
 import { useUpdateUser } from "@/hooks/use-update-user";
+import { needsNewConsentToReactivate } from "@/lib/consent";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -92,6 +94,9 @@ export function StudentsScreen() {
     null,
   );
   const reactivate = useUpdateUser();
+  const [studentToReactivate, setStudentToReactivate] = useState<User | null>(
+    null,
+  );
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [studentToView, setStudentToView] = useState<User | null>(null);
@@ -104,6 +109,9 @@ export function StudentsScreen() {
   function handleToggleActive(student: User) {
     if (student.active) {
       setStudentToDeactivate(student);
+    } else if (needsNewConsentToReactivate(student)) {
+      // Consentimento revogado: só volta com um termo novo.
+      setStudentToReactivate(student);
     } else {
       reactivate.mutate({ user: student, body: { active: true } });
     }
@@ -235,6 +243,8 @@ export function StudentsScreen() {
               const busy =
                 reactivate.isPending &&
                 reactivate.variables?.user._id === student._id;
+              // Aluno anonimizado não aceita mais edição (o backend responde 409).
+              const erased = Boolean(student.anonymized_at);
 
               return (
                 <StudentRow
@@ -255,42 +265,46 @@ export function StudentsScreen() {
                       >
                         <EyeIcon />
                       </Button>
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="ghost"
-                        aria-label={`Editar ${student.name}`}
-                        title="Editar"
-                        onClick={() => openEdit(student)}
-                      >
-                        <PencilIcon />
-                      </Button>
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="ghost"
-                        aria-label={
-                          student.active
-                            ? `Desativar ${student.name}`
-                            : `Reativar ${student.name}`
-                        }
-                        title={student.active ? "Desativar" : "Reativar"}
-                        className={
-                          student.active
-                            ? "hover:text-destructive"
-                            : "hover:text-brand-done"
-                        }
-                        disabled={busy}
-                        onClick={() => handleToggleActive(student)}
-                      >
-                        {busy ? (
-                          <Loader2Icon className="animate-spin" />
-                        ) : student.active ? (
-                          <ArchiveIcon />
-                        ) : (
-                          <RotateCcwIcon />
-                        )}
-                      </Button>
+                      {!erased && (
+                        <>
+                          <Button
+                            type="button"
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={`Editar ${student.name}`}
+                            title="Editar"
+                            onClick={() => openEdit(student)}
+                          >
+                            <PencilIcon />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={
+                              student.active
+                                ? `Desativar ${student.name}`
+                                : `Reativar ${student.name}`
+                            }
+                            title={student.active ? "Desativar" : "Reativar"}
+                            className={
+                              student.active
+                                ? "hover:text-destructive"
+                                : "hover:text-brand-done"
+                            }
+                            disabled={busy}
+                            onClick={() => handleToggleActive(student)}
+                          >
+                            {busy ? (
+                              <Loader2Icon className="animate-spin" />
+                            ) : student.active ? (
+                              <ArchiveIcon />
+                            ) : (
+                              <RotateCcwIcon />
+                            )}
+                          </Button>
+                        </>
+                      )}
                     </>
                   }
                 />
@@ -333,6 +347,11 @@ export function StudentsScreen() {
       <DeactivateStudentDialog
         student={studentToDeactivate}
         onClose={() => setStudentToDeactivate(null)}
+      />
+
+      <ReactivateStudentDialog
+        student={studentToReactivate}
+        onClose={() => setStudentToReactivate(null)}
       />
     </div>
   );

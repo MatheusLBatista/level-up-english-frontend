@@ -20,6 +20,8 @@ export function useRegisterStudent() {
           name: values.name,
           email: values.email,
           class: values.class === NO_CLASS ? undefined : values.class,
+          // O schema do formulário só deixa chegar aqui com a caixa marcada.
+          guardian_consent: true,
         },
         token,
       );

@@ -30,6 +30,9 @@ export type User = {
   level: number;
   progress: { xp_to_next_level: number; next_level_xp: number | null };
   mission_progress: MissionProgress[];
+  anonymized_at?: string | null;
+  guardian_consent_at?: string | null;
+  guardian_consent_revoked_at?: string | null;
 };
 
 export type XpHistoryItem = {
@@ -80,6 +83,7 @@ export type ClassSummary = {
   name: string;
   active: boolean;
   teacher: { _id: string; name: string } | null;
+  class_ranking_visible?: boolean;
   students: string[];
   missions: string[];
 };
@@ -111,4 +115,12 @@ export function isPending(mission: Mission, entry?: MissionProgress) {
     entry.score < 100;
 
   return !entry?.done || canRetry;
+}
+
+/** Mesmo formato de `formatFullDate` em src/lib/date.ts (ficha do aluno). */
+export function fullDate(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date(iso));
 }
