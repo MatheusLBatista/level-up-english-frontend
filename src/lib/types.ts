@@ -51,6 +51,11 @@ export type SchoolClass = {
   _id: string;
   name: string;
   active: boolean;
+  /**
+   * Se os alunos veem o ranking da turma. Turmas antigas vêm sem o campo e
+   * contam como visível.
+   */
+  class_ranking_visible?: boolean;
   teacher: TeacherRef | null;
   students: StudentRef[];
   missions: MissionRef[];
@@ -131,6 +136,19 @@ export type User = {
   /** Ausente em usuários antigos: vale como `true`. */
   show_in_global_ranking?: boolean;
   active: boolean;
+  /** Quando a conta foi desativada; conta o prazo de retenção. */
+  deactivated_at?: string | null;
+  /** Quando os dados pessoais foram eliminados (anonimização). */
+  anonymized_at?: string | null;
+  /**
+   * Quando a escola registrou o termo assinado pelos responsáveis. `null`
+   * (e sem revogação) é termo pendente. Ausente em usuários antigos.
+   */
+  guardian_consent_at?: string | null;
+  /** Id do professor ou admin que registrou o termo. */
+  guardian_consent_recorded_by?: string | null;
+  /** Quando o consentimento foi revogado; a revogação desativa a conta. */
+  guardian_consent_revoked_at?: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -163,7 +181,6 @@ export type RankingScope = "global" | "class";
 export type RankingUser = {
   _id: string;
   name: string;
-  email: string;
   xp: number;
   level: number;
   avatar_url?: string | null;
@@ -266,3 +283,12 @@ export type UserNotification = NotificationBase &
     | { type: "xp_adjustment"; data: { xp: number; xp_adjustment: string } }
     | { type: "new_mission"; data: { mission: string } }
   );
+
+/**
+ * Resposta de `GET /users/:id/data-export`. A tela só lê `exported_at` e
+ * `student._id`; o resto vai inteiro para o arquivo baixado.
+ */
+export type DataExport = {
+  exported_at: string;
+  student: { _id: string; name: string } & Record<string, unknown>;
+} & Record<string, unknown>;

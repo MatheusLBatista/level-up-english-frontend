@@ -1,5 +1,11 @@
 import { apiFetch } from "@/lib/api";
-import type { Paginated, Performance, User, XpHistoryItem } from "@/lib/types";
+import type {
+  DataExport,
+  Paginated,
+  Performance,
+  User,
+  XpHistoryItem,
+} from "@/lib/types";
 
 export function getUserById(id: string, token: string) {
   return apiFetch<User>(`/users/${id}`, { token });
@@ -48,7 +54,11 @@ export type StudentFilters = {
   classId?: string | null;
   /** `null` traz ativos e inativos. */
   active?: boolean | null;
+  /** Situação do termo dos responsáveis; sem valor, traz todos. */
+  guardianConsent?: GuardianConsentFilter | null;
 };
+
+export type GuardianConsentFilter = "pending" | "recorded" | "revoked";
 
 export function listStudents(token: string, filters: StudentFilters = {}) {
   const params = new URLSearchParams({
@@ -70,7 +80,41 @@ export function listStudents(token: string, filters: StudentFilters = {}) {
     params.set("active", String(filters.active));
   }
 
+  if (filters.guardianConsent) {
+    params.set("guardian_consent", filters.guardianConsent);
+  }
+
   return apiFetch<Paginated<User>>(`/users?${params}`, { token });
+}
+
+/** Registra que a escola recebeu o termo assinado (aluno ativo e pendente). */
+export function recordGuardianConsent(id: string, token: string) {
+  return apiFetch<User>(`/users/${id}/guardian-consent`, {
+    method: "PATCH",
+    token,
+  });
+}
+
+/** Revoga o consentimento; o backend também desativa a conta do aluno. */
+export function revokeGuardianConsent(id: string, token: string) {
+  return apiFetch<User>(`/users/${id}/guardian-consent/revoke`, {
+    method: "POST",
+    token,
+  });
+}
+
+/** Só admin. Anonimiza o aluno na hora; não tem volta (art. 18, VI). */
+export function eraseStudentData(id: string, token: string) {
+  return apiFetch<User>(`/users/${id}/erasure`, {
+    method: "POST",
+    body: { confirm: true },
+    token,
+  });
+}
+
+/** Só admin. Todos os dados do aluno em JSON (art. 18, II). */
+export function exportStudentData(id: string, token: string) {
+  return apiFetch<DataExport>(`/users/${id}/data-export`, { token });
 }
 
 export type XpHistoryFilters = {
