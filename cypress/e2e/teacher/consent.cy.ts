@@ -1,6 +1,7 @@
 import users from "../../fixtures/users.json";
 import {
   envelope,
+  fullDate,
   type ClassSummary,
   type Page,
   type User,
@@ -15,10 +16,9 @@ function openSheet(name: string) {
   cy.get(dialog).should("contain", name);
 }
 
-// No seed:demo o único aluno com termo pendente é de outra turma. Aqui a
-// lista da turma da Carla vem real, só com o termo do primeiro aluno zerado
-// na resposta. Registrar, revogar e mudar o ranking são simulados, para a
-// demonstração não mudar.
+// Turma da Carla no seed:demo, onde todo aluno nasce com o termo registrado.
+// Criar, revogar e mudar o ranking são simulados, para a demonstração não
+// mudar.
 describe("LGPD no painel do professor", () => {
   let session: ApiSession;
   let student: User;
@@ -43,49 +43,39 @@ describe("LGPD no painel do professor", () => {
         );
       })
       .then((page) => {
-        student = { ...page.docs[0], guardian_consent_at: null };
-
-        cy.intercept(
-          "GET",
-          `**/users?*class=${schoolClass._id}*`,
-          (request) => {
-            request.continue((response) => {
-              const list = response.body.data as Page<User>;
-              list.docs = list.docs.map((item) =>
-                item._id === student._id ? student : item,
-              );
-            });
-          },
-        );
-
+        student = page.docs[0];
         cy.visitWithSession(`/painel?turma=${schoolClass._id}`, session);
       });
   });
 
-  it("mostra o selo só no cartão do aluno com termo pendente", () => {
-    cy.contains("main li", student.name).should("contain", "Termo pendente");
-    cy.get("main li")
-      .filter(':contains("Termo pendente")')
-      .should("have.length", 1);
+  it("não mostra selo de termo nos cartões: todo aluno tem o termo", () => {
+    cy.contains("main li", student.name).should("be.visible");
+    cy.contains("main li", "Termo pendente").should("not.exist");
   });
 
-  it("registra o termo pela ficha", () => {
-    cy.intercept("PATCH", `**/users/${student._id}/guardian-consent`, {
-      body: envelope({
-        ...student,
-        guardian_consent_at: new Date().toISOString(),
-      }),
-    }).as("record");
+  it("não deixa criar aluno sem marcar o termo", () => {
+    cy.intercept("POST", "**/auth/register-student").as("register");
 
+    cy.contains("button", "Novo aluno").click();
+    cy.get("#student-name").type("Aluno Sem Termo");
+    cy.get("#student-email").type("aluno.sem.termo@levelup.edu.br");
+
+    cy.contains(`${dialog} button`, "Criar aluno").should("be.disabled");
+    cy.get("@register.all").should("have.length", 0);
+  });
+
+  it("mostra na ficha a data em que o termo foi registrado", () => {
     openSheet(student.name);
-    cy.contains(`${dialog} button`, "Registrar termo").click();
-    cy.contains(`${alertDialog} button`, "Termo recebido").click();
 
-    cy.wait("@record");
     cy.get('[data-testid="consent-status"]').should(
       "have.text",
       "Termo registrado",
     );
+    cy.get('[data-testid="consent-recorded-at"]').should(
+      "have.text",
+      fullDate(student.guardian_consent_at!),
+    );
+    cy.contains(`${dialog} button`, "Registrar termo").should("not.exist");
   });
 
   it("revoga o consentimento e a ficha mostra a conta desativada", () => {
@@ -108,6 +98,14 @@ describe("LGPD no painel do professor", () => {
 
     cy.wait("@revoke");
     cy.get(alertDialog).should("not.exist");
+    cy.get('[data-testid="consent-revoked-at"]').should(
+      "have.text",
+      fullDate(revokedAt),
+    );
+    cy.get('[data-testid="consent-recorded-at"]').should(
+      "have.text",
+      fullDate(student.guardian_consent_at!),
+    );
     cy.get('[data-testid="consent-status"]').should(
       "have.text",
       "Consentimento revogado",

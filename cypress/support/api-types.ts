@@ -116,3 +116,11 @@ export function isPending(mission: Mission, entry?: MissionProgress) {
 
   return !entry?.done || canRetry;
 }
+
+/** Mesmo formato de `formatFullDate` em src/lib/date.ts (ficha do aluno). */
+export function fullDate(iso: string) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date(iso));
+}

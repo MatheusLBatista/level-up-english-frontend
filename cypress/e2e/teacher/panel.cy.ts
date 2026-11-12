@@ -347,6 +347,7 @@ describe("Painel do professor", () => {
 
       cy.get("#student-name").type("A");
       cy.get("#student-email").type("nao-e-email");
+      cy.get("#student-guardian-consent").click();
       cy.contains('[role="dialog"] button', "Criar aluno").click();
 
       cy.contains("Use pelo menos 2 letras no nome.").should("be.visible");

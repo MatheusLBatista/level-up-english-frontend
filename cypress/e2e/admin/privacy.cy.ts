@@ -1,5 +1,10 @@
 import users from "../../fixtures/users.json";
-import { envelope, type Page, type User } from "../../support/api-types";
+import {
+  envelope,
+  fullDate,
+  type Page,
+  type User,
+} from "../../support/api-types";
 import type { ApiSession } from "../../support/session";
 
 const dialog = '[role="dialog"]';
@@ -19,9 +24,9 @@ function openSheet(student: User) {
   cy.get(dialog).should("contain", student.name);
 }
 
-// No seed:demo só o Arthur está com o termo pendente. Leituras (lista,
-// filtro, exportação) vão no backend real; registrar e eliminar são
-// simulados — a eliminação não tem volta e estragaria a demonstração.
+// No seed:demo todo aluno nasce com o termo registrado. Leituras (lista,
+// ficha, exportação) vão no backend real com o Arthur; criar, reativar e
+// eliminar são simulados — a eliminação não tem volta e estragaria a demo.
 describe("LGPD no admin", () => {
   let session: ApiSession;
   let arthur: User;
@@ -48,19 +53,24 @@ describe("LGPD no admin", () => {
       cy.contains("button", "Criar aluno").click();
     });
 
-    it("não cria o aluno sem confirmar o termo dos responsáveis", () => {
+    it("só libera a criação depois de marcar o termo", () => {
       cy.intercept("POST", "**/auth/register-student").as("register");
 
       cy.get("#student-name").type("Carlos Teste");
       cy.get("#student-email").type("carlos.teste@levelup.edu.br");
-      cy.contains(`${dialog} button`, "Criar aluno").click();
 
-      cy.contains(dialog, consentMessage).should("be.visible");
       cy.get("#student-guardian-consent").should(
         "have.attr",
-        "aria-invalid",
-        "true",
+        "aria-checked",
+        "false",
       );
+      cy.contains(`${dialog} button`, "Criar aluno").should("be.disabled");
+
+      cy.get("#student-guardian-consent").click();
+      cy.contains(`${dialog} button`, "Criar aluno").should("be.enabled");
+      cy.get("#student-guardian-consent").click();
+      cy.contains(`${dialog} button`, "Criar aluno").should("be.disabled");
+
       cy.get("@register.all").should("have.length", 0);
     });
 
@@ -90,55 +100,86 @@ describe("LGPD no admin", () => {
     });
   });
 
-  describe("Termo pendente", () => {
-    it("filtra os alunos com termo pendente e guarda o filtro na URL", () => {
-      cy.apiGet<Page<User>>(
-        "/users?role=student&active=true&guardian_consent=pending",
-        session.accessToken,
-      ).then((pending) => {
-        cy.visitWithSession("/alunos", session);
-        cy.selectOption(
-          '[aria-label="Filtrar por termo dos responsáveis"]',
-          "Termo pendente",
-        );
-
-        cy.location("search").should("contain", "termo=pendente");
-        cy.get("main ul > li").should("have.length", pending.docs.length);
-        studentRow(arthur.email).should("contain", "Termo pendente");
-      });
-    });
-
-    it("registra o termo depois, pela ficha do aluno", () => {
-      cy.intercept("PATCH", `**/users/${arthur._id}/guardian-consent`, {
-        body: envelope({
-          ...arthur,
-          guardian_consent_at: new Date().toISOString(),
-        }),
-      }).as("record");
-
-      cy.visitWithSession("/alunos?termo=pendente", session);
+  describe("Termo na ficha e reativação", () => {
+    it("mostra na ficha a data em que o termo foi registrado", () => {
+      cy.visitWithSession(
+        `/alunos?busca=${encodeURIComponent(arthur.name)}`,
+        session,
+      );
       openSheet(arthur);
 
       cy.get('[data-testid="consent-status"]').should(
         "have.text",
-        "Termo pendente",
-      );
-      cy.contains(`${dialog} button`, "Registrar termo").click();
-      cy.contains(`${alertDialog} button`, "Termo recebido").click();
-
-      cy.wait("@record");
-      cy.get(alertDialog).should("not.exist");
-      cy.get('[data-testid="consent-status"]').should(
-        "have.text",
         "Termo registrado",
       );
+      cy.get('[data-testid="consent-recorded-at"]').should(
+        "have.text",
+        fullDate(arthur.guardian_consent_at!),
+      );
+      cy.get('[data-testid="consent-revoked-at"]').should("not.exist");
       cy.contains(`${dialog} button`, "Registrar termo").should("not.exist");
+    });
+
+    it("exige um termo novo para reativar aluno com consentimento revogado", () => {
+      const revokedAt = "2026-11-01T13:00:00.000Z";
+      const revoked: User = {
+        ...arthur,
+        active: false,
+        guardian_consent_revoked_at: revokedAt,
+      };
+
+      // A lista de inativos vem com o Arthur revogado.
+      cy.intercept("GET", "**/users?*active=false*", {
+        body: envelope({
+          docs: [revoked],
+          totalDocs: 1,
+          limit: 12,
+          page: 1,
+          totalPages: 1,
+          hasPrevPage: false,
+          hasNextPage: false,
+          prevPage: null,
+          nextPage: null,
+        }),
+      });
+      cy.intercept("PATCH", `**/users/${arthur._id}`, {
+        body: envelope({
+          ...arthur,
+          guardian_consent_at: new Date().toISOString(),
+        }),
+      }).as("reactivate");
+
+      cy.visitWithSession("/alunos?status=inativos", session);
+      studentRow(arthur.email).should("contain", "Consentimento revogado");
+
+      openSheet(revoked);
+      cy.get('[data-testid="consent-revoked-at"]').should(
+        "have.text",
+        fullDate(revokedAt),
+      );
+      cy.get("body").type("{esc}");
+      cy.get(dialog).should("not.exist");
+
+      cy.get(`[aria-label="Reativar ${arthur.name}"]`).click();
+      cy.contains(`${alertDialog} button`, "Reativar com termo novo").should(
+        "be.disabled",
+      );
+      cy.get("#reactivate-guardian-consent").click();
+      cy.contains(`${alertDialog} button`, "Reativar com termo novo").click();
+
+      cy.wait("@reactivate")
+        .its("request.body")
+        .should("deep.eq", { active: true, guardian_consent: true });
+      cy.get(alertDialog).should("not.exist");
     });
   });
 
   describe("Dados do aluno", () => {
     beforeEach(() => {
-      cy.visitWithSession("/alunos?termo=pendente", session);
+      cy.visitWithSession(
+        `/alunos?busca=${encodeURIComponent(arthur.name)}`,
+        session,
+      );
       openSheet(arthur);
     });
 
