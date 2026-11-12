@@ -213,3 +213,52 @@
       var(--notebook-rule) 2rem
     );
 }
+
+/* Texto corrido das páginas legais (/privacidade, /termos, /termo-responsaveis). */
+@layer components {
+  .legal-text {
+    @apply text-body flex flex-col gap-3;
+  }
+  .legal-text ul,
+  .legal-text ol {
+    @apply flex list-outside flex-col gap-1.5 pl-5;
+  }
+  .legal-text ul {
+    @apply list-disc;
+  }
+  .legal-text ol {
+    @apply list-decimal;
+  }
+  .legal-text a {
+    @apply text-primary underline underline-offset-4;
+  }
+  .legal-text table {
+    @apply w-full border-collapse text-left text-sm;
+  }
+  .legal-text th,
+  .legal-text td {
+    @apply border-border border px-3 py-2 align-top;
+  }
+  .legal-text th {
+    @apply bg-muted font-semibold;
+  }
+}
+
+/* Impressão do termo: papel branco, texto preto, sem a cor do tema escuro. */
+@media print {
+  @page {
+    margin: 1.8cm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .legal-text th {
+    background: transparent;
+  }
+  .legal-text th,
+  .legal-text td {
+    border-color: #000;
+  }
+}

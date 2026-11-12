@@ -5,6 +5,7 @@ import {
   Gamepad2Icon,
   GraduationCapIcon,
   LayoutGridIcon,
+  LockKeyholeIcon,
   LogOutIcon,
   ShieldCheckIcon,
   TrophyIcon,
@@ -111,6 +112,15 @@ export function AppSidebar() {
 
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            {/* Página pública: abre em nova aba para não sair do app. */}
+            <SidebarMenuButton asChild tooltip="Privacidade">
+              <Link href="/privacidade" target="_blank" rel="noopener">
+                <LockKeyholeIcon />
+                <span>Privacidade</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={signOut}
