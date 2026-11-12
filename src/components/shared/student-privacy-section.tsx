@@ -1,21 +1,10 @@
 "use client";
 
-import { FileCheckIcon, FileXIcon, Loader2Icon } from "lucide-react";
+import { FileXIcon } from "lucide-react";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { RevokeConsentDialog } from "@/components/shared/revoke-consent-dialog";
 import { Button } from "@/components/ui/button";
-import { useRecordGuardianConsent } from "@/hooks/use-student-privacy";
 import {
-  canRecordConsent,
   canRevokeConsent,
   consentStatusLabels,
   getConsentStatus,
@@ -32,44 +21,29 @@ type StudentPrivacySectionProps = {
 };
 
 const statusStyles: Record<ConsentStatus, string> = {
-  pending: "border-brand-level/40 bg-brand-level/10",
   recorded: "border-brand-done/40 bg-brand-done/10",
   revoked: "border-destructive/40 bg-destructive/10",
   erased: "border-border bg-muted/40",
 };
 
-function describeStatus(student: User, status: ConsentStatus) {
-  switch (status) {
-    case "pending":
-      return student.active
-        ? "A escola ainda não registrou o termo assinado pelos responsáveis. Registre assim que recebê-lo."
-        : "Sem termo registrado. Para registrar, reative a conta primeiro.";
-    case "recorded":
-      return student.guardian_consent_at
-        ? `Termo recebido em ${formatFullDate(student.guardian_consent_at)}.`
-        : "Termo recebido.";
-    case "revoked":
-      return student.guardian_consent_revoked_at
-        ? `Os responsáveis revogaram o consentimento em ${formatFullDate(student.guardian_consent_revoked_at)}. A conta foi desativada e os dados seguem o prazo de retenção.`
-        : "Consentimento revogado.";
-    case "erased":
-      return student.anonymized_at
-        ? `Os dados pessoais foram eliminados em ${formatFullDate(student.anonymized_at)}. Só o XP e o progresso continuam, sem identificar o aluno.`
-        : "Dados pessoais eliminados.";
-  }
-}
+const statusNotes: Record<ConsentStatus, string> = {
+  recorded: "A escola guarda o termo em papel assinado pelos responsáveis.",
+  revoked:
+    "A conta foi desativada e os dados seguem o prazo de retenção. Para voltar, a escola reativa com um termo novo.",
+  erased:
+    "Os dados pessoais foram eliminados. Só o XP e o progresso continuam, sem identificar o aluno.",
+};
 
-/** Seção "Termo dos responsáveis" da ficha do aluno (professor e admin). */
+/**
+ * Seção "Termo dos responsáveis" da ficha do aluno (professor e admin): data
+ * do registro, da revogação (se houver) e a ação de revogar.
+ */
 export function StudentPrivacySection({
   student,
   onChange,
 }: StudentPrivacySectionProps) {
   const status = getConsentStatus(student);
-  const [openDialog, setOpenDialog] = useState<"record" | "revoke" | null>(
-    null,
-  );
-  const canRecord = canRecordConsent(student);
-  const canRevoke = canRevokeConsent(student);
+  const [revokeOpen, setRevokeOpen] = useState(false);
 
   return (
     <section aria-labelledby="guardian-consent" className="flex flex-col gap-3">
@@ -83,119 +57,76 @@ export function StudentPrivacySection({
           statusStyles[status],
         )}
       >
-        <div>
+        <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold" data-testid="consent-status">
             {consentStatusLabels[status]}
           </p>
-          <p className="text-muted-foreground text-xs">
-            {describeStatus(student, status)}
-          </p>
+
+          <dl className="grid gap-1 text-xs">
+            <ConsentDate
+              testId="consent-recorded-at"
+              label="Registrado em"
+              date={student.guardian_consent_at}
+            />
+            {student.guardian_consent_revoked_at && (
+              <ConsentDate
+                testId="consent-revoked-at"
+                label="Revogado em"
+                date={student.guardian_consent_revoked_at}
+              />
+            )}
+            {student.anonymized_at && (
+              <ConsentDate
+                testId="consent-erased-at"
+                label="Dados eliminados em"
+                date={student.anonymized_at}
+              />
+            )}
+          </dl>
+
+          <p className="text-muted-foreground text-xs">{statusNotes[status]}</p>
         </div>
 
-        {(canRecord || canRevoke) && (
-          <div className="flex flex-wrap gap-2">
-            {canRecord && (
-              <Button size="sm" onClick={() => setOpenDialog("record")}>
-                <FileCheckIcon />
-                Registrar termo
-              </Button>
-            )}
-            {canRevoke && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="hover:text-destructive"
-                onClick={() => setOpenDialog("revoke")}
-              >
-                <FileXIcon />
-                Revogar consentimento
-              </Button>
-            )}
+        {canRevokeConsent(student) && (
+          <div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="hover:text-destructive"
+              onClick={() => setRevokeOpen(true)}
+            >
+              <FileXIcon />
+              Revogar consentimento
+            </Button>
           </div>
         )}
       </div>
 
-      <RecordConsentDialog
-        student={openDialog === "record" ? student : null}
-        onClose={() => setOpenDialog(null)}
-        onRecorded={onChange}
-      />
-
       <RevokeConsentDialog
-        student={openDialog === "revoke" ? student : null}
-        onClose={() => setOpenDialog(null)}
+        student={revokeOpen ? student : null}
+        onClose={() => setRevokeOpen(false)}
         onRevoked={onChange}
       />
     </section>
   );
 }
 
-type RecordConsentDialogProps = {
-  student: User | null;
-  onClose: () => void;
-  onRecorded: (updated: User) => void;
-};
-
-function RecordConsentDialog({
-  student,
-  onClose,
-  onRecorded,
-}: RecordConsentDialogProps) {
-  const mutation = useRecordGuardianConsent();
-
-  function close() {
-    mutation.reset();
-    onClose();
-  }
-
-  function handleConfirm() {
-    if (!student) {
-      return;
-    }
-
-    mutation.mutate(student, {
-      onSuccess: (updated) => {
-        onRecorded(updated);
-        close();
-      },
-    });
-  }
-
+function ConsentDate({
+  label,
+  date,
+  testId,
+}: {
+  label: string;
+  date: string | null | undefined;
+  testId: string;
+}) {
   return (
-    <AlertDialog
-      open={student !== null}
-      onOpenChange={(open) => !open && !mutation.isPending && close()}
-    >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Registrar o termo?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Confirme que a escola recebeu o termo de consentimento de{" "}
-            {student?.name} assinado pelos responsáveis. Guarde o papel: ele é a
-            prova do consentimento. A data e quem registrou ficam salvos.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        {mutation.isError && (
-          <p className="border-destructive/40 bg-destructive/10 rounded-xl border p-3 text-sm">
-            {mutation.error.message}
-          </p>
-        )}
-
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={mutation.isPending}>
-            Cancelar
-          </AlertDialogCancel>
-          <Button disabled={mutation.isPending} onClick={handleConfirm}>
-            {mutation.isPending ? (
-              <Loader2Icon className="animate-spin" />
-            ) : (
-              <FileCheckIcon />
-            )}
-            {mutation.isPending ? "Registrando…" : "Termo recebido"}
-          </Button>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <div className="flex flex-wrap gap-x-1.5">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium" data-testid={testId}>
+        {/* Só contas anteriores à regra podem vir sem a data. */}
+        {date ? formatFullDate(date) : "data não informada"}
+      </dd>
+    </div>
   );
 }

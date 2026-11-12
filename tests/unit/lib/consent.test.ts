@@ -1,84 +1,76 @@
 import { describe, expect, it } from "vitest";
 import {
-  canRecordConsent,
   canRevokeConsent,
   dataExportFileName,
   getConsentStatus,
   matchesTypedName,
+  needsNewConsentToReactivate,
 } from "@/lib/consent";
 
 const DATE = "2026-11-12T14:00:00.000Z";
 
-const base = {
+const recorded = {
   active: true,
   anonymized_at: null,
-  guardian_consent_at: null,
+  guardian_consent_at: DATE,
   guardian_consent_revoked_at: null,
 };
 
+const revoked = {
+  ...recorded,
+  active: false,
+  guardian_consent_revoked_at: DATE,
+};
+
 describe("getConsentStatus", () => {
-  it("sem termo e sem revogação é pendente", () => {
-    expect(getConsentStatus(base)).toBe("pending");
+  it("todo aluno criado tem o termo registrado", () => {
+    expect(getConsentStatus(recorded)).toBe("recorded");
   });
 
-  it("trata usuário antigo, sem os campos, como pendente", () => {
-    expect(getConsentStatus({})).toBe("pending");
-  });
-
-  it("com a data do termo é registrado", () => {
-    expect(getConsentStatus({ ...base, guardian_consent_at: DATE })).toBe(
+  it("não existe mais termo pendente: sem a data continua registrado", () => {
+    expect(getConsentStatus({ ...recorded, guardian_consent_at: null })).toBe(
       "recorded",
     );
   });
 
-  it("a revogação vence o registro", () => {
-    expect(
-      getConsentStatus({
-        ...base,
-        guardian_consent_at: DATE,
-        guardian_consent_revoked_at: DATE,
-      }),
-    ).toBe("revoked");
+  it("com a data de revogação é revogado", () => {
+    expect(getConsentStatus(revoked)).toBe("revoked");
   });
 
-  it("a eliminação vence todo o resto", () => {
-    expect(
-      getConsentStatus({
-        ...base,
-        guardian_consent_revoked_at: DATE,
-        anonymized_at: DATE,
-      }),
-    ).toBe("erased");
-  });
-});
-
-describe("canRecordConsent", () => {
-  it("permite registrar o termo pendente de aluno ativo", () => {
-    expect(canRecordConsent(base)).toBe(true);
-  });
-
-  it("recusa aluno desativado, como o backend", () => {
-    expect(canRecordConsent({ ...base, active: false })).toBe(false);
-  });
-
-  it("recusa termo já registrado", () => {
-    expect(canRecordConsent({ ...base, guardian_consent_at: DATE })).toBe(
-      false,
+  it("a eliminação vence a revogação", () => {
+    expect(getConsentStatus({ ...revoked, anonymized_at: DATE })).toBe(
+      "erased",
     );
   });
 });
 
 describe("canRevokeConsent", () => {
-  it("permite revogar termo pendente ou registrado", () => {
-    expect(canRevokeConsent(base)).toBe(true);
-    expect(canRevokeConsent({ ...base, guardian_consent_at: DATE })).toBe(true);
+  it("permite revogar o termo registrado", () => {
+    expect(canRevokeConsent(recorded)).toBe(true);
   });
 
   it("recusa revogar de novo ou depois da eliminação", () => {
+    expect(canRevokeConsent(revoked)).toBe(false);
+    expect(canRevokeConsent({ ...recorded, anonymized_at: DATE })).toBe(false);
+  });
+});
+
+describe("needsNewConsentToReactivate", () => {
+  it("exige termo novo para reativar aluno revogado", () => {
+    expect(needsNewConsentToReactivate(revoked)).toBe(true);
+  });
+
+  it("não exige para aluno desativado sem revogação", () => {
+    expect(needsNewConsentToReactivate({ ...recorded, active: false })).toBe(
+      false,
+    );
+  });
+
+  it("não exige para aluno ativo nem para aluno eliminado", () => {
+    expect(needsNewConsentToReactivate(recorded)).toBe(false);
     expect(
-      canRevokeConsent({ ...base, guardian_consent_revoked_at: DATE }),
+      needsNewConsentToReactivate({ ...revoked, anonymized_at: DATE }),
     ).toBe(false);
-    expect(canRevokeConsent({ ...base, anonymized_at: DATE })).toBe(false);
   });
 });
 

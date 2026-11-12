@@ -141,8 +141,8 @@ export type User = {
   /** Quando os dados pessoais foram eliminados (anonimização). */
   anonymized_at?: string | null;
   /**
-   * Quando a escola registrou o termo assinado pelos responsáveis. `null`
-   * (e sem revogação) é termo pendente. Ausente em usuários antigos.
+   * Quando a escola registrou o termo assinado pelos responsáveis. Todo aluno
+   * é criado com ele; `null` só para professor e admin.
    */
   guardian_consent_at?: string | null;
   /** Id do professor ou admin que registrou o termo. */

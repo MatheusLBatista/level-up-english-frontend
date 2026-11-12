@@ -7,19 +7,17 @@ import type { User } from "@/lib/types";
 import {
   eraseStudentData,
   exportStudentData,
-  recordGuardianConsent,
   revokeGuardianConsent,
 } from "@/services/users";
 
 const SESSION_EXPIRED = "Sua sessão expirou. Entre de novo para continuar.";
 
 /**
- * Os quatro casos mudam a situação do aluno nas listas; revogar e eliminar
- * também mexem nos rankings (aluno desativado sai deles) e nas contagens.
+ * Revogar e eliminar mudam a situação do aluno nas listas, nos rankings
+ * (aluno desativado sai deles) e nas contagens das turmas.
  */
 function useStudentMutation(
   action: (id: string, token: string) => Promise<User>,
-  { affectsRankings }: { affectsRankings: boolean },
 ) {
   const { token } = useAuth();
   const queryClient = useQueryClient();
@@ -35,24 +33,18 @@ function useStudentMutation(
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: ["users"] }),
-        affectsRankings &&
-          queryClient.invalidateQueries({ queryKey: ["rankings"] }),
-        affectsRankings &&
-          queryClient.invalidateQueries({ queryKey: ["classes"] }),
+        queryClient.invalidateQueries({ queryKey: ["rankings"] }),
+        queryClient.invalidateQueries({ queryKey: ["classes"] }),
       ]),
   });
 }
 
-export function useRecordGuardianConsent() {
-  return useStudentMutation(recordGuardianConsent, { affectsRankings: false });
-}
-
 export function useRevokeGuardianConsent() {
-  return useStudentMutation(revokeGuardianConsent, { affectsRankings: true });
+  return useStudentMutation(revokeGuardianConsent);
 }
 
 export function useEraseStudentData() {
-  return useStudentMutation(eraseStudentData, { affectsRankings: true });
+  return useStudentMutation(eraseStudentData);
 }
 
 /** Baixa um arquivo no navegador sem sair da página. */

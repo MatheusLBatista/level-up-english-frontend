@@ -2,10 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, MailCheckIcon, UserPlusIcon } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
-import Link from "next/link";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -17,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
-  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -31,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { GuardianConsentCheckbox } from "@/components/shared/guardian-consent-checkbox";
 import { useRegisterStudent } from "@/hooks/use-register-student";
 import { ApiError } from "@/lib/api";
 import type { ClassSummary } from "@/lib/types";
@@ -143,6 +141,11 @@ function StudentForm({
 
   const { errors } = form.formState;
   const hasFieldErrors = Object.keys(errors).length > 0;
+  // Sem o termo marcado, o aluno não pode ser criado: o botão nem libera.
+  const consentChecked = useWatch({
+    control: form.control,
+    name: "guardian_consent",
+  });
 
   function handleSubmit(values: StudentFormInput) {
     if (!allowNoClass && values.class === NO_CLASS) {
@@ -258,39 +261,14 @@ function StudentForm({
             control={form.control}
             name="guardian_consent"
             render={({ field }) => (
-              <Field
-                orientation="horizontal"
-                data-invalid={Boolean(errors.guardian_consent)}
-                className="border-border bg-muted/40 rounded-xl border p-3"
-              >
-                <Checkbox
-                  id="student-guardian-consent"
-                  checked={field.value}
-                  onCheckedChange={(checked) =>
-                    field.onChange(checked === true)
-                  }
-                  onBlur={field.onBlur}
-                  aria-invalid={Boolean(errors.guardian_consent)}
-                  aria-describedby="student-guardian-consent-description"
-                  disabled={mutation.isPending}
-                />
-                <FieldContent>
-                  <FieldLabel htmlFor="student-guardian-consent">
-                    Termo de consentimento assinado pelos responsáveis recebido
-                  </FieldLabel>
-                  <FieldDescription id="student-guardian-consent-description">
-                    Marque só com o termo em papel em mãos. Não tem o modelo?{" "}
-                    <Link
-                      href="/termo-responsaveis"
-                      target="_blank"
-                      rel="noopener"
-                    >
-                      Imprimir termo
-                    </Link>
-                  </FieldDescription>
-                  <FieldError errors={[errors.guardian_consent]} />
-                </FieldContent>
-              </Field>
+              <GuardianConsentCheckbox
+                id="student-guardian-consent"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                onBlur={field.onBlur}
+                disabled={mutation.isPending}
+                error={errors.guardian_consent?.message}
+              />
             )}
           />
 
@@ -307,7 +285,11 @@ function StudentForm({
           </Button>
         </DialogClose>
 
-        <Button type="submit" form="student-form" disabled={mutation.isPending}>
+        <Button
+          type="submit"
+          form="student-form"
+          disabled={!consentChecked || mutation.isPending}
+        >
           {mutation.isPending ? (
             <Loader2Icon className="animate-spin" />
           ) : (

@@ -4,10 +4,10 @@ import type { User } from "@/lib/types";
  * Situação do aluno perante a LGPD, na ordem em que o backend decide:
  * - `erased`: dados pessoais eliminados (prazo de retenção ou pedido do titular);
  * - `revoked`: os responsáveis revogaram o consentimento (a conta foi desativada);
- * - `recorded`: a escola registrou o termo assinado em papel;
- * - `pending`: aluno criado antes da regra, ainda sem termo registrado.
+ * - `recorded`: termo registrado. Todo aluno nasce assim: o backend só cria o
+ *   aluno com `guardian_consent: true`.
  */
-export type ConsentStatus = "pending" | "recorded" | "revoked" | "erased";
+export type ConsentStatus = "recorded" | "revoked" | "erased";
 
 type ConsentFields = Pick<
   User,
@@ -19,29 +19,28 @@ export function getConsentStatus(user: ConsentFields): ConsentStatus {
     return "erased";
   }
 
-  if (user.guardian_consent_revoked_at) {
-    return "revoked";
-  }
-
-  return user.guardian_consent_at ? "recorded" : "pending";
+  return user.guardian_consent_revoked_at ? "revoked" : "recorded";
 }
 
 export const consentStatusLabels: Record<ConsentStatus, string> = {
-  pending: "Termo pendente",
   recorded: "Termo registrado",
   revoked: "Consentimento revogado",
   erased: "Dados eliminados",
 };
 
-/** Só faz sentido registrar o termo de um aluno ativo que ainda não o tem. */
-export function canRecordConsent(user: ConsentFields & Pick<User, "active">) {
-  return user.active && getConsentStatus(user) === "pending";
+/** Revogar só vale para termo registrado; o backend desativa a conta. */
+export function canRevokeConsent(user: ConsentFields) {
+  return getConsentStatus(user) === "recorded";
 }
 
-/** Revogar vale para termo pendente ou registrado; o backend desativa a conta. */
-export function canRevokeConsent(user: ConsentFields) {
-  const status = getConsentStatus(user);
-  return status === "pending" || status === "recorded";
+/**
+ * Reativar um aluno com consentimento revogado exige um termo novo
+ * (`guardian_consent: true` no PATCH); sem ele, o backend responde 409.
+ */
+export function needsNewConsentToReactivate(
+  user: ConsentFields & Pick<User, "active">,
+) {
+  return !user.active && getConsentStatus(user) === "revoked";
 }
 
 /** Nome do arquivo baixado na exportação dos dados (art. 18, II). */

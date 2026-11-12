@@ -1,4 +1,4 @@
-import { FileWarningIcon, FileXIcon, ShieldOffIcon } from "lucide-react";
+import { FileXIcon, ShieldOffIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   consentStatusLabels,
@@ -9,13 +9,11 @@ import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const styles: Record<Exclude<ConsentStatus, "recorded">, string> = {
-  pending: "border-brand-level/40 bg-brand-level/10 text-brand-level",
   revoked: "border-destructive/40 text-destructive",
   erased: "border-border text-muted-foreground",
 };
 
 const icons = {
-  pending: FileWarningIcon,
   revoked: FileXIcon,
   erased: ShieldOffIcon,
 };

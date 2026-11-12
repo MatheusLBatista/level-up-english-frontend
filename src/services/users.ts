@@ -19,6 +19,11 @@ export type UpdateUserBody = {
   active?: boolean;
   /** Só o próprio usuário ou o admin; o professor recebe 403. */
   show_in_global_ranking?: boolean;
+  /**
+   * Só admin, ao reativar (`active: true`) um aluno com consentimento
+   * revogado: registra o termo novo, obrigatório nesse caso.
+   */
+  guardian_consent?: true;
 };
 
 export function updateUser(id: string, body: UpdateUserBody, token: string) {
@@ -54,11 +59,7 @@ export type StudentFilters = {
   classId?: string | null;
   /** `null` traz ativos e inativos. */
   active?: boolean | null;
-  /** Situação do termo dos responsáveis; sem valor, traz todos. */
-  guardianConsent?: GuardianConsentFilter | null;
 };
-
-export type GuardianConsentFilter = "pending" | "recorded" | "revoked";
 
 export function listStudents(token: string, filters: StudentFilters = {}) {
   const params = new URLSearchParams({
@@ -80,19 +81,7 @@ export function listStudents(token: string, filters: StudentFilters = {}) {
     params.set("active", String(filters.active));
   }
 
-  if (filters.guardianConsent) {
-    params.set("guardian_consent", filters.guardianConsent);
-  }
-
   return apiFetch<Paginated<User>>(`/users?${params}`, { token });
-}
-
-/** Registra que a escola recebeu o termo assinado (aluno ativo e pendente). */
-export function recordGuardianConsent(id: string, token: string) {
-  return apiFetch<User>(`/users/${id}/guardian-consent`, {
-    method: "PATCH",
-    token,
-  });
 }
 
 /** Revoga o consentimento; o backend também desativa a conta do aluno. */

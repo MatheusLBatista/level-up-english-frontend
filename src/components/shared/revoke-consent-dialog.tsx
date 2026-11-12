@@ -73,7 +73,8 @@ export function RevokeConsentDialog({
                   depois são anonimizados.
                 </li>
                 <li>
-                  Se reativar a conta depois, o termo volta a ficar pendente.
+                  Para o aluno voltar, a escola reativa a conta com um termo
+                  novo assinado pelos responsáveis.
                 </li>
               </ul>
             </div>

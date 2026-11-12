@@ -20,6 +20,7 @@ import { useState } from "react";
 import { CreateStudentDialog } from "@/components/shared/create-student-dialog";
 import { DeactivateStudentDialog } from "@/components/admin/students/deactivate-student-dialog";
 import { EditStudentDialog } from "@/components/admin/students/edit-student-dialog";
+import { ReactivateStudentDialog } from "@/components/admin/students/reactivate-student-dialog";
 import { StudentProfileSheet } from "@/components/shared/student-profile-sheet";
 import { StudentRow } from "@/components/admin/students/student-row";
 import { PaginationControls } from "@/components/shared/pagination-controls";
@@ -38,8 +39,8 @@ import { useAdminClasses } from "@/hooks/use-admin-classes";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useStudents } from "@/hooks/use-students";
 import { useUpdateUser } from "@/hooks/use-update-user";
+import { needsNewConsentToReactivate } from "@/lib/consent";
 import type { User } from "@/lib/types";
-import type { GuardianConsentFilter } from "@/services/users";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 12;
@@ -55,30 +56,10 @@ const statusOptions = [
 
 const activeByStatus = { ativos: true, inativos: false, todos: null } as const;
 
-const ALL_CONSENTS = "todos";
-const consentFilters = ["pendente", "registrado", "revogado"] as const;
-
-const consentOptions = [
-  { value: ALL_CONSENTS, label: "Qualquer termo" },
-  { value: "pendente", label: "Termo pendente" },
-  { value: "registrado", label: "Termo registrado" },
-  { value: "revogado", label: "Consentimento revogado" },
-] as const;
-
-const consentByFilter = {
-  pendente: "pending",
-  registrado: "recorded",
-  revogado: "revoked",
-} as const satisfies Record<
-  (typeof consentFilters)[number],
-  GuardianConsentFilter
->;
-
 export function StudentsScreen() {
-  const [{ busca, turma, status, termo, pagina }, setFilters] = useQueryStates({
+  const [{ busca, turma, status, pagina }, setFilters] = useQueryStates({
     busca: parseAsString.withDefault(""),
     turma: parseAsString,
-    termo: parseAsStringLiteral(consentFilters),
     status: parseAsStringLiteral(studentStatuses).withDefault("ativos"),
     pagina: parseAsInteger.withDefault(1),
   });
@@ -96,7 +77,6 @@ export function StudentsScreen() {
     name: search,
     classId: turma,
     active: activeByStatus[status],
-    guardianConsent: termo ? consentByFilter[termo] : null,
   });
 
   const page = studentsQuery.data;
@@ -114,6 +94,9 @@ export function StudentsScreen() {
     null,
   );
   const reactivate = useUpdateUser();
+  const [studentToReactivate, setStudentToReactivate] = useState<User | null>(
+    null,
+  );
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [studentToView, setStudentToView] = useState<User | null>(null);
@@ -126,11 +109,14 @@ export function StudentsScreen() {
   function handleToggleActive(student: User) {
     if (student.active) {
       setStudentToDeactivate(student);
+    } else if (needsNewConsentToReactivate(student)) {
+      // Consentimento revogado: só volta com um termo novo.
+      setStudentToReactivate(student);
     } else {
       reactivate.mutate({ user: student, body: { active: true } });
     }
   }
-  const hasFilters = Boolean(search || turma || termo);
+  const hasFilters = Boolean(search || turma);
 
   return (
     <div className="flex flex-col gap-6">
@@ -188,34 +174,6 @@ export function StudentsScreen() {
               <SelectItem key={item._id} value={item._id}>
                 {item.name}
                 {!item.active && " (inativa)"}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={termo ?? ALL_CONSENTS}
-          onValueChange={(value) =>
-            void setFilters({
-              termo: value === ALL_CONSENTS ? null : (value as typeof termo),
-              // Revogar desativa a conta: em "Ativos" a lista viria vazia.
-              ...(value === "revogado" && status === "ativos"
-                ? { status: "todos" as const }
-                : {}),
-              pagina: 1,
-            })
-          }
-        >
-          <SelectTrigger
-            className="w-full lg:w-52"
-            aria-label="Filtrar por termo dos responsáveis"
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {consentOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -389,6 +347,11 @@ export function StudentsScreen() {
       <DeactivateStudentDialog
         student={studentToDeactivate}
         onClose={() => setStudentToDeactivate(null)}
+      />
+
+      <ReactivateStudentDialog
+        student={studentToReactivate}
+        onClose={() => setStudentToReactivate(null)}
       />
     </div>
   );
