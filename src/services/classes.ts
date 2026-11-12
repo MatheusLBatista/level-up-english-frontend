@@ -34,6 +34,8 @@ export type SaveClassBody = {
   name: string;
   teacher: string;
   active?: boolean;
+  /** Mostra ou esconde o ranking da turma para os alunos. Padrão `true`. */
+  class_ranking_visible?: boolean;
 };
 
 export function createClass(body: SaveClassBody, token: string) {

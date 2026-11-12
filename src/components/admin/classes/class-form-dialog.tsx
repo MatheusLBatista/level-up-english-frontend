@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -77,7 +78,12 @@ const serverMessages: Partial<Record<keyof ClassFormInput, string>> = {
   name: "Já existe uma turma com este nome.",
 };
 
-const formFields = new Set<string>(["name", "teacher", "active"]);
+const formFields = new Set<string>([
+  "name",
+  "teacher",
+  "active",
+  "class_ranking_visible",
+]);
 
 function isFormField(path: string): path is keyof ClassFormInput {
   return formFields.has(path);
@@ -99,6 +105,8 @@ function ClassForm({ schoolClass, mutation, onSaved }: ClassFormProps) {
       name: schoolClass?.name ?? "",
       teacher: schoolClass?.teacher?._id ?? "",
       active: schoolClass?.active ?? true,
+      // Turmas antigas vêm sem o campo: contam como visível, igual ao backend.
+      class_ranking_visible: schoolClass?.class_ranking_visible ?? true,
     },
   });
 
@@ -227,6 +235,31 @@ function ClassForm({ schoolClass, mutation, onSaved }: ClassFormProps) {
               <FieldError errors={[errors.teacher]} />
             )}
           </Field>
+
+          <Controller
+            control={form.control}
+            name="class_ranking_visible"
+            render={({ field }) => (
+              <Field orientation="horizontal">
+                <Switch
+                  id="class-ranking-visible"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  aria-describedby="class-ranking-visible-description"
+                  disabled={mutation.isPending}
+                />
+                <FieldContent>
+                  <FieldLabel htmlFor="class-ranking-visible">
+                    Ranking visível para os alunos
+                  </FieldLabel>
+                  <FieldDescription id="class-ranking-visible-description">
+                    Desligado, só o professor e a escola veem o ranking da
+                    turma.
+                  </FieldDescription>
+                </FieldContent>
+              </Field>
+            )}
+          />
 
           {isEditing && (
             <Controller
