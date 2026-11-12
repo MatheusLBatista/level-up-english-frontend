@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PaginationControls } from "@/components/shared/pagination-controls";
+import { StudentDataSection } from "@/components/admin/students/student-data-section";
 import { PerformanceRadar } from "@/components/shared/performance-radar";
 import { StudentPrivacySection } from "@/components/shared/student-privacy-section";
 import { XpHistoryList } from "@/components/shared/xp-history-list";
@@ -68,6 +69,10 @@ function ProfileContent({
   // essa versão na hora, mesmo que ele saia da lista filtrada por trás.
   const [changes, setChanges] = useState<Partial<User>>({});
   const student: User = { ...initialStudent, ...changes };
+
+  function applyChanges(updated: User) {
+    setChanges((previous) => ({ ...previous, ...updated }));
+  }
 
   const completed = student.mission_progress.filter((entry) => entry.done);
   const missionXp = completed.reduce(
@@ -165,12 +170,9 @@ function ProfileContent({
 
         <XpHistorySection key={student._id} studentId={student._id} />
 
-        <StudentPrivacySection
-          student={student}
-          onChange={(updated) =>
-            setChanges((previous) => ({ ...previous, ...updated }))
-          }
-        />
+        <StudentPrivacySection student={student} onChange={applyChanges} />
+
+        <StudentDataSection student={student} onChange={applyChanges} />
       </div>
     </>
   );

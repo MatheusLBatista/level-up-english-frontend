@@ -4,6 +4,7 @@ import {
   canRevokeConsent,
   dataExportFileName,
   getConsentStatus,
+  matchesTypedName,
 } from "@/lib/consent";
 
 const DATE = "2026-11-12T14:00:00.000Z";
@@ -86,5 +87,22 @@ describe("dataExportFileName", () => {
     expect(dataExportFileName("abc123", DATE)).toBe(
       "dados-aluno-abc123-2026-11-12.json",
     );
+  });
+});
+
+describe("matchesTypedName", () => {
+  it("aceita o nome sem diferenciar maiúsculas nem espaços sobrando", () => {
+    expect(
+      matchesTypedName("  arthur   NASCIMENTO ", "Arthur Nascimento"),
+    ).toBe(true);
+  });
+
+  it("recusa nome incompleto ou sem o acento", () => {
+    expect(matchesTypedName("Arthur", "Arthur Nascimento")).toBe(false);
+    expect(matchesTypedName("Joao", "João")).toBe(false);
+  });
+
+  it("recusa confirmar com campo vazio", () => {
+    expect(matchesTypedName("", "")).toBe(false);
   });
 });

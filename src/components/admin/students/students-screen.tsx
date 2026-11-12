@@ -285,6 +285,8 @@ export function StudentsScreen() {
               const busy =
                 reactivate.isPending &&
                 reactivate.variables?.user._id === student._id;
+              // Aluno anonimizado não aceita mais edição (o backend responde 409).
+              const erased = Boolean(student.anonymized_at);
 
               return (
                 <StudentRow
@@ -305,42 +307,46 @@ export function StudentsScreen() {
                       >
                         <EyeIcon />
                       </Button>
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="ghost"
-                        aria-label={`Editar ${student.name}`}
-                        title="Editar"
-                        onClick={() => openEdit(student)}
-                      >
-                        <PencilIcon />
-                      </Button>
-                      <Button
-                        type="button"
-                        size="icon-sm"
-                        variant="ghost"
-                        aria-label={
-                          student.active
-                            ? `Desativar ${student.name}`
-                            : `Reativar ${student.name}`
-                        }
-                        title={student.active ? "Desativar" : "Reativar"}
-                        className={
-                          student.active
-                            ? "hover:text-destructive"
-                            : "hover:text-brand-done"
-                        }
-                        disabled={busy}
-                        onClick={() => handleToggleActive(student)}
-                      >
-                        {busy ? (
-                          <Loader2Icon className="animate-spin" />
-                        ) : student.active ? (
-                          <ArchiveIcon />
-                        ) : (
-                          <RotateCcwIcon />
-                        )}
-                      </Button>
+                      {!erased && (
+                        <>
+                          <Button
+                            type="button"
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={`Editar ${student.name}`}
+                            title="Editar"
+                            onClick={() => openEdit(student)}
+                          >
+                            <PencilIcon />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label={
+                              student.active
+                                ? `Desativar ${student.name}`
+                                : `Reativar ${student.name}`
+                            }
+                            title={student.active ? "Desativar" : "Reativar"}
+                            className={
+                              student.active
+                                ? "hover:text-destructive"
+                                : "hover:text-brand-done"
+                            }
+                            disabled={busy}
+                            onClick={() => handleToggleActive(student)}
+                          >
+                            {busy ? (
+                              <Loader2Icon className="animate-spin" />
+                            ) : student.active ? (
+                              <ArchiveIcon />
+                            ) : (
+                              <RotateCcwIcon />
+                            )}
+                          </Button>
+                        </>
+                      )}
                     </>
                   }
                 />

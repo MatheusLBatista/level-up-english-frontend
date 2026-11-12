@@ -48,3 +48,16 @@ export function canRevokeConsent(user: ConsentFields) {
 export function dataExportFileName(studentId: string, exportedAt: string) {
   return `dados-aluno-${studentId}-${exportedAt.slice(0, 10)}.json`;
 }
+
+function normalizeName(name: string) {
+  return name.trim().replace(/\s+/g, " ").toLocaleLowerCase("pt-BR");
+}
+
+/**
+ * Confirmação da eliminação: o nome digitado precisa bater com o do aluno,
+ * sem diferenciar maiúsculas e ignorando espaços sobrando. Acentos contam.
+ */
+export function matchesTypedName(typed: string, name: string) {
+  const expected = normalizeName(name);
+  return expected.length > 0 && normalizeName(typed) === expected;
+}
