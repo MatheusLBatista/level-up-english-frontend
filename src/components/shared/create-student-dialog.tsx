@@ -3,7 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, MailCheckIcon, UserPlusIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -15,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -92,7 +95,12 @@ export function CreateStudentDialog({
   );
 }
 
-const formFields = new Set<string>(["name", "email", "class"]);
+const formFields = new Set<string>([
+  "name",
+  "email",
+  "class",
+  "guardian_consent",
+]);
 
 function isFormField(path: string): path is keyof StudentFormInput {
   return formFields.has(path);
@@ -129,6 +137,7 @@ function StudentForm({
       name: "",
       email: "",
       class: getInitialClass(classes, defaultClassId, allowNoClass),
+      guardian_consent: false,
     },
   });
 
@@ -244,6 +253,46 @@ function StudentForm({
               </FieldDescription>
             )}
           </Field>
+
+          <Controller
+            control={form.control}
+            name="guardian_consent"
+            render={({ field }) => (
+              <Field
+                orientation="horizontal"
+                data-invalid={Boolean(errors.guardian_consent)}
+                className="border-border bg-muted/40 rounded-xl border p-3"
+              >
+                <Checkbox
+                  id="student-guardian-consent"
+                  checked={field.value}
+                  onCheckedChange={(checked) =>
+                    field.onChange(checked === true)
+                  }
+                  onBlur={field.onBlur}
+                  aria-invalid={Boolean(errors.guardian_consent)}
+                  aria-describedby="student-guardian-consent-description"
+                  disabled={mutation.isPending}
+                />
+                <FieldContent>
+                  <FieldLabel htmlFor="student-guardian-consent">
+                    Termo de consentimento assinado pelos responsáveis recebido
+                  </FieldLabel>
+                  <FieldDescription id="student-guardian-consent-description">
+                    Marque só com o termo em papel em mãos. Não tem o modelo?{" "}
+                    <Link
+                      href="/termo-responsaveis"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Imprimir termo
+                    </Link>
+                  </FieldDescription>
+                  <FieldError errors={[errors.guardian_consent]} />
+                </FieldContent>
+              </Field>
+            )}
+          />
 
           {mutation.isError && !hasFieldErrors && (
             <FieldError>{mutation.error.message}</FieldError>
