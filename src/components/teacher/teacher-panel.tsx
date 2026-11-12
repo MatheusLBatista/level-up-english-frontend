@@ -18,6 +18,7 @@ import { ClassSelect } from "@/components/shared/class-select";
 import { ClassRankingToggle } from "@/components/teacher/class-ranking-toggle";
 import { useSelectedClass } from "@/hooks/use-selected-class";
 import { matchesSearch } from "@/lib/text";
+import type { User } from "@/lib/types";
 
 export function TeacherPanel() {
   const [search, setSearch] = useState("");
@@ -38,11 +39,14 @@ export function TeacherPanel() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
 
   const [profileOpen, setProfileOpen] = useState(false);
-  const [profileId, setProfileId] = useState<string | null>(null);
+  const [profileSnapshot, setProfileSnapshot] = useState<User | null>(null);
 
+  // Prefere a versão da lista (mais nova); a cópia guardada segura a ficha
+  // aberta quando o aluno sai da lista (ex.: revogação desativa a conta).
   const profileStudent =
-    (studentsQuery.data ?? []).find((student) => student._id === profileId) ??
-    null;
+    (studentsQuery.data ?? []).find(
+      (student) => student._id === profileSnapshot?._id,
+    ) ?? profileSnapshot;
 
   const selectedClass = classes.find((item) => item._id === classId) ?? null;
   const className = selectedClass?.name ?? null;
@@ -96,7 +100,9 @@ export function TeacherPanel() {
   }
 
   function openProfile(id: string) {
-    setProfileId(id);
+    setProfileSnapshot(
+      (studentsQuery.data ?? []).find((student) => student._id === id) ?? null,
+    );
     setProfileOpen(true);
   }
 

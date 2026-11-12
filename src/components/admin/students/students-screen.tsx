@@ -39,6 +39,7 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useStudents } from "@/hooks/use-students";
 import { useUpdateUser } from "@/hooks/use-update-user";
 import type { User } from "@/lib/types";
+import type { GuardianConsentFilter } from "@/services/users";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 12;
@@ -54,10 +55,30 @@ const statusOptions = [
 
 const activeByStatus = { ativos: true, inativos: false, todos: null } as const;
 
+const ALL_CONSENTS = "todos";
+const consentFilters = ["pendente", "registrado", "revogado"] as const;
+
+const consentOptions = [
+  { value: ALL_CONSENTS, label: "Qualquer termo" },
+  { value: "pendente", label: "Termo pendente" },
+  { value: "registrado", label: "Termo registrado" },
+  { value: "revogado", label: "Consentimento revogado" },
+] as const;
+
+const consentByFilter = {
+  pendente: "pending",
+  registrado: "recorded",
+  revogado: "revoked",
+} as const satisfies Record<
+  (typeof consentFilters)[number],
+  GuardianConsentFilter
+>;
+
 export function StudentsScreen() {
-  const [{ busca, turma, status, pagina }, setFilters] = useQueryStates({
+  const [{ busca, turma, status, termo, pagina }, setFilters] = useQueryStates({
     busca: parseAsString.withDefault(""),
     turma: parseAsString,
+    termo: parseAsStringLiteral(consentFilters),
     status: parseAsStringLiteral(studentStatuses).withDefault("ativos"),
     pagina: parseAsInteger.withDefault(1),
   });
@@ -75,6 +96,7 @@ export function StudentsScreen() {
     name: search,
     classId: turma,
     active: activeByStatus[status],
+    guardianConsent: termo ? consentByFilter[termo] : null,
   });
 
   const page = studentsQuery.data;
@@ -108,7 +130,7 @@ export function StudentsScreen() {
       reactivate.mutate({ user: student, body: { active: true } });
     }
   }
-  const hasFilters = Boolean(search || turma);
+  const hasFilters = Boolean(search || turma || termo);
 
   return (
     <div className="flex flex-col gap-6">
@@ -166,6 +188,34 @@ export function StudentsScreen() {
               <SelectItem key={item._id} value={item._id}>
                 {item.name}
                 {!item.active && " (inativa)"}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select
+          value={termo ?? ALL_CONSENTS}
+          onValueChange={(value) =>
+            void setFilters({
+              termo: value === ALL_CONSENTS ? null : (value as typeof termo),
+              // Revogar desativa a conta: em "Ativos" a lista viria vazia.
+              ...(value === "revogado" && status === "ativos"
+                ? { status: "todos" as const }
+                : {}),
+              pagina: 1,
+            })
+          }
+        >
+          <SelectTrigger
+            className="w-full lg:w-52"
+            aria-label="Filtrar por termo dos responsáveis"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {consentOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
               </SelectItem>
             ))}
           </SelectContent>

@@ -1,4 +1,5 @@
 import { CheckIcon, IdCardIcon, TrophyIcon } from "lucide-react";
+import { ConsentBadge } from "@/components/shared/consent-badge";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,7 @@ export function StudentCard({
               <TrophyIcon />
               {xpFormatter.format(student.xp)} XP
             </Badge>
+            <ConsentBadge student={student} />
           </div>
         </div>
       </button>
