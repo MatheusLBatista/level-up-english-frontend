@@ -1,6 +1,6 @@
 "use client";
 
-import { FileCheckIcon, Loader2Icon } from "lucide-react";
+import { FileCheckIcon, FileXIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -11,10 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { RevokeConsentDialog } from "@/components/shared/revoke-consent-dialog";
 import { Button } from "@/components/ui/button";
 import { useRecordGuardianConsent } from "@/hooks/use-student-privacy";
 import {
   canRecordConsent,
+  canRevokeConsent,
   consentStatusLabels,
   getConsentStatus,
   type ConsentStatus,
@@ -63,7 +65,11 @@ export function StudentPrivacySection({
   onChange,
 }: StudentPrivacySectionProps) {
   const status = getConsentStatus(student);
-  const [recordOpen, setRecordOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState<"record" | "revoke" | null>(
+    null,
+  );
+  const canRecord = canRecordConsent(student);
+  const canRevoke = canRevokeConsent(student);
 
   return (
     <section aria-labelledby="guardian-consent" className="flex flex-col gap-3">
@@ -86,20 +92,39 @@ export function StudentPrivacySection({
           </p>
         </div>
 
-        {canRecordConsent(student) && (
+        {(canRecord || canRevoke) && (
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" onClick={() => setRecordOpen(true)}>
-              <FileCheckIcon />
-              Registrar termo
-            </Button>
+            {canRecord && (
+              <Button size="sm" onClick={() => setOpenDialog("record")}>
+                <FileCheckIcon />
+                Registrar termo
+              </Button>
+            )}
+            {canRevoke && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="hover:text-destructive"
+                onClick={() => setOpenDialog("revoke")}
+              >
+                <FileXIcon />
+                Revogar consentimento
+              </Button>
+            )}
           </div>
         )}
       </div>
 
       <RecordConsentDialog
-        student={recordOpen ? student : null}
-        onClose={() => setRecordOpen(false)}
+        student={openDialog === "record" ? student : null}
+        onClose={() => setOpenDialog(null)}
         onRecorded={onChange}
+      />
+
+      <RevokeConsentDialog
+        student={openDialog === "revoke" ? student : null}
+        onClose={() => setOpenDialog(null)}
+        onRevoked={onChange}
       />
     </section>
   );
