@@ -93,20 +93,50 @@ token.
 
 ### Usuários
 
-| Método | Rota                        | Papéis   |
-| ------ | --------------------------- | -------- |
-| GET    | `/users`                    | A, P     |
-| POST   | `/users`                    | A, P     |
-| GET    | `/users/{id}`               | A, P, Al |
-| PATCH  | `/users/{id}`               | A, P, Al |
-| DELETE | `/users/{id}`               | A, P, Al |
-| GET    | `/users/{id}/xp-history`    | A, P, Al |
-| POST   | `/users/recalculate-levels` | A        |
+| Método | Rota                                  | Papéis   |
+| ------ | ------------------------------------- | -------- |
+| GET    | `/users`                              | A, P     |
+| POST   | `/users`                              | A, P     |
+| GET    | `/users/{id}`                         | A, P, Al |
+| PATCH  | `/users/{id}`                         | A, P, Al |
+| DELETE | `/users/{id}`                         | A, P     |
+| GET    | `/users/{id}/xp-history`              | A, P, Al |
+| POST   | `/users/recalculate-levels`           | A        |
+| PATCH  | `/users/{id}/guardian-consent`        | A, P     |
+| POST   | `/users/{id}/guardian-consent/revoke` | A, P     |
+| GET    | `/users/{id}/data-export`             | A        |
+| POST   | `/users/{id}/erasure`                 | A        |
 
 Só o admin edita outros usuários. Professor e aluno editam só a própria conta,
 e sem mudar papel, XP, nível, turma, status, e-mail ou senha (a senha tem rota
 própria). Filtros do `GET /users`: `role`, `active`, `class` (`none` = sem turma,
-só admin).
+só admin) e `guardian_consent` (`pending`, `recorded` ou `revoked`).
+
+`DELETE /users/{id}` **desativa** a conta (preenche `deactivated_at`); não
+apaga nada.
+
+### LGPD (termo dos responsáveis e direitos do titular)
+
+| Campo do usuário               | Significado                                                                  |
+| ------------------------------ | ---------------------------------------------------------------------------- |
+| `guardian_consent_at`          | Quando a escola registrou o termo em papel. `null` sem revogação = pendente. |
+| `guardian_consent_recorded_by` | Id de quem registrou.                                                        |
+| `guardian_consent_revoked_at`  | Quando os responsáveis revogaram; a revogação desativa a conta.              |
+| `deactivated_at`               | Quando a conta foi desativada; conta o prazo de retenção (12 meses padrão).  |
+| `anonymized_at`                | Quando os dados pessoais foram eliminados ("Aluno removido").                |
+
+- `POST /auth/register-student` (e `POST /users` para aluno) exige
+  `guardian_consent: true`; sem ele, 400 em `path: guardian_consent`.
+- `PATCH /users/{id}/guardian-consent` registra o termo depois; 409 se já foi
+  registrado ou se o aluno está desativado.
+- `POST /users/{id}/guardian-consent/revoke` revoga e desativa; 409 se já foi
+  revogado. Reativar a conta depois volta o termo para pendente.
+- `GET /users/{id}/data-export` devolve em `data` todos os dados do aluno
+  (`student`, `mission_progress`, `attitude_logs`, `xp_adjustments`,
+  `notifications`, `rankings`); o front baixa como `.json`.
+- `POST /users/{id}/erasure` com `{ confirm: true }` anonimiza na hora; 409 se
+  já foi eliminado. Aluno anonimizado recebe 409 em qualquer `PATCH`.
+- Professor só age nos alunos das próprias turmas (403 nos outros).
 
 O `xp-history` junta numa linha do tempo, da mais recente para a mais antiga,
 tudo o que mexeu no XP do aluno: atitudes aplicadas (`kind: "attitude"`),
@@ -129,7 +159,8 @@ admin o de qualquer aluno; um id que não seja de aluno responde 404.
 | DELETE | `/classes/{id}` | A        |
 
 Filtros do `GET /classes`: `active`, `teacher`. `teacher: null` no `PATCH`
-deixa a turma sem professor.
+deixa a turma sem professor. `class_ranking_visible` (padrão `true`; turmas
+antigas vêm sem o campo) mostra ou esconde o ranking da turma para os alunos.
 
 ### Missões
 
@@ -207,7 +238,10 @@ própria: os ajustes aparecem no `GET /users/{id}/xp-history`.
 
 O ranking de uma turma só existe depois que alguém dela ganha XP; antes disso a
 rota responde 404, e o frontend mostra o ranking vazio. `/rankings/me` usa a
-turma do usuário logado (só faz sentido para aluno).
+turma do usuário logado (só faz sentido para aluno). Com
+`class_ranking_visible: false`, o aluno recebe 403 ("O professor ocultou o
+ranking desta turma.") e o frontend mostra esse aviso; professor e admin
+continuam vendo. As entradas do ranking não trazem mais o e-mail.
 
 ### Notificações
 

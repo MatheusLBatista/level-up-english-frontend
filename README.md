@@ -28,31 +28,38 @@ lida e abre a missão ou o histórico de XP.
 
 ### Professor
 
-| Tela    | Rota       | O que faz                                                                                                                         |
-| ------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Painel  | `/painel`  | Grade de alunos da turma: aplicar atitudes, ajustar XP, ver a ficha com o histórico de XP e cadastrar alunos nas próprias turmas. |
-| Missões | `/missoes` | Criar, editar, desativar e reativar missões das suas turmas (inclui editor de quiz).                                              |
-| Ranking | `/ranking` | Ranking geral e de cada uma das suas turmas.                                                                                      |
-| Perfil  | `/perfil`  | Crachá, suas turmas com atalhos e as últimas atitudes aplicadas.                                                                  |
+| Tela    | Rota       | O que faz                                                                                                                                                                                                             |
+| ------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Painel  | `/painel`  | Grade de alunos da turma: aplicar atitudes, ajustar XP, ver a ficha com o histórico de XP, cadastrar alunos (com o termo dos responsáveis), registrar ou revogar o termo e ocultar o ranking da turma para os alunos. |
+| Missões | `/missoes` | Criar, editar, desativar e reativar missões das suas turmas (inclui editor de quiz).                                                                                                                                  |
+| Ranking | `/ranking` | Ranking geral e de cada uma das suas turmas.                                                                                                                                                                          |
+| Perfil  | `/perfil`  | Crachá, suas turmas com atalhos e as últimas atitudes aplicadas.                                                                                                                                                      |
 
 ### Admin
 
-| Tela        | Rota           | O que faz                                                                                     |
-| ----------- | -------------- | --------------------------------------------------------------------------------------------- |
-| Painel      | `/painel`      | O mesmo painel do professor, com acesso a todas as turmas.                                    |
-| Turmas      | `/turmas`      | Criar, editar, desativar e reativar turmas e escolher o professor.                            |
-| Alunos      | `/alunos`      | Cadastrar (com e-mail de convite), editar, mudar de turma, desativar e ver o histórico de XP. |
-| Professores | `/professores` | Cadastrar, definir as turmas de cada professor e desativar.                                   |
-| Atitudes    | `/atitudes`    | Catálogo de atitudes (prêmios e punições em XP) usadas no painel.                             |
-| Missões     | `/missoes`     | Gerencia as missões de qualquer turma.                                                        |
-| Ranking     | `/ranking`     | Ranking geral e de qualquer turma.                                                            |
-| Perfil      | `/perfil`      | Crachá, turmas da escola e as últimas atitudes que aplicou.                                   |
+| Tela        | Rota           | O que faz                                                                                                                                                                                         |
+| ----------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Painel      | `/painel`      | O mesmo painel do professor, com acesso a todas as turmas.                                                                                                                                        |
+| Turmas      | `/turmas`      | Criar, editar, desativar e reativar turmas e escolher o professor.                                                                                                                                |
+| Alunos      | `/alunos`      | Cadastrar (com e-mail de convite e o termo dos responsáveis), editar, mudar de turma, desativar, ver o histórico de XP, filtrar por termo pendente, exportar e eliminar os dados do aluno (LGPD). |
+| Professores | `/professores` | Cadastrar, definir as turmas de cada professor e desativar.                                                                                                                                       |
+| Atitudes    | `/atitudes`    | Catálogo de atitudes (prêmios e punições em XP) usadas no painel.                                                                                                                                 |
+| Missões     | `/missoes`     | Gerencia as missões de qualquer turma.                                                                                                                                                            |
+| Ranking     | `/ranking`     | Ranking geral e de qualquer turma.                                                                                                                                                                |
+| Perfil      | `/perfil`      | Crachá, turmas da escola e as últimas atitudes que aplicou.                                                                                                                                       |
 
 ### Telas públicas
 
 `/login`, `/esqueci-senha`, `/reset-password` (link do e-mail de recuperação) e
 `/set-password` (link do e-mail de boas-vindas, para criar a primeira senha). A
 raiz `/` redireciona para o login.
+
+Páginas legais, abertas sem login e linkadas no login, na sidebar e no perfil:
+`/privacidade` (política de privacidade), `/termos` (termos de uso) e
+`/termo-responsaveis` (modelo do termo de consentimento, pronto para imprimir).
+**O texto é um modelo e precisa de revisão jurídica antes do uso real.** Os
+prazos citados (12 meses de retenção, 7 dias de backup, 90 dias de
+notificações) ficam em `src/lib/legal.ts` e precisam bater com o backend.
 
 ## Backend
 
@@ -118,8 +125,9 @@ O projeto tem dois tipos de teste, cada um na sua pasta:
 | Unitário      | [Vitest](https://vitest.dev/)      | `tests/unit/`  | Não                  |
 | Ponta a ponta | [Cypress](https://www.cypress.io/) | `cypress/e2e/` | Front e backend      |
 
-Os **unitários** testam funções puras de `src/lib/` (embaralhar o quiz, montar
-as respostas na ordem original, textos do contador de notificações etc.). A
+Os **unitários** testam funções puras de `src/lib/` e schemas de `src/schemas/`
+(embaralhar o quiz, montar as respostas na ordem original, textos do contador
+de notificações, situação do termo dos responsáveis etc.). A
 pasta espelha `src/`: o teste de `src/lib/text.ts` fica em
 `tests/unit/lib/text.test.ts`. Rodam em segundos, sem navegador:
 
@@ -256,6 +264,11 @@ Uma tela nova que use nuqs **fora** da área logada precisa do `<Suspense>`.
 - **Tokens no `localStorage`.** A API devolve os tokens no corpo, não em cookie.
   Guardá-los em cookie `httpOnly` exigiria mudar o backend; fica como evolução
   de segurança.
+- **LGPD: o termo é da escola, não do aluno.** A caixa na criação de aluno
+  registra que a escola recebeu o termo em papel assinado pelos responsáveis.
+  Alunos antigos aparecem com "Termo pendente" até alguém registrar. Revogar
+  desativa a conta; exportar e eliminar os dados ficam só com o admin, e a
+  eliminação pede para digitar o nome do aluno.
 - **Permissões nas duas pontas.** O front esconde o que o papel não pode fazer,
   e o backend recusa de qualquer forma (ex.: professor só cadastra alunos nas
   próprias turmas).
