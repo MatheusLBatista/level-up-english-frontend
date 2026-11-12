@@ -1,11 +1,11 @@
 # Plano de testes — LevelUp English (frontend)
 
-| Item            | Valor                                                                                                    |
-| --------------- | -------------------------------------------------------------------------------------------------------- |
-| Sistema         | LevelUp English — interface web (Next.js)                                                                |
-| Tipo de teste   | Ponta a ponta (E2E) com Cypress e unitário com Vitest                                                    |
-| Versão          | 1.7 — LGPD: páginas legais, termo dos responsáveis, revogação, exportação, eliminação e ranking da turma |
-| Última execução | 12/11/2026 — 160 casos E2E e 38 unitários, todos aprovados                                               |
+| Item            | Valor                                                                                                 |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| Sistema         | LevelUp English — interface web (Next.js)                                                             |
+| Tipo de teste   | Ponta a ponta (E2E) com Cypress e unitário com Vitest                                                 |
+| Versão          | 1.8 — termo dos responsáveis obrigatório na criação (sem estado pendente) e reativação com termo novo |
+| Última execução | 12/11/2026 — 161 casos E2E (159 na suíte completa + 2 reexecutados, ver seção 9) e 37 unitários       |
 
 ## 1. Objetivo
 
@@ -19,28 +19,28 @@ funcionando.
 
 ### 2.1 Dentro do escopo
 
-| Área                 | O que é testado                                                                                                                                                                                                                                                  |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                                                                                                                                          |
-| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                                                                                                                                                 |
-| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                                                                                                                                            |
-| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor, radar de desempenho                                                                                                                              |
-| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, perguntas do quiz em ordem aleatória com envio na ordem original, rascunho, saída, refazer, erros                                                                                                            |
-| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL, opção de não aparecer no ranking geral                                                                                                                                              |
-| Aluno — Perfil       | Dados, turma, conquistas, edição do nome, troca de senha e foto de perfil                                                                                                                                                                                        |
-| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno com o radar de desempenho, radar da turma, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis                                                                         |
-| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, campos de pergunta que crescem com o texto, limite de caracteres e contador, edição, desativação e reativação                                                                                      |
-| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                                                                                                                                            |
-| Professor — Perfil   | Crachá, foto de perfil, turmas com atalhos e atividade recente                                                                                                                                                                                                   |
-| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                                                                                                                                       |
-| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                                                                                                                                           |
-| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                                                                                                                                                 |
-| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                                                                                                                                      |
-| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                                                                                                                                     |
-| Radar de desempenho  | Notas por tipo de missão comparadas com a turma, filtro de período, tipo sem nota, aluno sem turma e estado vazio                                                                                                                                                |
-| Aluno — Notificações | Sino com contador e consulta periódica (pausada com a aba oculta), painel paginado, estados vazio e de erro, marcar como lida (otimista, com desfazer), marcar todas e navegação por tipo, painel no celular                                                     |
-| LGPD                 | Páginas públicas de privacidade, termos e termo dos responsáveis (impressão); checkbox do termo na criação; selo e filtro de termo pendente; registro e revogação do termo; exportação e eliminação dos dados pelo admin; ranking da turma oculto pelo professor |
-| Funções puras        | Embaralhamento do quiz, respostas na ordem original, texto em linha única, textos do contador de notificações, situação do termo dos responsáveis, confirmação da eliminação e validação do cadastro de aluno (testes unitários)                                 |
+| Área                 | O que é testado                                                                                                                                                                                                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Autenticação         | Login dos três papéis, validação do formulário, credenciais inválidas, conta desativada                                                                                                                                                                                                                                  |
+| Recuperação de senha | "Esqueci minha senha", nova senha por link e criação de senha no primeiro acesso                                                                                                                                                                                                                                         |
+| Sessão               | Rotas protegidas, sessão mantida ao recarregar, logout, renovação do token, sessão encerrada pela API                                                                                                                                                                                                                    |
+| Aluno — Dashboard    | Saudação, XP, nível, contagem de missões, próxima missão, recomendadas, histórico de XP, anotação do professor, radar de desempenho                                                                                                                                                                                      |
+| Aluno — Missões      | Listagem e filtro, resolução de quiz e vocabulário, perguntas do quiz em ordem aleatória com envio na ordem original, rascunho, saída, refazer, erros                                                                                                                                                                    |
+| Aluno — Ranking      | Ranking da turma e geral, ordem, destaque do aluno, escolha guardada na URL, opção de não aparecer no ranking geral                                                                                                                                                                                                      |
+| Aluno — Perfil       | Dados, turma, conquistas, edição do nome, troca de senha e foto de perfil                                                                                                                                                                                                                                                |
+| Professor — Painel   | Alunos da turma, pesquisa, seleção, ficha do aluno com o radar de desempenho, radar da turma, aplicar e desfazer atitudes, ajustar XP, cadastrar aluno, acesso às telas de outros papéis                                                                                                                                 |
+| Professor — Missões  | Listagem, paginação e filtro, criação com validação por tipo, campos de pergunta que crescem com o texto, limite de caracteres e contador, edição, desativação e reativação                                                                                                                                              |
+| Professor — Ranking  | Ranking da turma escolhida no seletor e ranking geral                                                                                                                                                                                                                                                                    |
+| Professor — Perfil   | Crachá, foto de perfil, turmas com atalhos e atividade recente                                                                                                                                                                                                                                                           |
+| Admin — Turmas       | Listagem, busca, filtro por status, criação com validação, nome repetido, edição, desativação e reativação                                                                                                                                                                                                               |
+| Admin — Alunos       | Listagem paginada, busca, filtro por turma, inativos, perfil, edição, desativação e cadastro sem turma                                                                                                                                                                                                                   |
+| Admin — Professores  | Listagem com turmas, busca, desativados, cadastro, edição das turmas, aviso de turmas sem professor ao desativar                                                                                                                                                                                                         |
+| Admin — Atitudes     | Listagem com XP com sinal, desativadas, criação de punição com prévia, edição e desativação                                                                                                                                                                                                                              |
+| Tema claro e escuro  | Tema do aparelho na primeira visita, botão no login e no cabeçalho, escolha guardada e mantida ao recarregar                                                                                                                                                                                                             |
+| Radar de desempenho  | Notas por tipo de missão comparadas com a turma, filtro de período, tipo sem nota, aluno sem turma e estado vazio                                                                                                                                                                                                        |
+| Aluno — Notificações | Sino com contador e consulta periódica (pausada com a aba oculta), painel paginado, estados vazio e de erro, marcar como lida (otimista, com desfazer), marcar todas e navegação por tipo, painel no celular                                                                                                             |
+| LGPD                 | Páginas públicas de privacidade, termos e termo dos responsáveis (impressão); checkbox obrigatório do termo na criação (botão desabilitado sem ele); datas de registro e revogação na ficha; revogação e reativação com termo novo; exportação e eliminação dos dados pelo admin; ranking da turma oculto pelo professor |
+| Funções puras        | Embaralhamento do quiz, respostas na ordem original, texto em linha única, textos do contador de notificações, situação do termo dos responsáveis, confirmação da eliminação e validação do cadastro de aluno (testes unitários)                                                                                         |
 
 ### 2.2 Fora do escopo (nesta versão)
 
@@ -121,13 +121,13 @@ A configuração fica em `cypress.config.ts`. A URL da API usada pelos testes
 Os usuários vêm do seed de demonstração do backend (`npm run seed:demo`), todos
 com a senha `Senha@123`, e estão em `cypress/fixtures/users.json`.
 
-| Papel nos testes    | Usuário                             | Por que foi escolhido                                                                                    |
-| ------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Aluno com histórico | `ana.ferreira@levelup.edu.br`       | Aluna destaque: tem XP, histórico, missões com nota máxima e outras abaixo de 100%.                      |
-| Aluno novo          | `arthur.nascimento@levelup.edu.br`  | Entrou na turma há pouco: nenhuma missão feita, XP zerado e o único com termo dos responsáveis pendente. |
-| Professor           | `carla.mendes@levelup.edu.br`       | Professora do 1º Ano A: 8 alunos e as 7 missões da turma, todas criadas por ela.                         |
-| Admin               | `renata.albuquerque@levelup.edu.br` | Coordenação da escola.                                                                                   |
-| Conta desativada    | `nicolas.pinto@levelup.edu.br`      | Aluno que o seed desativa.                                                                               |
+| Papel nos testes    | Usuário                             | Por que foi escolhido                                                               |
+| ------------------- | ----------------------------------- | ----------------------------------------------------------------------------------- |
+| Aluno com histórico | `ana.ferreira@levelup.edu.br`       | Aluna destaque: tem XP, histórico, missões com nota máxima e outras abaixo de 100%. |
+| Aluno novo          | `arthur.nascimento@levelup.edu.br`  | Entrou na turma há pouco: nenhuma missão feita e XP zerado.                         |
+| Professor           | `carla.mendes@levelup.edu.br`       | Professora do 1º Ano A: 8 alunos e as 7 missões da turma, todas criadas por ela.    |
+| Admin               | `renata.albuquerque@levelup.edu.br` | Coordenação da escola.                                                              |
+| Conta desativada    | `nicolas.pinto@levelup.edu.br`      | Aluno que o seed desativa.                                                          |
 
 **Cuidado:** os testes contam com o Arthur sem nenhuma missão feita. Ele não
 deve ser usado em demonstrações; se resolver missões com ele, rode o
@@ -261,7 +261,7 @@ demonstração.
 | CT-PNL-07 | Ajuste sem quantidade              | I    | Mostra "Informe a quantidade de XP." sem chamar a API.                                                                                                                             |
 | CT-PNL-08 | Adicionar XP                       | I+S  | Envia `{ student, amount, reason }` para cada aluno marcado e confirma "+50 XP por aluno".                                                                                         |
 | CT-PNL-09 | Remover mais XP do que o aluno tem | I+S  | Antes de confirmar, avisa que o XP vai parar em 0; depois, mostra quanto foi removido de fato.                                                                                     |
-| CT-PNL-10 | Validação do novo aluno            | I    | Nome com 1 letra e e-mail inválido são barrados sem chamar a API.                                                                                                                  |
+| CT-PNL-10 | Validação do novo aluno            | I    | Com o termo marcado, nome com 1 letra e e-mail inválido são barrados sem chamar a API.                                                                                             |
 | CT-PNL-11 | E-mail já cadastrado               | I    | Com o termo marcado, a API responde 400 e o erro aparece no próprio campo de e-mail.                                                                                               |
 | CT-PNL-12 | Cadastrar aluno                    | I+S  | Envia nome, e-mail normalizado, a turma do painel e `guardian_consent: true`; mostra "Aluno criado".                                                                               |
 | CT-PNL-13 | Acesso a `/dashboard`              | I    | Tela de aluno: o professor volta para `/painel`.                                                                                                                                   |
@@ -426,15 +426,15 @@ Rodam com `npm run test`. Cada arquivo testa o módulo de mesmo nome e caminho
 em `src/` (`tests/unit/lib/` → `src/lib/`, `tests/unit/schemas/` →
 `src/schemas/`).
 
-| Arquivo                   |  Casos | O que garantem                                                                                                                                                                                                                                                                                                   |
-| ------------------------- | -----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `shuffle.test.ts`         |      4 | O embaralhamento (Fisher–Yates) mantém os mesmos elementos, não altera a lista original, segue o número sorteado e aceita lista vazia.                                                                                                                                                                           |
-| `quiz.test.ts`            |      7 | Cada pergunta embaralhada guarda a posição original; as respostas dadas na ordem da tela viram a lista na ordem da API, do mesmo tamanho; a tela lê as respostas na ordem certa.                                                                                                                                 |
-| `text.test.ts`            |      4 | Quebras de linha coladas (inclusive as do Windows e linhas em branco) viram um espaço só; texto de uma linha não muda.                                                                                                                                                                                           |
-| `notifications.test.ts`   |      6 | O contador mostra "9+" acima de 9; o `aria-label` usa singular e plural; cada tipo de notificação leva à tela certa.                                                                                                                                                                                             |
-| `consent.test.ts`         |     14 | A situação do termo segue a ordem do backend (eliminado > revogado > registrado > pendente, usuário antigo = pendente); registrar só aluno ativo pendente; revogar só pendente ou registrado; nome do arquivo exportado; confirmação da eliminação pelo nome (sem diferenciar maiúsculas e espaços, com acento). |
-| `schemas/student.test.ts` |      3 | O cadastro de aluno exige o termo dos responsáveis marcado, com a mesma mensagem do backend, e normaliza o e-mail.                                                                                                                                                                                               |
-| **Total**                 | **38** |                                                                                                                                                                                                                                                                                                                  |
+| Arquivo                   |  Casos | O que garantem                                                                                                                                                                                                                                                                                   |
+| ------------------------- | -----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `shuffle.test.ts`         |      4 | O embaralhamento (Fisher–Yates) mantém os mesmos elementos, não altera a lista original, segue o número sorteado e aceita lista vazia.                                                                                                                                                           |
+| `quiz.test.ts`            |      7 | Cada pergunta embaralhada guarda a posição original; as respostas dadas na ordem da tela viram a lista na ordem da API, do mesmo tamanho; a tela lê as respostas na ordem certa.                                                                                                                 |
+| `text.test.ts`            |      4 | Quebras de linha coladas (inclusive as do Windows e linhas em branco) viram um espaço só; texto de uma linha não muda.                                                                                                                                                                           |
+| `notifications.test.ts`   |      6 | O contador mostra "9+" acima de 9; o `aria-label` usa singular e plural; cada tipo de notificação leva à tela certa.                                                                                                                                                                             |
+| `consent.test.ts`         |     13 | A situação do termo segue a ordem do backend (eliminado > revogado > registrado; não existe pendente); revogar só termo registrado; reativar aluno revogado exige termo novo; nome do arquivo exportado; confirmação da eliminação pelo nome (sem diferenciar maiúsculas e espaços, com acento). |
+| `schemas/student.test.ts` |      3 | O cadastro de aluno exige o termo dos responsáveis marcado, com a mesma mensagem do backend, e normaliza o e-mail.                                                                                                                                                                               |
+| **Total**                 | **37** |                                                                                                                                                                                                                                                                                                  |
 
 ### 7.21 LGPD — Páginas legais — `cypress/e2e/auth/legal.cy.ts`
 
@@ -449,35 +449,36 @@ Páginas públicas, abertas sem sessão (como faria um responsável sem conta).
 
 ### 7.22 LGPD — Admin — `cypress/e2e/admin/privacy.cy.ts`
 
-Leituras (lista, filtro e exportação) vão no backend real, com o Arthur, único
-aluno com termo pendente no `seed:demo`. Registrar e eliminar são simulados: a
+Desde a v1.8 não existe termo pendente: o backend só cria aluno com o termo, e
+todo aluno do `seed:demo` nasce com ele. Leituras (ficha e exportação) vão no
+backend real com o Arthur; criar, reativar e eliminar são simulados — a
 eliminação é irreversível e estragaria a demonstração.
 
-| ID        | Caso                               | Modo | Resultado esperado                                                                                                                                                             |
-| --------- | ---------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| CT-LGA-01 | Criar sem o termo                  | S    | Sem marcar a caixa, aparece a mensagem do termo, a caixa fica com `aria-invalid` e nenhuma requisição é enviada.                                                               |
-| CT-LGA-02 | Modelo do termo                    | I    | O link "Imprimir termo" do formulário aponta para `/termo-responsaveis` e abre em nova aba.                                                                                    |
-| CT-LGA-03 | Recusa do backend                  | S    | Com 400 em `path: guardian_consent`, a mensagem aparece no formulário.                                                                                                         |
-| CT-LGA-04 | Filtro "Termo pendente"            | I    | A URL ganha `?termo=pendente`, a lista tem o mesmo tamanho da consulta `guardian_consent=pending` na API e o Arthur aparece com o selo.                                        |
-| CT-LGA-05 | Registrar o termo depois           | S    | A ficha mostra "Termo pendente"; depois de confirmar, passa a "Termo registrado" e o botão some.                                                                               |
-| CT-LGA-06 | Exportar dados                     | I    | `GET /users/:id/data-export` responde 200 e o arquivo `dados-aluno-<id>-<data>.json` baixado tem o e-mail do aluno e as sete seções da exportação.                             |
-| CT-LGA-07 | Eliminar com confirmação pelo nome | S    | O botão fica desabilitado com o nome incompleto e libera com o nome completo (em maiúsculas); envia `{ confirm: true }`; a ficha mostra "Dados eliminados" e "Aluno removido". |
-| CT-LGA-08 | Eliminação recusada                | S    | Com 409, a mensagem do backend aparece no diálogo.                                                                                                                             |
+| ID        | Caso                               | Modo | Resultado esperado                                                                                                                                                                             |
+| --------- | ---------------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-LGA-01 | Criar sem o termo                  | S    | Com a caixa desmarcada, "Criar aluno" fica desabilitado; marcar libera e desmarcar desabilita de novo; nenhuma requisição é enviada.                                                           |
+| CT-LGA-02 | Modelo do termo                    | I    | O link "Imprimir termo" do formulário aponta para `/termo-responsaveis` e abre em nova aba.                                                                                                    |
+| CT-LGA-03 | Recusa do backend                  | S    | Com 400 em `path: guardian_consent`, a mensagem aparece no formulário.                                                                                                                         |
+| CT-LGA-04 | Data do termo na ficha             | I    | A ficha do Arthur mostra "Termo registrado" e a data igual a `guardian_consent_at` da API; não há data de revogação nem "Registrar termo".                                                     |
+| CT-LGA-05 | Reativar aluno revogado            | S    | Um aluno revogado aparece com o selo e a data da revogação na ficha; "Reativar" abre a confirmação, que só libera com o termo novo marcado e envia `{ active: true, guardian_consent: true }`. |
+| CT-LGA-06 | Exportar dados                     | I    | `GET /users/:id/data-export` responde 200 e o arquivo `dados-aluno-<id>-<data>.json` baixado tem o e-mail do aluno e as sete seções da exportação.                                             |
+| CT-LGA-07 | Eliminar com confirmação pelo nome | S    | O botão fica desabilitado com o nome incompleto e libera com o nome completo (em maiúsculas); envia `{ confirm: true }`; a ficha mostra "Dados eliminados" e "Aluno removido".                 |
+| CT-LGA-08 | Eliminação recusada                | S    | Com 409, a mensagem do backend aparece no diálogo.                                                                                                                                             |
 
 ### 7.23 LGPD — Professor — `cypress/e2e/teacher/consent.cy.ts`
 
-O aluno com termo pendente do `seed:demo` é de outra turma; por isso a lista
-real da turma da Carla é usada com o termo do primeiro aluno zerado na
-resposta. Registrar, revogar e ocultar o ranking são simulados.
+Usa a lista real da turma da Carla. Criar, revogar e ocultar o ranking são
+simulados.
 
-| ID        | Caso                       | Modo | Resultado esperado                                                                                                                    |
-| --------- | -------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| CT-LGP-01 | Selo de termo pendente     | I+S  | Só o cartão do aluno sem termo mostra "Termo pendente".                                                                               |
-| CT-LGP-02 | Registrar o termo          | S    | Pela ficha, a situação passa a "Termo registrado".                                                                                    |
-| CT-LGP-03 | Revogar o consentimento    | S    | A confirmação avisa que a conta é desativada; depois, a ficha mostra "Consentimento revogado" e "Inativo", e o botão de revogar some. |
-| CT-LGP-04 | Revogação recusada         | S    | Com 403 (aluno de outra turma), a mensagem do backend aparece no diálogo.                                                             |
-| CT-LGP-05 | Sem exportar nem eliminar  | I    | A ficha do professor tem "Termo dos responsáveis", mas não a seção "Dados do aluno (LGPD)".                                           |
-| CT-LGP-06 | Ocultar o ranking da turma | S    | O interruptor envia `{ class_ranking_visible: false }` e só muda depois que a lista de turmas volta com o valor novo.                 |
+| ID        | Caso                       | Modo | Resultado esperado                                                                                                                                                        |
+| --------- | -------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CT-LGP-01 | Sem selo de termo          | I    | Nenhum cartão do painel mostra "Termo pendente": todo aluno tem o termo.                                                                                                  |
+| CT-LGP-02 | Criar sem o termo          | I    | No "Novo aluno" do painel, "Criar aluno" fica desabilitado sem a caixa marcada e nada é enviado.                                                                          |
+| CT-LGP-03 | Data do termo na ficha     | I    | A ficha mostra "Termo registrado" e a data igual à da API, sem "Registrar termo".                                                                                         |
+| CT-LGP-04 | Revogar o consentimento    | S    | A confirmação avisa que a conta é desativada; depois, a ficha mostra "Consentimento revogado", "Inativo", as datas de registro e de revogação, e o botão de revogar some. |
+| CT-LGP-05 | Revogação recusada         | S    | Com 403 (aluno de outra turma), a mensagem do backend aparece no diálogo.                                                                                                 |
+| CT-LGP-06 | Sem exportar nem eliminar  | I    | A ficha do professor tem "Termo dos responsáveis", mas não a seção "Dados do aluno (LGPD)".                                                                               |
+| CT-LGP-07 | Ocultar o ranking da turma | S    | O interruptor envia `{ class_ranking_visible: false }` e só muda depois que a lista de turmas volta com o valor novo.                                                     |
 
 ## 8. Critérios
 
@@ -518,18 +519,19 @@ Execução de 12/11/2026, ambiente da seção 4, com o backend na branch
 | Tema claro e escuro     | `theme/theme.cy.ts`                |       5 |         5 |      0 |
 | LGPD — páginas legais   | `auth/legal.cy.ts`                 |       4 |         4 |      0 |
 | LGPD — admin            | `admin/privacy.cy.ts`              |       8 |         8 |      0 |
-| LGPD — professor        | `teacher/consent.cy.ts`            |       6 |         6 |      0 |
-| **Total E2E**           |                                    | **160** |   **160** |  **0** |
+| LGPD — professor        | `teacher/consent.cy.ts`            |       7 |         7 |      0 |
+| **Total E2E**           |                                    | **161** |   **161** |  **0** |
 
-Tempo total: 2 minutos e 57 segundos.
+Tempo total da suíte completa: cerca de 3 minutos com a máquina livre (5
+minutos com ela carregada).
 
-Na primeira execução da v1.7, CT-TUR-06 e CT-TUR-07 falharam porque o
-formulário de turma passou a enviar `class_ranking_visible` e os testes
-conferiam o corpo antigo. Era mudança de regra, não defeito: os dois casos
-foram atualizados (e o CT-TUR-07 passou a desligar o ranking) e a suíte foi
-rodada de novo do zero, com o resultado acima.
+Na última suíte completa da v1.8, com a máquina carregada (load average acima
+de 10), dois casos estouraram o tempo limite: CT-LGP-06 e CT-NOT-03. Os dois
+passaram ao serem rodados de novo, e a tabela acima conta essa reexecução. O
+CT-NOT-03 falha de forma intermitente também no código anterior à v1.8 (ver
+seção 11); não é efeito das mudanças desta versão.
 
-**Unitários (Vitest):** 38 casos em 6 arquivos (seção 7.20), 38 aprovados, em
+**Unitários (Vitest):** 37 casos em 6 arquivos (seção 7.20), 37 aprovados, em
 menos de 1 segundo.
 
 ## 10. Defeitos encontrados
@@ -549,10 +551,9 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 - Os testes integrados dependem dos dados do `seed:demo`. Se os dados mudarem
   (por exemplo, o Arthur resolver missões), alguns casos falham sem que haja
   defeito; a solução é rodar o seed de novo.
-- Os testes de LGPD contam com o Arthur como único aluno com termo pendente
-  (seed da branch 56 do backend). Com o seed antigo, todos os alunos aparecem
-  pendentes e o CT-LGA-04 falha.
-- Eliminar, revogar e registrar o termo são sempre simulados no Cypress; as
+- Os testes de LGPD contam com o seed da branch 56 do backend a partir do
+  commit `582d015`, em que todo aluno nasce com o termo registrado.
+- Criar, revogar, reativar e eliminar são sempre simulados no Cypress; as
   regras do backend para esses casos (recusas 403/409, anonimização) são
   cobertas pela suíte Jest da API.
 - Os testes do admin contam com dados do seed: cada turma com um professor
@@ -567,6 +568,11 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
   reage ao mouse simulado pelo Cypress. O texto "Sem missões concluídas" é
   conferido pelo resumo para leitores de tela (CT-DES-03), e o tooltip foi
   conferido à mão.
+- O CT-NOT-03 (consulta periódica do sino) é instável: o teste avança o
+  relógio com `cy.tick` logo depois da primeira consulta e, com a máquina
+  carregada, às vezes o próximo agendamento ainda não existe. Falha de forma
+  intermitente desde antes da v1.8; o caminho é esperar o contador aparecer na
+  tela antes de avançar o relógio.
 - O frontend roda em modo de desenvolvimento; a primeira abertura de cada tela é
   mais lenta, por isso o tempo limite por comando é de 10 s.
 
@@ -574,17 +580,18 @@ senha atual em "Alterar senha" encerrava a sessão) e garante que ele não volte
 
 | Versão | Escopo planejado                                 | Pasta |
 | ------ | ------------------------------------------------ | ----- |
-| 1.8    | Fluxos principais em tela de celular (390 × 844) | todas |
+| 1.9    | Fluxos principais em tela de celular (390 × 844) | todas |
 
 ## 12. Histórico de versões
 
-| Versão | Data       | Mudança                                                                                                                                                                                                                                                      |
-| ------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                                                                                                                                                                                                                    |
-| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).                                                                                                                                                                                            |
-| 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02.                                                                                                                                                                                   |
-| 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                                                                                                                                                                                                               |
-| 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                                                                                                                                                                                                            |
-| 1.5    | 28/10/2026 | Radar de desempenho no dashboard, na ficha do aluno e no painel da turma (6 casos).                                                                                                                                                                          |
-| 1.6    | 29/10/2026 | Quiz embaralhado (1 caso), campos de pergunta que crescem (2), visibilidade no ranking geral (2, criados em 28/10), notificações (17) e testes unitários (21). Seção 9 refeita com a suíte completa.                                                         |
-| 1.7    | 12/11/2026 | LGPD: páginas legais (4 casos), termo, exportação e eliminação no admin (8), termo, revogação e ranking da turma no professor (6), ranking oculto para o aluno (1); CT-ALU-08, CT-PNL-11, CT-PNL-12, CT-TUR-06 e CT-TUR-07 atualizados; 17 testes unitários. |
+| Versão | Data       | Mudança                                                                                                                                                                                                                                                                                                                                                                           |
+| ------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0    | 19/10/2026 | Autenticação e telas do aluno (45 casos).                                                                                                                                                                                                                                                                                                                                         |
+| 1.1    | 21/10/2026 | Telas do professor: painel, missões, perfil e ranking (27 casos).                                                                                                                                                                                                                                                                                                                 |
+| 1.2    | 22/10/2026 | Telas do admin: turmas, alunos, professores e atitudes (31 casos); DEF-02.                                                                                                                                                                                                                                                                                                        |
+| 1.3    | 22/10/2026 | Tema claro e escuro (5 casos).                                                                                                                                                                                                                                                                                                                                                    |
+| 1.4    | 27/10/2026 | Foto de perfil do aluno e do professor (5 casos).                                                                                                                                                                                                                                                                                                                                 |
+| 1.5    | 28/10/2026 | Radar de desempenho no dashboard, na ficha do aluno e no painel da turma (6 casos).                                                                                                                                                                                                                                                                                               |
+| 1.6    | 29/10/2026 | Quiz embaralhado (1 caso), campos de pergunta que crescem (2), visibilidade no ranking geral (2, criados em 28/10), notificações (17) e testes unitários (21). Seção 9 refeita com a suíte completa.                                                                                                                                                                              |
+| 1.7    | 12/11/2026 | LGPD: páginas legais (4 casos), termo, exportação e eliminação no admin (8), termo, revogação e ranking da turma no professor (6), ranking oculto para o aluno (1); CT-ALU-08, CT-PNL-11, CT-PNL-12, CT-TUR-06 e CT-TUR-07 atualizados; 17 testes unitários.                                                                                                                      |
+| 1.8    | 12/11/2026 | O backend tirou o estado "termo pendente": CT-LGA-04, CT-LGA-05, CT-LGP-01 e CT-LGP-02 substituídos (data do termo na ficha, reativação com termo novo, sem selo, criar sem termo no painel), CT-LGA-01 passa a conferir o botão desabilitado, CT-LGP-03 novo (data na ficha) e CT-LGP-04 confere as datas da revogação; CT-PNL-10 marca o termo antes de validar. Unitários: 37. |

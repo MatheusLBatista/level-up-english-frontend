@@ -102,7 +102,6 @@ token.
 | DELETE | `/users/{id}`                         | A, P     |
 | GET    | `/users/{id}/xp-history`              | A, P, Al |
 | POST   | `/users/recalculate-levels`           | A        |
-| PATCH  | `/users/{id}/guardian-consent`        | A, P     |
 | POST   | `/users/{id}/guardian-consent/revoke` | A, P     |
 | GET    | `/users/{id}/data-export`             | A        |
 | POST   | `/users/{id}/erasure`                 | A        |
@@ -110,27 +109,26 @@ token.
 Só o admin edita outros usuários. Professor e aluno editam só a própria conta,
 e sem mudar papel, XP, nível, turma, status, e-mail ou senha (a senha tem rota
 própria). Filtros do `GET /users`: `role`, `active`, `class` (`none` = sem turma,
-só admin) e `guardian_consent` (`pending`, `recorded` ou `revoked`).
+só admin).
 
 `DELETE /users/{id}` **desativa** a conta (preenche `deactivated_at`); não
 apaga nada.
 
 ### LGPD (termo dos responsáveis e direitos do titular)
 
-| Campo do usuário               | Significado                                                                  |
-| ------------------------------ | ---------------------------------------------------------------------------- |
-| `guardian_consent_at`          | Quando a escola registrou o termo em papel. `null` sem revogação = pendente. |
-| `guardian_consent_recorded_by` | Id de quem registrou.                                                        |
-| `guardian_consent_revoked_at`  | Quando os responsáveis revogaram; a revogação desativa a conta.              |
-| `deactivated_at`               | Quando a conta foi desativada; conta o prazo de retenção (12 meses padrão).  |
-| `anonymized_at`                | Quando os dados pessoais foram eliminados ("Aluno removido").                |
+| Campo do usuário               | Significado                                                                                              |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `guardian_consent_at`          | Quando a escola registrou o termo em papel. Todo aluno nasce com ele (`null` só para professor e admin). |
+| `guardian_consent_recorded_by` | Id de quem registrou.                                                                                    |
+| `guardian_consent_revoked_at`  | Quando os responsáveis revogaram; a revogação desativa a conta.                                          |
+| `deactivated_at`               | Quando a conta foi desativada; conta o prazo de retenção (12 meses padrão).                              |
+| `anonymized_at`                | Quando os dados pessoais foram eliminados ("Aluno removido").                                            |
 
 - `POST /auth/register-student` (e `POST /users` para aluno) exige
   `guardian_consent: true`; sem ele, 400 em `path: guardian_consent`.
-- `PATCH /users/{id}/guardian-consent` registra o termo depois; 409 se já foi
-  registrado ou se o aluno está desativado.
 - `POST /users/{id}/guardian-consent/revoke` revoga e desativa; 409 se já foi
-  revogado. Reativar a conta depois volta o termo para pendente.
+  revogado. Reativar exige um termo novo: `PATCH /users/{id}` com
+  `{ active: true, guardian_consent: true }` (só admin); sem ele, 409.
 - `GET /users/{id}/data-export` devolve em `data` todos os dados do aluno
   (`student`, `mission_progress`, `attitude_logs`, `xp_adjustments`,
   `notifications`, `rankings`); o front baixa como `.json`.
