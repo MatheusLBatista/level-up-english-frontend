@@ -23,6 +23,7 @@
   --destructive: oklch(0.53 0.2 25);
   --border: oklch(0.88 0.012 260);
   --input: oklch(0.62 0.03 290);
+  --field: oklch(0.96 0.032 290);
   --ring: oklch(0.45 0.14 290);
   --chart-1: oklch(0.45 0.13 235);
   --chart-2: oklch(0.48 0.19 310);
@@ -69,6 +70,7 @@
   --destructive: oklch(0.7 0.19 20);
   --border: oklch(0.36 0.045 290);
   --input: oklch(0.52 0.05 290);
+  --field: oklch(0.52 0.05 290 / 30%);
   --ring: oklch(0.86 0.07 85);
   --chart-1: oklch(0.754 0.139 232.7);
   --chart-2: oklch(0.713 0.179 311.8);
@@ -113,6 +115,7 @@
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
+  --color-field: var(--field);
   --color-ring: var(--ring);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
