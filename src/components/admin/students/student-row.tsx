@@ -4,6 +4,11 @@ import { ConsentBadge } from "@/components/shared/consent-badge";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -49,9 +54,14 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
         </div>
       </div>
 
-      <div className="w-36 shrink-0 text-sm">
+      <div className="min-w-0 text-sm sm:w-40 sm:shrink-0">
         {student.class ? (
-          <span className="truncate">{classLabel ?? "…"}</span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="block truncate">{classLabel ?? "…"}</span>
+            </TooltipTrigger>
+            {classLabel && <TooltipContent>{classLabel}</TooltipContent>}
+          </Tooltip>
         ) : (
           <span className="text-brand-level flex items-center gap-1.5 text-xs font-medium">
             <TriangleAlertIcon className="size-3.5" />
