@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
-import { Controller, useForm, useWatch, type FieldPath } from "react-hook-form";
+import { Controller, useWatch, type FieldPath } from "react-hook-form";
 import { ClassSelect } from "@/components/shared/class-select";
+import { DraftRestoredNotice } from "@/components/shared/draft-restored-notice";
 import { QuestionsEditor } from "@/components/missions/questions-editor";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { useDraftForm } from "@/hooks/use-draft-form";
 import type { useSaveMission } from "@/hooks/use-save-mission";
 import { ApiError } from "@/lib/api";
 import { fitQuestionsToType, getMissionFormDefaults } from "@/lib/mission-form";
@@ -71,6 +73,8 @@ type MissionFormProps = {
   defaultClassId: string | null;
   mutation: ReturnType<typeof useSaveMission>;
   onSaved: () => void;
+  /** Avisa se o formulário está diferente do original (há rascunho salvo). */
+  onDirtyChange: (dirty: boolean) => void;
 };
 
 export function MissionForm({
@@ -79,13 +83,17 @@ export function MissionForm({
   defaultClassId,
   mutation,
   onSaved,
+  onDirtyChange,
 }: MissionFormProps) {
   const isEditing = mission !== null;
-
-  const form = useForm<MissionFormInput>({
-    resolver: zodResolver(missionFormSchema),
-    defaultValues: getMissionFormDefaults(mission, defaultClassId),
-  });
+  const { form, restoredDraft, discardDraft, clearDraft } =
+    useDraftForm<MissionFormInput>({
+      scope: "mission-form",
+      itemId: mission?._id ?? null,
+      defaultValues: () => getMissionFormDefaults(mission, defaultClassId),
+      resolver: zodResolver(missionFormSchema),
+      onDirtyChange,
+    });
 
   const type = useWatch({ control: form.control, name: "type" });
   const { errors } = form.formState;
@@ -117,7 +125,10 @@ export function MissionForm({
     mutation.mutate(
       { missionId: mission?._id ?? null, values },
       {
-        onSuccess: onSaved,
+        onSuccess: () => {
+          clearDraft();
+          onSaved();
+        },
         onError: (error) => {
           if (!(error instanceof ApiError)) {
             return;
@@ -139,6 +150,14 @@ export function MissionForm({
         <DialogTitle>{isEditing ? "Editar missão" : "Nova missão"}</DialogTitle>
         <DialogDescription>Crie conteúdos para seus alunos.</DialogDescription>
       </DialogHeader>
+
+      {restoredDraft && (
+        <DraftRestoredNotice
+          savedAt={restoredDraft.savedAt}
+          onDiscard={discardDraft}
+          disabled={mutation.isPending}
+        />
+      )}
 
       <form
         noValidate

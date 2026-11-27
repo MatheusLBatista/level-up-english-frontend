@@ -2,8 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon, SaveIcon } from "lucide-react";
-import { useForm, useWatch } from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import { AttitudeCard } from "@/components/admin/attitudes/attitude-card";
+import { DraftRestoredNotice } from "@/components/shared/draft-restored-notice";
+import { UnsavedChangesDialog } from "@/components/shared/unsaved-changes-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +26,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useDraftDialog, useDraftForm } from "@/hooks/use-draft-form";
 import { useSaveAttitude } from "@/hooks/use-save-attitude";
 import { ApiError } from "@/lib/api";
 import { toAttitudeBody, toAttitudeFormValues } from "@/lib/attitudes";
@@ -43,24 +46,40 @@ export function AttitudeFormDialog({
   onClose,
 }: AttitudeFormDialogProps) {
   const mutation = useSaveAttitude();
-
-  function close() {
-    mutation.reset();
-    onClose();
-  }
-
-  function handleOpenChange(next: boolean) {
-    if (!next && !mutation.isPending) {
-      close();
-    }
-  }
+  const { close, handleOpenChange, onDirtyChange, confirmDialog } =
+    useDraftDialog({
+      open,
+      scope: "attitude-form",
+      itemId: attitude?._id ?? null,
+      isPending: mutation.isPending,
+      onClose: () => {
+        mutation.reset();
+        onClose();
+      },
+    });
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[90vh] gap-6 overflow-y-auto sm:max-w-md">
-        <AttitudeForm attitude={attitude} mutation={mutation} onSaved={close} />
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="max-h-[90vh] gap-6 overflow-y-auto sm:max-w-md">
+          <AttitudeForm
+            attitude={attitude}
+            mutation={mutation}
+            onSaved={close}
+            onDirtyChange={onDirtyChange}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <UnsavedChangesDialog
+        {...confirmDialog}
+        whereItComesBack={
+          attitude
+            ? "quando você editar esta atitude de novo"
+            : "na próxima vez que você criar uma atitude"
+        }
+      />
+    </>
   );
 }
 
@@ -76,13 +95,23 @@ type AttitudeFormProps = {
   attitude: Attitude | null;
   mutation: ReturnType<typeof useSaveAttitude>;
   onSaved: () => void;
+  onDirtyChange: (dirty: boolean) => void;
 };
 
-function AttitudeForm({ attitude, mutation, onSaved }: AttitudeFormProps) {
-  const form = useForm<AttitudeFormInput>({
-    resolver: zodResolver(attitudeFormSchema),
-    defaultValues: toAttitudeFormValues(attitude),
-  });
+function AttitudeForm({
+  attitude,
+  mutation,
+  onSaved,
+  onDirtyChange,
+}: AttitudeFormProps) {
+  const { form, restoredDraft, discardDraft, clearDraft } =
+    useDraftForm<AttitudeFormInput>({
+      scope: "attitude-form",
+      itemId: attitude?._id ?? null,
+      defaultValues: () => toAttitudeFormValues(attitude),
+      resolver: zodResolver(attitudeFormSchema),
+      onDirtyChange,
+    });
 
   const { errors } = form.formState;
   const hasFieldErrors = Object.keys(errors).length > 0;
@@ -108,7 +137,10 @@ function AttitudeForm({ attitude, mutation, onSaved }: AttitudeFormProps) {
     mutation.mutate(
       { attitudeId: attitude?._id ?? null, values },
       {
-        onSuccess: onSaved,
+        onSuccess: () => {
+          clearDraft();
+          onSaved();
+        },
         onError: (error) => {
           if (!(error instanceof ApiError)) {
             return;
@@ -139,6 +171,14 @@ function AttitudeForm({ attitude, mutation, onSaved }: AttitudeFormProps) {
         </DialogTitle>
         <DialogDescription>Defina os prêmios ou punições.</DialogDescription>
       </DialogHeader>
+
+      {restoredDraft && (
+        <DraftRestoredNotice
+          savedAt={restoredDraft.savedAt}
+          onDiscard={discardDraft}
+          disabled={mutation.isPending}
+        />
+      )}
 
       <form
         noValidate

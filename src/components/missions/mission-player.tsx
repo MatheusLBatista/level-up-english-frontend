@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/auth-context";
+import { useBeforeUnload } from "@/hooks/use-before-unload";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useMissionById } from "@/hooks/use-mission";
 import { useSubmitMissionProgress } from "@/hooks/use-submit-mission-progression";
@@ -201,18 +202,7 @@ function MissionFlow({ mission, progress, level }: MissionFlowProps) {
     });
   }, [userId, mission._id, answers, currentQuestion, answeredCount, step]);
 
-  useEffect(() => {
-    if (!dirty) {
-      return;
-    }
-
-    function warn(event: BeforeUnloadEvent) {
-      event.preventDefault();
-    }
-
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
+  useBeforeUnload(dirty);
 
   function choose(answer: QuizAnswer) {
     setAnswers((list) => chooseAnswer(list, currentQuestion, answer));
