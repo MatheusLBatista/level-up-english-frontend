@@ -100,7 +100,7 @@ export function MissionForm({
   const hasFieldErrors = Object.keys(errors).length > 0;
 
   // Vocabulário/áudio criado antes das perguntas de checagem: o backend só
-  // aceita salvar alterações se vierem de 1 a 3 perguntas.
+  // aceita salvar alterações se vierem de 1 a 10 perguntas.
   const isLegacyCheck =
     mission !== null &&
     mission.type !== "quiz" &&
@@ -322,7 +322,7 @@ export function MissionForm({
           {isLegacyCheck && (
             <p className="border-brand-level/40 bg-brand-level/10 rounded-xl border p-3 text-sm">
               Esta missão foi criada antes das perguntas de checagem. Para
-              salvar alterações, cadastre de 1 a 3 perguntas sobre o conteúdo.
+              salvar alterações, cadastre de 1 a 10 perguntas sobre o conteúdo.
             </p>
           )}
 

@@ -7,8 +7,8 @@ export const questionLimits: Record<
   { min: number; max: number | null }
 > = {
   quiz: { min: 5, max: null },
-  vocabulary: { min: 1, max: 3 },
-  audio: { min: 1, max: 3 },
+  vocabulary: { min: 1, max: 10 },
+  audio: { min: 1, max: 10 },
 };
 
 export function describeQuestionLimit(type: MissionType) {
