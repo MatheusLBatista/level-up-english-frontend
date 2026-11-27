@@ -2,6 +2,7 @@ import { formatXpDelta } from "@/lib/attitudes";
 import { formatFullDate, formatRelativeTime } from "@/lib/date";
 import type { XpHistoryItem, XpHistoryKind } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 const kindLabels: Record<XpHistoryKind, string> = {
   attitude: "Atitude",
@@ -60,7 +61,12 @@ function HistoryItem({ item }: { item: XpHistoryItem }) {
       />
 
       <div className="flex items-baseline justify-between gap-3">
-        <p className="min-w-0 truncate text-sm font-semibold">{item.title}</p>
+        <TruncatedText
+          as="p"
+          className="min-w-0 truncate text-sm font-semibold"
+        >
+          {item.title}
+        </TruncatedText>
 
         <span
           className={cn(

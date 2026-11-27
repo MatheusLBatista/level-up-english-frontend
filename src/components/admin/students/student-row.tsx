@@ -4,13 +4,9 @@ import { ConsentBadge } from "@/components/shared/consent-badge";
 import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 const xpFormatter = new Intl.NumberFormat("pt-BR");
 
@@ -37,7 +33,9 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <p className="truncate font-semibold">{student.name}</p>
+            <TruncatedText as="p" className="truncate font-semibold">
+              {student.name}
+            </TruncatedText>
             {!student.active && (
               <Badge
                 variant="outline"
@@ -48,20 +46,20 @@ export function StudentRow({ student, classLabel, actions }: StudentRowProps) {
             )}
             <ConsentBadge student={student} />
           </div>
-          <p className="text-muted-foreground truncate text-xs">
+          <TruncatedText
+            as="p"
+            className="text-muted-foreground truncate text-xs"
+          >
             {student.email}
-          </p>
+          </TruncatedText>
         </div>
       </div>
 
       <div className="min-w-0 text-sm sm:w-40 sm:shrink-0">
         {student.class ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="block truncate">{classLabel ?? "…"}</span>
-            </TooltipTrigger>
-            {classLabel && <TooltipContent>{classLabel}</TooltipContent>}
-          </Tooltip>
+          <TruncatedText className="block truncate">
+            {classLabel ?? "…"}
+          </TruncatedText>
         ) : (
           <span className="text-brand-level flex items-center gap-1.5 text-xs font-medium">
             <TriangleAlertIcon className="size-3.5" />

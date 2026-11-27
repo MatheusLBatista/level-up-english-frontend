@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import type { ClassSummary } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type ClassRowProps = {
   item: ClassSummary;
@@ -22,7 +23,9 @@ export function ClassRow({ item, actions }: ClassRowProps) {
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="truncate font-semibold">{item.name}</p>
+          <TruncatedText as="p" className="truncate font-semibold">
+            {item.name}
+          </TruncatedText>
           {!item.active && (
             <Badge
               variant="outline"
@@ -35,7 +38,9 @@ export function ClassRow({ item, actions }: ClassRowProps) {
 
         {item.teacher ? (
           <p className="text-muted-foreground mt-1 flex items-center gap-2 text-xs">
-            <span className="truncate">{item.teacher.name}</span>
+            <TruncatedText className="truncate">
+              {item.teacher.name}
+            </TruncatedText>
           </p>
         ) : (
           <p className="text-brand-level mt-1 flex items-center gap-1.5 text-xs font-medium">

@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import type { ClassSummary } from "@/lib/types";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type ClassChecklistProps = {
   /** Turmas ativas da escola. */
@@ -58,9 +59,9 @@ export function ClassChecklist({
                 }
                 disabled={disabled}
               />
-              <span className="min-w-0 flex-1 truncate text-sm">
+              <TruncatedText className="min-w-0 flex-1 truncate text-sm">
                 {item.name}
-              </span>
+              </TruncatedText>
               {otherTeacher ? (
                 <span
                   className={

@@ -7,6 +7,7 @@ import type { LevelSnapshot } from "@/components/missions/mission-player";
 import { Button } from "@/components/ui/button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import type { Mission, MissionProgressResult } from "@/lib/types";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type MissionResultProps = {
   mission: Mission;
@@ -48,7 +49,9 @@ export function MissionResult({
           <span className="font-heading text-heading leading-none font-bold">
             Visto
           </span>
-          <span className="text-label max-w-28 truncate">{teacher}</span>
+          <TruncatedText className="text-label max-w-28 truncate">
+            {teacher}
+          </TruncatedText>
         </div>
       )}
 

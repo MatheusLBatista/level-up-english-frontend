@@ -3,6 +3,7 @@ import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import type { RankingEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 const xpFormatter = new Intl.NumberFormat("pt-BR");
 
@@ -54,7 +55,9 @@ export function RankingRow({
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="truncate font-semibold">{entry.user.name}</p>
+          <TruncatedText as="p" className="truncate font-semibold">
+            {entry.user.name}
+          </TruncatedText>
 
           {position === 1 && (
             <Badge className="bg-brand-level/20 text-brand-level text-label">

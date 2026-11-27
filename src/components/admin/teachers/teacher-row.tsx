@@ -3,6 +3,7 @@ import { UserAvatar } from "@/components/shared/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import type { ClassSummary, User } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type TeacherRowProps = {
   teacher: User;
@@ -28,7 +29,9 @@ export function TeacherRow({ teacher, classes, actions }: TeacherRowProps) {
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <p className="truncate font-semibold">{teacher.name}</p>
+            <TruncatedText as="p" className="truncate font-semibold">
+              {teacher.name}
+            </TruncatedText>
             {!teacher.active && (
               <Badge
                 variant="outline"
@@ -38,9 +41,12 @@ export function TeacherRow({ teacher, classes, actions }: TeacherRowProps) {
               </Badge>
             )}
           </div>
-          <p className="text-muted-foreground truncate text-xs">
+          <TruncatedText
+            as="p"
+            className="text-muted-foreground truncate text-xs"
+          >
             {teacher.email}
-          </p>
+          </TruncatedText>
         </div>
       </div>
 

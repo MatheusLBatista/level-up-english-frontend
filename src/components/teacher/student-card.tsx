@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 const xpFormatter = new Intl.NumberFormat("pt-BR");
 
@@ -58,7 +59,9 @@ export function StudentCard({
         />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1 sm:w-full sm:flex-none sm:gap-3">
-          <p className="truncate text-sm font-semibold">{student.name}</p>
+          <TruncatedText as="p" className="truncate text-sm font-semibold">
+            {student.name}
+          </TruncatedText>
 
           <div className="flex flex-wrap gap-1.5 sm:justify-center">
             <Badge className="bg-brand-level/15 text-brand-level">

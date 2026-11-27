@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { summarizeClasses } from "@/lib/teacher";
 import type { ClassSummary } from "@/lib/types";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type TeacherClassesCardProps = {
   title?: string;
@@ -73,7 +74,9 @@ export function TeacherClassesCard({
                 <li key={item._id} className="flex flex-col gap-2 py-3">
                   <div className="flex items-center gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">{item.name}</p>
+                      <TruncatedText as="p" className="truncate font-semibold">
+                        {item.name}
+                      </TruncatedText>
                       <p className="text-muted-foreground text-xs tabular-nums">
                         {studentCount} {studentCount === 1 ? "aluno" : "alunos"}{" "}
                         · {missionCount}{" "}

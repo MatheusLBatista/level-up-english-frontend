@@ -8,6 +8,7 @@ import { MissionCard } from "@/components/missions/mission-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Mission } from "@/lib/types";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type ManageMissionCardProps = {
   mission: Mission;
@@ -48,7 +49,9 @@ export function ManageMissionCard({
         )}
 
         {!canManage && mission.createdBy && (
-          <span className="truncate">Criada por {mission.createdBy.name}</span>
+          <TruncatedText className="truncate">
+            Criada por {mission.createdBy.name}
+          </TruncatedText>
         )}
       </div>
 

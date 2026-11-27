@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TruncatedText } from "@/components/shared/truncated-text";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -74,6 +75,8 @@ export function TeacherActivityCard({
 function ActivityItem({ log }: { log: AttitudeLog }) {
   const xp = log.xp_applied;
   const isNegative = log.attitude ? log.attitude.type === "negative" : xp < 0;
+  const studentName = log.student?.name ?? "Aluno removido";
+  const attitudeName = log.attitude?.name ?? "Atitude removida";
 
   return (
     <li className="relative pb-4 pl-5 last:pb-0">
@@ -86,15 +89,14 @@ function ActivityItem({ log }: { log: AttitudeLog }) {
       />
 
       <div className="flex items-baseline justify-between gap-3">
-        <p className="min-w-0 truncate text-sm">
-          <span className="font-semibold">
-            {log.student?.name ?? "Aluno removido"}
-          </span>
-          <span className="text-muted-foreground">
-            {" "}
-            · {log.attitude?.name ?? "Atitude removida"}
-          </span>
-        </p>
+        <TruncatedText
+          as="p"
+          className="min-w-0 truncate text-sm"
+          tooltip={`${studentName} · ${attitudeName}`}
+        >
+          <span className="font-semibold">{studentName}</span>
+          <span className="text-muted-foreground"> · {attitudeName}</span>
+        </TruncatedText>
 
         <span
           className={cn(

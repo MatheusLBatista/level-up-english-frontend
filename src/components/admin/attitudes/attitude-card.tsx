@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatXpDelta, getAttitudeXp } from "@/lib/attitudes";
 import type { Attitude } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { TruncatedText } from "@/components/shared/truncated-text";
 
 type AttitudeCardProps = {
   attitude: Attitude;
@@ -31,7 +32,9 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="truncate font-semibold">{attitude.name}</p>
+          <TruncatedText as="p" className="truncate font-semibold">
+            {attitude.name}
+          </TruncatedText>
           {!attitude.active && (
             <Badge
               variant="outline"
@@ -50,9 +53,12 @@ export function AttitudeCard({ attitude, actions }: AttitudeCardProps) {
           {formatXpDelta(getAttitudeXp(attitude))}
         </p>
         {attitude.description && (
-          <p className="text-muted-foreground line-clamp-2 text-xs">
+          <TruncatedText
+            as="p"
+            className="text-muted-foreground line-clamp-2 text-xs"
+          >
             {attitude.description}
-          </p>
+          </TruncatedText>
         )}
       </div>
 
